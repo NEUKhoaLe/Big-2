@@ -22,19 +22,19 @@ class Big2:
         self.back = False
 
         self.back_button = Buttons("Back", back_font, 25, 25, self.screen)
-        self.solo_button = Buttons("Single Player", main_screen_font, 600, 500, self.screen)
-        self.multi_button = Buttons("Multi Player", main_screen_font, 600, 550, self.screen)
-        self.rules_button = Buttons("Rules", main_screen_font, 600, 600, self.screen)
+        self.solo_button = Buttons("Single Player", main_screen_font, 500, 500, self.screen)
+        self.multi_button = Buttons("Multi Player", main_screen_font, 500, 550, self.screen)
+        self.rules_button = Buttons("Rules", main_screen_font, 500, 600, self.screen)
 
-        self.two_player_single_button = Buttons("Two Player", self.settings.game_mode_font, 600, 400, self.screen)
-        self.four_player_single_button = Buttons("Four Player", self.settings.game_mode_font, 600, 600, self.screen)
-        self.two_player_online_button = Buttons("Two Player", self.settings.game_mode_font, 600, 400, self.screen)
-        self.four_player_online_button = Buttons("Four Player", self.settings.game_mode_font, 600, 600, self.screen)
+        self.two_player_single_button = Buttons("Two Player", self.settings.game_mode_font, 500, 400, self.screen)
+        self.four_player_single_button = Buttons("Four Player", self.settings.game_mode_font, 500, 600, self.screen)
+        self.two_player_online_button = Buttons("Two Player", self.settings.game_mode_font, 500, 400, self.screen)
+        self.four_player_online_button = Buttons("Four Player", self.settings.game_mode_font, 500, 600, self.screen)
 
         self.easy_difficulty_button = Buttons("Easy Difficulty", self.settings.bot_difficulty_font,
-                                              600, 400, self.screen)
+                                              500, 400, self.screen)
         self.hard_difficulty_button = Buttons("Hard Difficulty", self.settings.bot_difficulty_font,
-                                              600, 600, self.screen)
+                                              500, 600, self.screen)
 
     # Function to Draw the back button
     def draw_back_button(self):
@@ -63,7 +63,7 @@ class Big2:
         title = title_font.render("Big 2", True, (255, 255, 255))
         title_width = title_font.size("Big 2")
 
-        self.screen.blit(title, (600 - title_width[0]/2, 200 - title_width[1]/2))
+        self.screen.blit(title, (500 - title_width[0]/2, 200 - title_width[1]/2))
 
         self.solo_button.draw_button()
         self.multi_button.draw_button()

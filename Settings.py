@@ -4,8 +4,8 @@ import pygame.font
 class Settings:
 
     def __init__(self):
-        self.screen_width = 1200
-        self.screen_height = 800
+        self.screen_width = 1000
+        self.screen_height = 1000
         self.bg_color = (50, 168, 105)
         self.main_menu_button_color = (50, 111, 168)
 

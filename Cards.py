@@ -3,8 +3,10 @@ import pygame
 
 class Cards:
 
-    def __init__(self, value, suit, front_image, back_image):
+    def __init__(self, win, value, suit, front_image, back_image):
 
+        # The screen
+        self.screen = win
         # Value of the card
         self.value = value
         # Suit of the card
@@ -38,9 +40,64 @@ class Cards:
     # position. If it is false, we are dealing, playing, which will have a smooth position.
     # We have to move the image and the rectangle at the same time.
     def move(self, x, y, shuffle):
-        pass
+        x_distance = x - self.x
+        y_distance = y - self.y
 
-    # This method is used to
-    def update(self):
-        pass
+        x_direction = "positive" if (x_distance > 0) else "negative"
+        y_direction = "positive" if (y_distance > 0) else "negative"
 
+        if x_direction == "negative":
+            x_distance *= -1
+        if y_direction == "negative":
+            y_distance *= -1
+
+        if x_distance != 0 and y_distance != 0:
+            slope = y_distance/x_distance
+        else:
+            slope = 0
+
+        if not shuffle:
+            while x_distance != 0 or y_distance != 0:
+                if x_distance == 0:
+                    if y_direction == "negative":
+                        self.y += -5
+                    else:
+                        self.y += -5
+
+                    self.draw()
+                    pygame.display.update()
+                elif y_distance == 0:
+                    if x_direction == "negative":
+                        self.x += -5
+                    else:
+                        self.x += 5
+
+                    self.draw()
+                    pygame.display.update()
+                else:
+                    if x_direction == "negative":
+                        self.x += -1
+                    else:
+                        self.x += 1
+
+                    if y_direction == "positive":
+                        self.y += -1 * slope
+                    else:
+                        self.y += slope
+
+                    self.draw()
+                    pygame.display.update()
+        else:
+            self.x = x
+            self.y = y
+
+            self.draw()
+            pygame.display.update()
+
+    def draw(self, shuffled):
+        if self.is_player and (not shuffled):
+            self.screen.blit(self.front_image, (self.x, self.y))
+            self.rect_card.move(self.x, self.y)
+        else:
+            self.screen.blit(self.back_image, (self.x, self.y))
+            self.rect_card.move(self.x, self.y)
