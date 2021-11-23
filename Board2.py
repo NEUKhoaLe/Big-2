@@ -1,3 +1,5 @@
+import random
+
 import pygame
 from Cards import Cards
 from Settings import Settings
@@ -134,5 +136,46 @@ class Board2:
     # of the card
     # If it is the opponent's deck, then we will draw each card
     # moving to its place
-    def draw_deck(self, deck, deck_type):
-        pass
+    # If it is discard, we also only draw the top of the deck
+    # card back
+    # If it is the current play pile, we draw the card front
+    def draw_deck(self, deck_type):
+        if deck_type == "shuffle":
+            for x in self.deck:
+                x.move(450, 425, True)
+            self.deck[0].draw(False)
+
+    # Method to shuffle the deck
+    def shuffle_deck(self):
+        return random.shuffle(self.deck)
+
+    # Method to deal the shuffled card.
+    # takes in the winner of the last game.
+    # deals in counter clock-wise
+    # Must implement the move.
+    def deal(self, last_winner):
+        counter = 0
+        if last_winner == "player 1":
+            for x in self.deck:
+                if counter % 2 == 0:
+                    self.player_deck.append(x)
+                    self.deck.remove(x)
+                else:
+                    self.opponent_deck.append(x)
+                    self.deck.remove(x)
+                counter += 1
+        else:
+            for x in self.deck:
+                if counter % 2 == 1:
+                    self.player_deck.append(x)
+                    self.deck.remove(x)
+                else:
+                    x.update_vis(False)
+                    self.opponent_deck.append(x)
+                    self.deck.remove(x)
+                counter += 1
+
+    # Method to move cards to the discard pile
+    def move_to_discard(self):
+        self.discard_deck_pile.append(self.current_play_pile)
+        self.current_play_pile = []

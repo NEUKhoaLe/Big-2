@@ -26,7 +26,7 @@ class Cards:
         # Opponent card or User card
         # We will make it default to true, so all cards will be dealt
         # face up
-        self.is_player = True
+        self.front = True
 
         # Card Location
         self.x = -200
@@ -64,7 +64,7 @@ class Cards:
                     else:
                         self.y += -5
 
-                    self.draw()
+                    self.draw(self.front)
                     pygame.display.update()
                 elif y_distance == 0:
                     if x_direction == "negative":
@@ -72,7 +72,7 @@ class Cards:
                     else:
                         self.x += 5
 
-                    self.draw()
+                    self.draw(self.front)
                     pygame.display.update()
                 else:
                     if x_direction == "negative":
@@ -85,19 +85,23 @@ class Cards:
                     else:
                         self.y += slope
 
-                    self.draw()
+                    self.draw(self.front)
                     pygame.display.update()
         else:
             self.x = x
             self.y = y
 
-            self.draw()
+            self.draw(self.front)
             pygame.display.update()
 
-    def draw(self, shuffled):
-        if self.is_player and (not shuffled):
+    def draw(self, front):
+        if self.front and front:
             self.screen.blit(self.front_image, (self.x, self.y))
             self.rect_card.move(self.x, self.y)
         else:
             self.screen.blit(self.back_image, (self.x, self.y))
             self.rect_card.move(self.x, self.y)
+
+    # Method to update the visibility of the card
+    def update_vis(self, boolean):
+        self.front = boolean
