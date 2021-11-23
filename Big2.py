@@ -230,6 +230,15 @@ class Big2:
 
             pygame.display.flip()
 
+    ###################################################################################################################
+    #                                                                                                                 #
+    #                                               Single Player Section                                             #
+    #                                                                                                                 #
+    ###################################################################################################################
+
+    """
+    A Game class that is the API. It stores all the methods that is required for you to run a game.
+    """
     def easy_difficulty(self):
         while True:
             self.reset_drawn_stat_rect()
