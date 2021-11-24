@@ -99,9 +99,6 @@ class Cards:
             self.x = x
             self.y = y
 
-            self.draw(self.front)
-            pygame.display.update()
-
     def draw(self, *argv):
         if self.front and argv[0]:
             self.screen.blit(self.front_image, (self.x, self.y))
@@ -167,3 +164,6 @@ class Cards:
     # Method to get the Height
     def get_height(self):
         return self.height
+
+    def cur_pos(self):
+        return self.x, self.y
