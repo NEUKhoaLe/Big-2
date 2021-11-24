@@ -11,13 +11,13 @@ class Game2:
 
         # The Play button
         self.play_button = Buttons("Play", self.settings.game_button_font,
-                                   1050, 720, self.screen)
+                                   700, 700, self.screen)
         # The Skip button
         self.skip_button = Buttons("Skip", self.settings.game_button_font,
-                                   30, 720, self.screen)
+                                   700, 790, self.screen)
         # The Quit button
         self.quit_button = Buttons("Quit", self.settings.game_button_font,
-                                   30, 20, self.screen)
+                                   50, 50, self.screen)
 
     # Dealing The Card
     def deal(self):

@@ -135,7 +135,7 @@ class Board2:
     # If it is a shuffle deck: we will draw only the top back
     # of the card
     # If it is the opponent's deck, then we will draw each card
-    # moving to its place
+    # moving to its place, reversed 180 degrees
     # If it is discard, we also only draw the top of the deck
     # card back
     # If it is the current play pile, we draw the card front

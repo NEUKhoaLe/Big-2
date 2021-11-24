@@ -1,6 +1,12 @@
 import pygame
 
 
+def _rotate_in_place(surface, angle):
+    rotated_image = pygame.transform.rotozoom(surface, angle, 1)
+
+    return rotated_image
+
+
 class Cards:
 
     def __init__(self, win, value, suit, front_image, back_image):
@@ -105,3 +111,47 @@ class Cards:
     # Method to update the visibility of the card
     def update_vis(self, boolean):
         self.front = boolean
+
+    # Method to rotate the card smoothly
+    def rotate(self, degrees, is_front):
+        is_positive = True if degrees >= 0 else False
+
+        if not is_positive:
+            new_degree = degrees * -1
+        else:
+            new_degree = degrees
+
+        if is_front:
+            self.back_image = pygame.transform.rotate(self.back_image, degrees)
+        else:
+            self.front_image = pygame.transform.rotate(self.front_image, degrees)
+
+        while new_degree > 0:
+            if is_positive:
+                rotated_image = _rotate_in_place(
+                    self.front_image if is_front else self.back_image, 1)
+                self.screen.blit(rotated_image, (self.x, self.y))
+
+                new_degree -= 1
+                if new_degree == 0:
+                    if is_front:
+                        self.front_image = rotated_image
+                        self.rect_card = rotated_image.get_rect()
+                    else:
+                        self.back_image = rotated_image
+                        self.rect_card = rotated_image.get_rect()
+            else:
+                rotated_image = _rotate_in_place(
+                    self.front_image if is_front else self.back_image, -1)
+                self.screen.blit(rotated_image, (self.x, self.y))
+
+                new_degree -= 1
+                if new_degree == 0:
+                    if is_front:
+                        self.front_image = rotated_image
+                        self.rect_card = rotated_image.get_rect()
+                    else:
+                        self.back_image = rotated_image
+                        self.rect_card = rotated_image.get_rect()
+
+            self.draw(is_front)

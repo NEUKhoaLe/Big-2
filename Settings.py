@@ -15,5 +15,6 @@ class Settings:
         self.game_mode_font = pygame.font.SysFont('jetsbrainsmono.ttf', 64)
         self.bot_difficulty_font = pygame.font.SysFont('jetsbrainsmono.ttf', 64)
         self.game_button_font = pygame.font.SysFont('jetsbrainsmono.ttf', 36)
+        self.player_name_font = pygame.font.SysFont('jetsbrainsmono.ttf', 50)
 
         self.FPS = 60
