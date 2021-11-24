@@ -166,7 +166,7 @@ class Board2:
                 x.update_vis(False)
                 if x.cur_pos() == (self.deck_x, self.deck_y):
                     x.rotate(180)
-                x.move(starting, self.opponent_deck_y)
+                x.move(starting, self.opponent_deck_y, False)
                 x.draw()
 
                 starting += x.get_width()
@@ -177,7 +177,7 @@ class Board2:
 
             for x in self.current_play_pile:
                 x.update_vis(True)
-                x.move(starting, self.current_play_pile_y)
+                x.move(starting, self.current_play_pile_y, False)
                 x.draw()
 
                 starting += x.get_width()
@@ -191,7 +191,7 @@ class Board2:
 
             for x in self.player_deck:
                 x.update_vis(True)
-                x.move(starting, self.player_deck)
+                x.move(starting, self.player_deck, False)
                 x.draw()
 
                 starting += x.get_width()
@@ -215,6 +215,8 @@ class Board2:
                     self.opponent_deck.append(x)
                     self.deck.remove(x)
                 counter += 1
+                self.draw_deck("opponent")
+                self.draw_deck("player")
         else:
             for x in self.deck:
                 if counter % 2 == 1:
@@ -225,6 +227,12 @@ class Board2:
                     self.opponent_deck.append(x)
                     self.deck.remove(x)
                 counter += 1
+                self.draw_deck("opponent")
+                self.draw_deck("player")
+
+    # Method to move card from pile to pile
+    def move_pile_to_pile(self, pile_from, pile_to):
+        pass
 
     # Method to move card to the shuffle deck position
     def move_to_shuffle_pos(self):
@@ -232,13 +240,16 @@ class Board2:
             x.move(450, 425, True)
             x.update_vis(False)
 
+        self.draw_deck("shuffle")
+
     # Method to move cards to the discard pile
     def move_to_discard(self):
         for x in self.current_play_pile:
-            x.move(self.discard_deck_pile_x, self.discard_deck_pile_y)
+            x.move(self.discard_deck_pile_x, self.discard_deck_pile_y, False)
             x.update_vis(False)
             self.discard_deck_pile.append(x)
 
+        self.draw_deck("discard")
         self.current_play_pile = []
 
     def draw_names(self):
