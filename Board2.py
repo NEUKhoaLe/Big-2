@@ -1,5 +1,4 @@
 import random
-
 import pygame
 from Cards import Cards
 from Settings import Settings
@@ -20,6 +19,18 @@ class Board2:
         self.current_play_pile = []
         # The Discard pile
         self.discard_deck_pile = []
+
+        self.opponent_deck_x = 250
+        self.opponent_deck_y = 75
+
+        self.player_deck_x = 250
+        self.player_deck_y = 675
+
+        self.current_play_pile_x = 250
+        self.current_play_pile_y = 425
+
+        self.discard_deck_pile_x = 750
+        self.discard_deck_pile_y = 50
 
         self.deck = self.create_deck()
 
@@ -144,6 +155,44 @@ class Board2:
             for x in self.deck:
                 x.move(450, 425, True)
             self.deck[0].draw(False)
+        elif deck_type == "opponent":
+            num_cards = len(self.opponent_deck)
+            starting = 500 - (num_cards * self.opponent_deck[0].get_width())
+            starting = starting / 2
+
+            for x in self.opponent_deck:
+                x.rotate(180, False)
+                x.update_vis(False)
+                x.move(starting, self.opponent_deck_y)
+                x.draw()
+
+                starting += x.get_width()
+        elif deck_type == "current":
+            num_cards = len(self.current_play_pile)
+            starting = 500 - (num_cards * self.current_play_pile[0].get_width())
+            starting = starting/2
+
+            for x in self.current_play_pile:
+                x.update_vis(True)
+                x.move(starting, self.current_play_pile_y)
+                x.draw()
+
+                starting += x.get_width()
+        elif deck_type == "discard":
+            card = self.discard_deck_pile[len(self.discard_deck_pile)]
+            card.move(self.discard_deck_pile_x, self.discard_deck_pile_y)
+            card.draw()
+        elif deck_type == "player":
+            num_cards = len(self.player_deck)
+            starting = 500 - (num_cards * self.player_deck[0].get_width())
+            starting = starting / 2
+
+            for x in self.player_deck:
+                x.update_vis(True)
+                x.move(starting, self.player_deck)
+                x.draw()
+
+                starting += x.get_width()
 
     # Method to shuffle the deck
     def shuffle_deck(self):
@@ -177,5 +226,12 @@ class Board2:
 
     # Method to move cards to the discard pile
     def move_to_discard(self):
-        self.discard_deck_pile.append(self.current_play_pile)
+        for x in self.current_play_pile:
+            x.move(self.discard_deck_pile_x, self.discard_deck_pile_y)
+            x.update_vis(False)
+            self.discard_deck_pile.append(x)
+
         self.current_play_pile = []
+
+    def draw_names(self):
+        pass

@@ -22,10 +22,14 @@ class Cards:
         # Back image of the card
         self.back_image = pygame.load(back_image)
 
+        # Card size
+        self.width = 100
+        self.height = 150
+
         # We will default the size of the card to be 100, 150. We will be able
         # to scale it when dealing.
-        self.front_image = pygame.transform.scale(self.front_image, (100, 150))
-        self.back_image = pygame.transform.scale(self.back_image, (100, 150))
+        self.front_image = pygame.transform.scale(self.front_image, (self.width, self.height))
+        self.back_image = pygame.transform.scale(self.back_image, (self.width, self.height))
 
         # If the user chose the card
         self.chosen = False
@@ -38,7 +42,7 @@ class Cards:
         self.x = -200
         self.y = -200
 
-        self.rect_card = pygame.Rect(self.x, self.y, 100, 150)
+        self.rect_card = pygame.Rect(self.x, self.y, self.width, self.height)
 
     # Move the card to a different location
     # If we are moving the card to the shuffle position, we will make it appear
@@ -71,7 +75,6 @@ class Cards:
                         self.y += -5
 
                     self.draw(self.front)
-                    pygame.display.update()
                 elif y_distance == 0:
                     if x_direction == "negative":
                         self.x += -5
@@ -79,7 +82,6 @@ class Cards:
                         self.x += 5
 
                     self.draw(self.front)
-                    pygame.display.update()
                 else:
                     if x_direction == "negative":
                         self.x += -1
@@ -92,7 +94,7 @@ class Cards:
                         self.y += slope
 
                     self.draw(self.front)
-                    pygame.display.update()
+
         else:
             self.x = x
             self.y = y
@@ -100,13 +102,15 @@ class Cards:
             self.draw(self.front)
             pygame.display.update()
 
-    def draw(self, front):
-        if self.front and front:
+    def draw(self, *argv):
+        if self.front and argv[0]:
             self.screen.blit(self.front_image, (self.x, self.y))
             self.rect_card.move(self.x, self.y)
         else:
             self.screen.blit(self.back_image, (self.x, self.y))
             self.rect_card.move(self.x, self.y)
+
+        pygame.display.update()
 
     # Method to update the visibility of the card
     def update_vis(self, boolean):
@@ -155,3 +159,11 @@ class Cards:
                         self.rect_card = rotated_image.get_rect()
 
             self.draw(is_front)
+
+    # Method to get the Width
+    def get_width(self):
+        return self.width
+
+    # Method to get the Height
+    def get_height(self):
+        return self.height
