@@ -70,7 +70,7 @@ class Big2:
         self.rules_button.draw_button()
 
     # Function that handles all the mouse left click action
-    def mouse1_action(self):
+    def menu_mouse_action(self):
         mouseX, mouseY = pygame.mouse.get_pos()
 
         if self.back_button.collide_point(mouseX, mouseY):
@@ -129,7 +129,7 @@ class Big2:
                     sys.exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
-                        self.mouse1_action()
+                        self.menu_mouse_action()
 
             # Make the most recently drawn screen visible.
             pygame.display.flip()
@@ -151,7 +151,7 @@ class Big2:
                     sys.exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
-                        self.mouse1_action()
+                        self.menu_mouse_action()
                         if self.back:
                             self.back = False
                             return
@@ -176,7 +176,7 @@ class Big2:
                     sys.exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
-                        self.mouse1_action()
+                        self.menu_mouse_action()
                         if self.back:
                             self.back = False
                             return
@@ -200,7 +200,7 @@ class Big2:
                     sys.exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
-                        self.mouse1_action()
+                        self.menu_mouse_action()
                         if self.back:
                             self.back = False
                             return
@@ -223,7 +223,7 @@ class Big2:
                     sys.exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
-                        self.mouse1_action()
+                        self.menu_mouse_action()
                         if self.back:
                             self.back = False
                             return
@@ -254,7 +254,7 @@ class Big2:
                     sys.exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
-                        self.mouse1_action()
+                        self.menu_mouse_action()
                         if self.back:
                             self.back = False
                             return
@@ -276,7 +276,7 @@ class Big2:
                     sys.exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
-                        self.mouse1_action()
+                        self.menu_mouse_action()
                         if self.back:
                             self.back = False
                             return
@@ -307,7 +307,7 @@ class Big2:
                     sys.exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
-                        self.mouse1_action()
+                        self.menu_mouse_action()
                         if self.back:
                             self.back = False
                             return
@@ -330,7 +330,7 @@ class Big2:
                     sys.exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
-                        self.mouse1_action()
+                        self.menu_mouse_action()
                         if self.back:
                             self.back = False
                             return
@@ -353,7 +353,7 @@ class Big2:
                     sys.exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
-                        self.mouse1_action()
+                        self.menu_mouse_action()
                         if self.back:
                             self.back = False
                             return

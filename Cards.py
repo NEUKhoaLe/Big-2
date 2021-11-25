@@ -40,8 +40,15 @@ class Cards:
         self.x = -200
         self.y = -200
 
+        # If a player has clicked on this card
         self.chosen = False
 
+        # This boolean determines whether this card is in play (ie whether it is in the opponent's or player's hand)
+        # This is to help with collision. If it is not in the player's hand, then the player should
+        # not be able to click on the card
+        self.in_play = False
+
+        # rect used to handle clicking and collision
         self.rect_card = pygame.Rect(self.x, self.y, self.width, self.height)
 
     # Move the card to a different location
@@ -56,6 +63,7 @@ class Cards:
         x_direction = "positive" if (x_distance > 0) else "negative"
         y_direction = "positive" if (y_distance > 0) else "negative"
 
+        # We save whether it is negative, we want the distance to be positive.
         if x_direction == "negative":
             x_distance *= -1
         if y_direction == "negative":
@@ -66,27 +74,29 @@ class Cards:
         else:
             slope = 0
 
+        # If it is not a move to shuffle position, then we want to move it incrementally.
+        # If it is a  shuffle move, then we can instantly move it.
         if not shuffle:
             while x_distance != 0 or y_distance != 0:
                 if x_distance == 0:
                     if y_direction == "negative":
-                        self.y += -5
+                        self.y += -1
                     else:
-                        self.y += -5
+                        self.y += 1
 
                     self.draw(self.front)
                 elif y_distance == 0:
                     if x_direction == "negative":
-                        self.x += -5
+                        self.x += -1
                     else:
-                        self.x += 5
+                        self.x += 1
 
                     self.draw(self.front)
                 else:
                     if x_direction == "negative":
                         self.x += -1
                     else:
-                        self.x += 1
+                        self.y += -1 * slope
 
                     if y_direction == "positive":
                         self.y += -1 * slope
@@ -94,11 +104,11 @@ class Cards:
                         self.y += slope
 
                     self.draw(self.front)
-
         else:
             self.x = x
             self.y = y
 
+    # Draw method. Blit the image, and move the rect to the x, y position
     def draw(self, *argv):
         if self.front and argv[0]:
             self.screen.blit(self.front_image, (self.x, self.y))
@@ -141,10 +151,8 @@ class Cards:
             if new_degree == 0:
                 if is_front:
                     self.front_image = rotated_image
-                    self.rect_card = rotated_image.get_rect()
                 else:
                     self.back_image = rotated_image
-                    self.rect_card = rotated_image.get_rect()
 
             self.draw(is_front)
 
@@ -156,11 +164,16 @@ class Cards:
     def get_height(self):
         return self.height
 
+    # Return the current position of the card
     def cur_pos(self):
         return self.x, self.y
 
+    # Change the status of the chosen status of this card
     def change_chosen(self, boolean):
         self.chosen = boolean
 
+    # return the status of whether a card is chosen
     def get_chosen(self):
         return self.chosen
+
+

@@ -59,9 +59,23 @@ class Board2:
         self.card_width = 100
         self.card_height = 150
 
+    # Method to reset the board
     def reset(self):
-        pass
+        self.player_deck = []
+        self.opponent_deck = []
+        self.current_play_pile = []
+        self.discard_deck_pile = []
+        self.opponent_chosen = []
+        self.player_chosen = []
 
+        self.deck = self.create_deck()
+        self.opponent_deck_collide_point = pygame.Rect(self.opponent_deck_x, self.opponent_deck_y,
+                                                       0, 0)
+        self.player_deck_collide_point = pygame.Rect(self.player_deck_x, self.player_deck_y,
+                                                     0, 0)
+        self.draw_board()
+
+    # Method to create the shuffled deck to begin dealing
     def create_deck(self):
         deck = [Cards(self.screen, "A", "Spades",
                       "Assets/card-spades-1.png", "Assets/card-back1.png"), Cards(self.screen, "2", "Spades",
