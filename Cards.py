@@ -3,7 +3,7 @@ import pygame
 
 def _rotate_in_place(surface, top_left, angle):
     rotated_image = pygame.transform.rotozoom(surface, angle, 1)
-    new_rect = rotated_image.get_rect(center=surface.get_rect(topLeft = top_left).center)
+    new_rect = rotated_image.get_rect(center=surface.get_rect(topLeft=top_left).center)
     return rotated_image, new_rect
 
 
@@ -154,7 +154,7 @@ class Cards:
                 else:
                     self.back_image = rotated_image
 
-            self.draw(is_front)
+        self.draw(is_front)
 
     # Method to get the Width
     def get_width(self):
@@ -176,4 +176,10 @@ class Cards:
     def get_chosen(self):
         return self.chosen
 
+    # Change the status of the in play instance
+    def change_in_play(self, boolean):
+        self.in_play = boolean
 
+    # return the status of the in play instance
+    def get_in_play(self):
+        return self.in_play
