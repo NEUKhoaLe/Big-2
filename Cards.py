@@ -1,10 +1,10 @@
 import pygame
 
 
-def _rotate_in_place(surface, angle):
+def _rotate_in_place(surface, top_left, angle):
     rotated_image = pygame.transform.rotozoom(surface, angle, 1)
-
-    return rotated_image
+    new_rect = rotated_image.get_rect(center=surface.get_rect(topLeft = top_left).center)
+    return rotated_image, new_rect
 
 
 class Cards:
@@ -123,37 +123,28 @@ class Cards:
             new_degree = degrees
 
         if is_front:
-            self.back_image = pygame.transform.rotate(self.back_image, degrees)
+            self.back_image = _rotate_in_place(self.back_image, (self.x, self.y), degrees)
         else:
-            self.front_image = pygame.transform.rotate(self.front_image, degrees)
+            self.front_image = _rotate_in_place(self.front_image, (self.x, self.y), degrees)
 
         while new_degree > 0:
             if is_positive:
-                rotated_image = _rotate_in_place(
+                rotated_image, new_rect = _rotate_in_place(
                     self.front_image if is_front else self.back_image, 1)
-                self.screen.blit(rotated_image, (self.x, self.y))
-
-                new_degree -= 1
-                if new_degree == 0:
-                    if is_front:
-                        self.front_image = rotated_image
-                        self.rect_card = rotated_image.get_rect()
-                    else:
-                        self.back_image = rotated_image
-                        self.rect_card = rotated_image.get_rect()
+                self.screen.blit(rotated_image, new_rect.topleft)
             else:
-                rotated_image = _rotate_in_place(
+                rotated_image, new_rect = _rotate_in_place(
                     self.front_image if is_front else self.back_image, -1)
-                self.screen.blit(rotated_image, (self.x, self.y))
+                self.screen.blit(rotated_image, new_rect.topleft)
 
-                new_degree -= 1
-                if new_degree == 0:
-                    if is_front:
-                        self.front_image = rotated_image
-                        self.rect_card = rotated_image.get_rect()
-                    else:
-                        self.back_image = rotated_image
-                        self.rect_card = rotated_image.get_rect()
+            new_degree -= 1
+            if new_degree == 0:
+                if is_front:
+                    self.front_image = rotated_image
+                    self.rect_card = rotated_image.get_rect()
+                else:
+                    self.back_image = rotated_image
+                    self.rect_card = rotated_image.get_rect()
 
             self.draw(is_front)
 
