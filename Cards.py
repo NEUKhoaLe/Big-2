@@ -189,3 +189,7 @@ class Cards:
 
     def update_card_block_area(self, x, y, width, height):
         pass
+
+    def handle_selected(self, mouse_x, mouse_y):
+        return self.rect_card.collidepoint((mouse_x, mouse_y)) and not \
+            self.rect_blocked.collidepoint((mouse_x, mouse_y))
