@@ -20,11 +20,21 @@ class Board2:
         # The Discard pile
         self.discard_deck_pile = []
 
-        self.opponent_deck_x = 250
+        # Opponent chosen card(s)
+        self.opponent_chosen = []
+        # Player chosen card(s)
+        self.player_chosen = []
+
+        self.opponent_deck_x = 50
         self.opponent_deck_y = 75
 
-        self.player_deck_x = 250
+        self.player_deck_x = 50
         self.player_deck_y = 675
+
+        self.play_deck_width = 800
+
+        self.player_chosen_height = 600
+        self.opponent_chosen_height = 150
 
         self.current_play_pile_x = 250
         self.current_play_pile_y = 425
@@ -153,13 +163,15 @@ class Board2:
     # If it is discard, we also only draw the top of the deck
     # card back
     # If it is the current play pile, we draw the card front
+    # If it is in the chosen pile, we draw the card moving up
+    # half its length
     def draw_deck(self, deck_type):
         if deck_type == "shuffle":
             self.move_to_shuffle_pos()
             self.deck[0].draw(False)
         elif deck_type == "opponent":
             num_cards = len(self.opponent_deck)
-            starting = self.opponent_deck_x - (num_cards * self.opponent_deck[0].get_width())
+            starting = (self.play_deck_width + self.opponent_deck_x) - (num_cards * self.opponent_deck[0].get_width())
             starting = starting / 2
 
             for x in self.opponent_deck:
@@ -172,8 +184,8 @@ class Board2:
                 starting += x.get_width()
         elif deck_type == "current":
             num_cards = len(self.current_play_pile)
-            starting = self.current_play_pile_x - (num_cards * self.current_play_pile[0].get_width())
-            starting = starting/2
+            starting = (self.play_deck_width + self.current_play_pile_x) - (num_cards * self.current_play_pile[0].get_width())
+            starting = starting / 2
 
             for x in self.current_play_pile:
                 x.update_vis(True)
@@ -182,11 +194,15 @@ class Board2:
 
                 starting += x.get_width()
         elif deck_type == "discard":
+            for x in self.current_play_pile:
+                x.move(self.discard_deck_pile_x, self.discard_deck_pile_y, False)
+                x.update_vis(False)
+
             card = self.discard_deck_pile[len(self.discard_deck_pile) - 1]
             card.draw()
         elif deck_type == "player":
             num_cards = len(self.player_deck)
-            starting = self.player_deck_x - (num_cards * self.player_deck[0].get_width())
+            starting = (self.play_deck_width + self.player_deck_x) - (num_cards * self.player_deck[0].get_width())
             starting = starting / 2
 
             for x in self.player_deck:
@@ -195,6 +211,16 @@ class Board2:
                 x.draw()
 
                 starting += x.get_width()
+        elif deck_type == "player-chosen":
+            for card in self.player_chosen:
+                x, y = card.cur_pos()
+                card.move(x, self.player_chosen_height)
+                card.draw()
+        elif deck_type == "opponent-chosen":
+            for card in self.opponent_chosen:
+                x, y = card.cur_pos()
+                card.move(x, self.opponent_chosen_height)
+                card.draw()
 
     # Method to shuffle the deck
     def shuffle_deck(self):
@@ -230,14 +256,28 @@ class Board2:
                 self.draw_deck("opponent")
                 self.draw_deck("player")
 
-    # Method to move card from pile to pile
-    def move_pile_to_pile(self, pile_from, pile_to):
+    # Method to move card from play pile to chosen pile
+    def move_play_to_chosen(self, card, deck_type):
         pass
+
+    def move_chosen_to_play(self, card, deck_type):
+        pass
+
+    # Method to move card from pile to the play pile
+    def move_selected_to_current(self, pile_from, cards):
+        if pile_from == "player":
+            for card in cards:
+                self.current_play_pile.append(card)
+                self.player_chosen.remove(card)
+        elif pile_from == "opponent":
+            for card in cards:
+                self.current_play_pile.append(card)
+                self.player_chosen.remove(card)
 
     # Method to move card to the shuffle deck position
     def move_to_shuffle_pos(self):
         for x in self.deck:
-            x.move(450, 425, True)
+            x.move(self.deck_x, self.deck_y, True)
             x.update_vis(False)
 
         self.draw_deck("shuffle")
@@ -245,11 +285,9 @@ class Board2:
     # Method to move cards to the discard pile
     def move_to_discard(self):
         for x in self.current_play_pile:
-            x.move(self.discard_deck_pile_x, self.discard_deck_pile_y, False)
-            x.update_vis(False)
             self.discard_deck_pile.append(x)
+            self.draw_deck("discard")
 
-        self.draw_deck("discard")
         self.current_play_pile = []
 
     def draw_names(self):

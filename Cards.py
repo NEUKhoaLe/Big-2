@@ -31,8 +31,6 @@ class Cards:
         self.front_image = pygame.transform.scale(self.front_image, (self.width, self.height))
         self.back_image = pygame.transform.scale(self.back_image, (self.width, self.height))
 
-        # If the user chose the card
-        self.chosen = False
         # Opponent card or User card
         # We will make it default to true, so all cards will be dealt
         # face up
