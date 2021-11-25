@@ -59,6 +59,9 @@ class Board2:
         self.card_width = 100
         self.card_height = 150
 
+    def reset(self):
+        pass
+
     def create_deck(self):
         deck = [Cards(self.screen, "A", "Spades",
                       "Assets/card-spades-1.png", "Assets/card-back1.png"), Cards(self.screen, "2", "Spades",
@@ -167,6 +170,15 @@ class Board2:
 
         return deck
 
+    def draw_board(self):
+        self.draw_deck("shuffle")
+        self.draw_deck("opponent")
+        self.draw_deck("current")
+        self.draw_deck("discard")
+        self.draw_deck("player")
+        self.draw_deck("player-chosen")
+        self.draw_deck("opponent-chosen")
+
     # Method to draw a given deck given a deck type
     # If it is a shuffle deck: we will draw only the top back
     # of the card
@@ -190,11 +202,12 @@ class Board2:
                         (num_cards * self.card_width), self.card_height)
 
             for x in self.opponent_deck:
-                x.update_vis(False)
-                if x.cur_pos() == (self.deck_x, self.deck_y):
-                    x.rotate(180)
-                x.move(starting, self.opponent_deck_y, False)
-                x.draw()
+                if not x.get_chosen():
+                    x.update_vis(False)
+                    if x.cur_pos() == (self.deck_x, self.deck_y):
+                        x.rotate(180)
+                    x.move(starting, self.opponent_deck_y, False)
+                    x.draw()
 
                 starting += x.get_width()
         elif deck_type == "current":
@@ -224,9 +237,10 @@ class Board2:
                         (num_cards * self.card_width), self.card_height)
 
             for x in self.player_deck:
-                x.update_vis(True)
-                x.move(starting, self.player_deck, False)
-                x.draw()
+                if not x.get_chosen():
+                    x.update_vis(True)
+                    x.move(starting, self.player_deck, False)
+                    x.draw()
 
                 starting += x.get_width()
         elif deck_type == "player-chosen":
@@ -255,31 +269,58 @@ class Board2:
                 if counter % 2 == 0:
                     self.player_deck.append(x)
                     self.deck.remove(x)
+                    self.draw_deck("player")
                 else:
+                    x.update_vis(False)
                     self.opponent_deck.append(x)
                     self.deck.remove(x)
+                    self.draw_deck("opponent")
                 counter += 1
-                self.draw_deck("opponent")
-                self.draw_deck("player")
         else:
             for x in self.deck:
                 if counter % 2 == 1:
                     self.player_deck.append(x)
                     self.deck.remove(x)
+                    self.draw_deck("player")
                 else:
                     x.update_vis(False)
                     self.opponent_deck.append(x)
                     self.deck.remove(x)
+                    self.draw_deck("opponent")
                 counter += 1
-                self.draw_deck("opponent")
-                self.draw_deck("player")
 
     # Method to move card from play pile to chosen pile
     def move_play_to_chosen(self, card, deck_type):
-        pass
+        if deck_type == "player":
+            card.change_chosen(True)
+            self.player_deck.remove(card)
+            self.player_chosen.append(card)
+
+            self.draw_deck("player-chosen")
+            self.draw_deck("player")
+        if deck_type == "opponent":
+            card.change_chosen(True)
+            self.opponent_deck.remove(card)
+            self.opponent_chosen.append(card)
+
+            self.draw_deck("opponent-chosen")
+            self.draw_deck("opponent")
 
     def move_chosen_to_play(self, card, deck_type):
-        pass
+        if deck_type == "player":
+            card.change_chosen(False)
+            self.player_deck.append(card)
+            self.player_chosen.remove(card)
+
+            self.draw_deck("player-chosen")
+            self.draw_deck("player")
+        if deck_type == "opponent":
+            card.change_chosen(False)
+            self.opponent_deck.append(card)
+            self.opponent_chosen.remove(card)
+
+            self.draw_deck("opponent-chosen")
+            self.draw_deck("opponent")
 
     # Method to move card from pile to the play pile
     def move_selected_to_current(self, pile_from, cards):
@@ -287,18 +328,20 @@ class Board2:
             for card in cards:
                 self.current_play_pile.append(card)
                 self.player_chosen.remove(card)
+                self.draw_deck("current")
+                self.draw_deck("player")
         elif pile_from == "opponent":
             for card in cards:
                 self.current_play_pile.append(card)
                 self.player_chosen.remove(card)
+                self.draw_deck("current")
+                self.draw_deck("opponent")
 
     # Method to move card to the shuffle deck position
     def move_to_shuffle_pos(self):
         for x in self.deck:
             x.move(self.deck_x, self.deck_y, True)
             x.update_vis(False)
-
-        self.draw_deck("shuffle")
 
     # Method to move cards to the discard pile
     def move_to_discard(self):
@@ -310,3 +353,5 @@ class Board2:
 
     def draw_names(self):
         pass
+
+    # Handle collision

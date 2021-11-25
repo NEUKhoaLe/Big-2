@@ -40,6 +40,8 @@ class Cards:
         self.x = -200
         self.y = -200
 
+        self.chosen = False
+
         self.rect_card = pygame.Rect(self.x, self.y, self.width, self.height)
 
     # Move the card to a different location
@@ -156,3 +158,9 @@ class Cards:
 
     def cur_pos(self):
         return self.x, self.y
+
+    def change_chosen(self, boolean):
+        self.chosen = boolean
+
+    def get_chosen(self):
+        return self.chosen
