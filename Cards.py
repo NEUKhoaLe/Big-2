@@ -50,6 +50,8 @@ class Cards:
 
         # rect used to handle clicking and collision
         self.rect_card = pygame.Rect(self.x, self.y, self.width, self.height)
+        # rect used to calculate the area that is blocked by the card above
+        self.rect_blocked = pygame.Rect(0, 0, 0, 0)
 
     # Move the card to a different location
     # If we are moving the card to the shuffle position, we will make it appear
@@ -84,14 +86,12 @@ class Cards:
                     else:
                         self.y += 1
 
-                    self.draw(self.front)
                 elif y_distance == 0:
                     if x_direction == "negative":
                         self.x += -1
                     else:
                         self.x += 1
 
-                    self.draw(self.front)
                 else:
                     if x_direction == "negative":
                         self.x += -1
@@ -103,19 +103,19 @@ class Cards:
                     else:
                         self.y += slope
 
-                    self.draw(self.front)
+                self.draw(self.front)
         else:
             self.x = x
             self.y = y
+
+        self.update_card_collision(self.x, self.y)
 
     # Draw method. Blit the image, and move the rect to the x, y position
     def draw(self, *argv):
         if self.front and argv[0]:
             self.screen.blit(self.front_image, (self.x, self.y))
-            self.rect_card.move(self.x, self.y)
         else:
             self.screen.blit(self.back_image, (self.x, self.y))
-            self.rect_card.move(self.x, self.y)
 
         pygame.display.update()
 
@@ -183,3 +183,9 @@ class Cards:
     # return the status of the in play instance
     def get_in_play(self):
         return self.in_play
+
+    def update_card_collision(self, x, y):
+        self.rect_card.update(x, y, self.width, self.height)
+
+    def update_card_block_area(self, x, y, width, height):
+        pass
