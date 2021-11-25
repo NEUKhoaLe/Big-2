@@ -4,6 +4,10 @@ from Cards import Cards
 from Settings import Settings
 
 
+def update_rect(rect, x, y, width, height):
+    return rect.update(x, y, width, height)
+
+
 class Board2:
     def __init__(self, screen):
         self.screen = screen
@@ -46,6 +50,14 @@ class Board2:
 
         self.deck_x = 450
         self.deck_y = 425
+
+        self.opponent_deck_collide_point = pygame.Rect(self.opponent_deck_x, self.opponent_deck_y,
+                                                       0, 0)
+        self.player_deck_collide_point = pygame.Rect(self.player_deck_x, self.player_deck_y,
+                                                     0, 0)
+
+        self.card_width = 100
+        self.card_height = 150
 
     def create_deck(self):
         deck = [Cards(self.screen, "A", "Spades",
@@ -171,8 +183,11 @@ class Board2:
             self.deck[0].draw(False)
         elif deck_type == "opponent":
             num_cards = len(self.opponent_deck)
-            starting = (self.play_deck_width + self.opponent_deck_x) - (num_cards * self.opponent_deck[0].get_width())
+            starting = (self.play_deck_width + self.opponent_deck_x) - (num_cards * self.card_width)
             starting = starting / 2
+
+            update_rect(self.opponent_deck_collide_point, self.opponent_deck_x, self.opponent_deck_y,
+                        (num_cards * self.card_width), self.card_height)
 
             for x in self.opponent_deck:
                 x.update_vis(False)
@@ -184,7 +199,7 @@ class Board2:
                 starting += x.get_width()
         elif deck_type == "current":
             num_cards = len(self.current_play_pile)
-            starting = (self.play_deck_width + self.current_play_pile_x) - (num_cards * self.current_play_pile[0].get_width())
+            starting = (self.play_deck_width + self.current_play_pile_x) - (num_cards * self.card_width)
             starting = starting / 2
 
             for x in self.current_play_pile:
@@ -202,8 +217,11 @@ class Board2:
             card.draw()
         elif deck_type == "player":
             num_cards = len(self.player_deck)
-            starting = (self.play_deck_width + self.player_deck_x) - (num_cards * self.player_deck[0].get_width())
+            starting = (self.play_deck_width + self.player_deck_x) - (num_cards * self.card_width)
             starting = starting / 2
+
+            update_rect(self.player_deck_collide_point, self.player_deck_x, self.player_deck_y,
+                        (num_cards * self.card_width), self.card_height)
 
             for x in self.player_deck:
                 x.update_vis(True)
