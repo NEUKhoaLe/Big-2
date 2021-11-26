@@ -1,7 +1,6 @@
-import pygame
-from Buttons import Buttons
-from Settings import Settings
-from Board2 import Board2
+from Utils.Buttons import Buttons
+from Utils.Settings import Settings
+from Board.Board2 import Board2
 from Player import Player
 
 

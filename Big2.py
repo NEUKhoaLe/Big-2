@@ -1,7 +1,7 @@
 import pygame
 import sys
-from Settings import Settings
-from Buttons import Buttons
+from Utils.Settings import Settings
+from Utils.Buttons import Buttons
 
 
 class Big2:
