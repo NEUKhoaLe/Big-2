@@ -1,6 +1,8 @@
 import pygame
 from Buttons import Buttons
 from Settings import Settings
+from Board2 import Board2
+from Player import Player
 
 
 class Game2:
@@ -8,6 +10,11 @@ class Game2:
 
         self.settings = Settings()
         self.screen = win
+        self.board = Board2(self.screen)
+
+        # The player here will be player 1
+        self.player1 = Player()
+        self.player2 = Player()
 
         # The Play button
         self.play_button = Buttons("Play", self.settings.game_button_font,
@@ -19,6 +26,10 @@ class Game2:
         self.quit_button = Buttons("Quit", self.settings.game_button_font,
                                    50, 50, self.screen)
 
+    # Enter name method
+    def enter_name(self, player_type, name):
+        pass
+
     # Dealing The Card
     def deal(self):
         pass
@@ -28,6 +39,9 @@ class Game2:
         pass
 
     # Updating the game
+    # Draw the board
+    # Draw the player's names
+    # Draw the buttons
     def update(self):
         pass
 

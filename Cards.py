@@ -58,7 +58,7 @@ class Cards:
     # instantly. If shuffle is true, then we are moving it to the shuffle
     # position. If it is false, we are dealing, playing, which will have a smooth position.
     # We have to move the image and the rectangle at the same time.
-    def move(self, x, y, shuffle):
+    def move(self, x, y, shuffle=False):
         x_distance = x - self.x
         y_distance = y - self.y
 
@@ -188,7 +188,7 @@ class Cards:
         self.rect_card.update(x, y, self.width, self.height)
 
     def update_card_block_area(self, x, y, width, height):
-        pass
+        self.rect_blocked.update(x, y, width, height)
 
     def handle_selected(self, mouse_x, mouse_y):
         return self.rect_card.collidepoint((mouse_x, mouse_y)) and not \

@@ -1,4 +1,3 @@
-import math
 import random
 import pygame
 from Cards import Cards
@@ -394,16 +393,59 @@ class Board2:
 
         self.current_play_pile = []
 
-    def draw_names(self):
-        pass
+    # Method to flip the visibility.
+    def flip_vis(self, deck_type, boolean):
+        if deck_type == "opponent":
+            for card in self.opponent_deck:
+                card.udate_vis(boolean)
+        elif deck_type == "player":
+            for card in self.player_deck:
+                card.update_vis(boolean)
 
     # Handle collision. Choosing a card. Passes in x and y position of mouse. First find which deck was chosen
     # and then go through every card in that deck to find the card. Move that card to the chosen
+    # If a chosen card is selected, then it is "unchosen" i.e. removed from the chosen pile
     def choose_card(self, mouse_x, mouse_y, cur_player):
         if self.opponent_deck_collide_point.collidepoint(mouse_x, mouse_y):
             deck_type = "opponent"
+
+            if cur_player == deck_type:
+                for card in self.opponent_deck:
+                    if card.handle_selected():
+                        if card.get_chosen():
+                            self.move_chosen_to_play(card, deck_type)
+                        else:
+                            self.move_play_to_chosen(card, deck_type)
         elif self.player_deck_collide_point.collidepoint(mouse_x, mouse_y):
             deck_type = "player"
+
+            if cur_player == deck_type:
+                for card in self.player_deck:
+                    if card.get_chosen():
+                        self.move_chosen_to_play(card, deck_type)
+                    else:
+                        self.move_play_to_chosen(card, deck_type)
         else:
             for card in self.opponent_chosen:
-                pass
+                if card.handle_selected(mouse_x, mouse_y) and cur_player == "opponent":
+                    if card.get_chosen():
+                        self.move_chosen_to_play(card, "opponent")
+                    else:
+                        self.move_play_to_chosen(card, "opponent")
+
+                    return
+            for card in self.player_chosen:
+                if card.handle_selected(mouse_x, mouse_y) and cur_player == "player":
+                    if card.get_chosen():
+                        self.move_chosen_to_play(card, "player")
+                    else:
+                        self.move_play_to_chosen(card, "player")
+
+                    return
+
+            if cur_player == "player":
+                for card in self.player_chosen:
+                    self.move_chosen_to_play(card, "player")
+            elif cur_player == "opponent":
+                for card in self.opponent_chosen:
+                    self.move_chosen_to_play(card, "opponent")
