@@ -7,6 +7,7 @@ from Utils.Settings import Settings
 def update_rect(rect, x, y, width, height):
     return rect.update(x, y, width, height)
 
+
 class AbstractBoard:
     def __init__(self, screen):
         self.screen = screen
