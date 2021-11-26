@@ -22,9 +22,6 @@ class Game2:
         # The Skip button
         self.skip_button = Buttons("Skip", self.settings.game_button_font,
                                    700, 790, self.screen)
-        # The Quit button
-        self.quit_button = Buttons("Quit", self.settings.game_button_font,
-                                   50, 50, self.screen)
 
     # Enter name method
     def enter_name(self, player_type, name):

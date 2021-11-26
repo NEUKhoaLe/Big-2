@@ -40,7 +40,7 @@ class Board2:
         self.player_chosen_height = 600
         self.opponent_chosen_height = 150
 
-        self.current_play_pile_x = 250
+        self.current_play_pile_x = 50
         self.current_play_pile_y = 425
 
         self.discard_deck_pile_x = 750
