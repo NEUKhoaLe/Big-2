@@ -1,14 +1,14 @@
-from Utils.Buttons import Buttons
-from Utils.Settings import Settings
 from Board.Board2 import Board2
+from Game.AbstractGame import AbstractGame
 from Player import Player
+from Utils.Buttons import Buttons
 
 
-class Game2:
+class Game2(AbstractGame):
     def __init__(self, win):
 
-        self.settings = Settings()
-        self.screen = win
+        super().__init__(win)
+
         self.board = Board2(self.screen)
 
         # The player here will be player 1
@@ -17,10 +17,10 @@ class Game2:
 
         # The Play button
         self.play_button = Buttons("Play", self.settings.game_button_font,
-                                   700, 700, self.screen)
+                                   250, 525, self.screen)
         # The Skip button
         self.skip_button = Buttons("Skip", self.settings.game_button_font,
-                                   700, 790, self.screen)
+                                   450, 525, self.screen)
 
     # Enter name method
     def enter_name(self, player_type, name):
