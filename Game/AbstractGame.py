@@ -5,3 +5,6 @@ class AbstractGame:
     def __init__(self, win):
         self.settings = Settings()
         self.screen = win
+
+    def start_game(self):
+        pass

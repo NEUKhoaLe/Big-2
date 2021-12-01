@@ -18,9 +18,9 @@ class Cards:
         # Suit of the card
         self.suit = suit
         # Front image of the card
-        self.front_image = pygame.load(front_image)
+        self.front_image = pygame.image.load(front_image)
         # Back image of the card
-        self.back_image = pygame.load(back_image)
+        self.back_image = pygame.image.load(back_image)
 
         # Card size
         self.width = 100

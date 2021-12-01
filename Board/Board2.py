@@ -20,8 +20,8 @@ class Board2(AbstractBoard):
         self.current_play_pile_x = 50
         self.current_play_pile_y = 425
 
-        self.discard_deck_pile_x = 750
-        self.discard_deck_pile_y = 50
+        self.discard_deck_pile_x = 450
+        self.discard_deck_pile_y = 250
 
         self.deck = self.create_deck()
 

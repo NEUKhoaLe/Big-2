@@ -2,6 +2,7 @@ import pygame
 import sys
 from Utils.Settings import Settings
 from Utils.Buttons import Buttons
+from Game.Game2 import Game2
 
 
 class Big2:
@@ -20,6 +21,8 @@ class Big2:
         back_font = self.settings.back_font
 
         self.back = False
+
+        self.game = None
 
         self.back_button = Buttons("Back", back_font, 25, 25, self.screen)
         self.solo_button = Buttons("Single Player", main_screen_font, 500, 500, self.screen)
@@ -247,6 +250,8 @@ class Big2:
             self.screen.fill(self.settings.bg_color)
 
             self.draw_back_button()
+
+            self.game = Game2(self.screen)
 
             # Watch for keyboard and mouse events.
             for event in pygame.event.get():
