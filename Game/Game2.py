@@ -5,85 +5,6 @@ from Utils.Buttons import Buttons
 import pygame
 
 
-def _keys(key):
-    if key[pygame.K_RETURN]:
-        return "enter"
-    elif key[pygame.K_a]:
-        return "a"
-    elif key[pygame.K_b]:
-        return "b"
-    elif key == pygame.K_c:
-        return "c"
-    elif key == pygame.K_d:
-        return "d"
-    elif key == pygame.K_e:
-        return "e"
-    elif key == pygame.K_f:
-        return "f"
-    elif key == pygame.K_g:
-        return "g"
-    elif key == pygame.K_h:
-        return "h"
-    elif key == pygame.K_i:
-        return "i"
-    elif key == pygame.K_j:
-        return "j"
-    elif key == pygame.K_k:
-        return "k"
-    elif key == pygame.K_l:
-        return "l"
-    elif key == pygame.K_m:
-        return "m"
-    elif key == pygame.K_n:
-        return "n"
-    elif key == pygame.K_o:
-        return "o"
-    elif key == pygame.K_p:
-        return "p"
-    elif key == pygame.K_q:
-        return "q"
-    elif key == pygame.K_r:
-        return "r"
-    elif key == pygame.K_s:
-        return "s"
-    elif key == pygame.K_t:
-        return "t"
-    elif key == pygame.K_u:
-        return "u"
-    elif key == pygame.K_v:
-        return "v"
-    elif key == pygame.K_w:
-        return "w"
-    elif key == pygame.K_x:
-        return "x"
-    elif key == pygame.K_y:
-        return "o"
-    elif key == pygame.K_o:
-        return "x"
-    elif key == pygame.K_0:
-        return "0"
-    elif key == pygame.K_1:
-        return "1"
-    elif key == pygame.K_2:
-        return "2"
-    elif key == pygame.K_3:
-        return "3"
-    elif key == pygame.K_4:
-        return "4"
-    elif key == pygame.K_5:
-        return "5"
-    elif key == pygame.K_6:
-        return "6"
-    elif key == pygame.K_7:
-        return "7"
-    elif key == pygame.K_8:
-        return "8"
-    elif key == pygame.K_9:
-        return "9"
-    else:
-        return ""
-
-
 class Game2(AbstractGame):
     def __init__(self, win):
 
@@ -134,22 +55,22 @@ class Game2(AbstractGame):
             pygame.display.flip()
 
             for event in pygame.event.get():
-                keys = pygame.key.get_pressed()
-
-                for key in keys:
-                    letter = _keys(key)
-
-                    if letter == "enter":
-                        if entered_name1 != "":
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RETURN:
+                        if not entered_name1 and player1_name != "":
                             entered_name1 = True
-                        elif entered_name1 and not entered_name2:
-                            if entered_name2 != "":
-                                entered_name2 = True
+                        elif not entered_name2 and player2_name != "":
+                            entered_name2 = True
+                    elif event.key == pygame.K_BACKSPACE:
+                        if not entered_name1 and player1_name != "":
+                            player1_name = player1_name[:-1]
+                        elif not entered_name2 and player2_name != "":
+                            player2_name = player2_name[:-1]
                     else:
                         if not entered_name1:
-                            player1_name += letter
+                            player1_name += event.unicode
                         elif entered_name1 and not entered_name2:
-                            player2_name += letter
+                            player2_name += event.unicode
 
             pygame.display.flip()
 
