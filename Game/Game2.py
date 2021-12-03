@@ -25,6 +25,11 @@ class Game2(AbstractGame):
         self.skip_button = Buttons("Skip", self.settings.game_button_font,
                                    450, 525, self.screen)
 
+    def start_game(self):
+        self.board.deal(self.turn)
+
+    # Enter name method
+    def enter_name(self):
         entered_name1 = False
         entered_name2 = False
         player1_name = ""
@@ -32,11 +37,9 @@ class Game2(AbstractGame):
 
         while not entered_name1 or not entered_name2:
 
-            font = self.settings.big2_font
+            font = self.settings.game_mode_font
 
             self.screen.fill(self.settings.bg_color)
-
-
 
             if not entered_name1:
                 string = "Enter Player 1 name: " + player1_name
@@ -72,17 +75,13 @@ class Game2(AbstractGame):
                         elif entered_name1 and not entered_name2:
                             player2_name += event.unicode
 
+                if entered_name2 and entered_name1:
+                    break
+
             pygame.display.flip()
 
         self.player1.enter_name(player1_name)
         self.player2.enter_name(player2_name)
-
-    def start_game(self):
-        self.board.deal(self.turn)
-
-    # Enter name method
-    def enter_name(self, player_type, name):
-        pass
 
     # Dealing The Card
     def deal(self):

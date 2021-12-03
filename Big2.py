@@ -243,6 +243,9 @@ class Big2:
     A Game class that is the API. It stores all the methods that is required for you to run a game.
     """
     def easy_difficulty(self):
+        self.game = Game2(self.screen)
+        self.game.enter_name()
+        
         while True:
             self.reset_drawn_stat_rect()
             self.clock.tick(self.settings.FPS)
@@ -250,8 +253,6 @@ class Big2:
             self.screen.fill(self.settings.bg_color)
 
             self.draw_back_button()
-
-            self.game = Game2(self.screen)
 
             # Watch for keyboard and mouse events.
             for event in pygame.event.get():
