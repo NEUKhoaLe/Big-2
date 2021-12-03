@@ -1,5 +1,6 @@
 import pygame
 from Utils.Settings import Settings
+import copy
 
 
 def _rotate_in_place(surface, top_left, angle):
@@ -122,21 +123,14 @@ class Cards:
     def draw(self, still_drawing=False, is_front=True):
         if self.front and is_front:
             if still_drawing:
-                temp_surface = pygame.Surface((self.settings.screen_width, self.settings.screen_height),
-                                              pygame.SRCALPHA, 32).convert_alpha()
-
-                temp_surface.blit(self.front_image, (self.x, self.y))
-                self.screen.blit(temp_surface, (0, 0))
+                self.screen.blit(self.front_image, (self.x, self.y))
             else:
                 self.screen.blit(self.front_image, (self.x, self.y))
         else:
             if still_drawing:
-                temp_surface = pygame.Surface((self.settings.screen_width, self.settings.screen_height))
-                temp_surface.blit(self.back_image, (self.x, self.y))
+                self.screen.blit(self.back_image, (self.x, self.y))
             else:
                 self.screen.blit(self.back_image, (self.x, self.y))
-
-        pygame.display.update()
 
     # Method to update the visibility of the card
     def update_vis(self, boolean):
