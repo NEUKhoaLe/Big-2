@@ -42,9 +42,13 @@ class Board2(AbstractBoard):
         elif deck_type == "opponent":
             num_cards = len(self.opponent_deck)
             starting = (self.play_deck_width + self.opponent_deck_x) - (num_cards * self.card_width)
-            starting = starting / 2
-            card_pos = min(self.card_width,
-                           round((self.play_deck_width - self.card_width) / (num_cards - 1)))
+            starting = int(starting / 2)
+
+            if num_cards == 1 or num_cards == 0:
+                card_pos = self.card_width
+            else:
+                card_pos = min(self.card_width,
+                               round((self.play_deck_width - self.card_width) / (num_cards - 1)))
 
             update_rect(self.opponent_deck_collide_point, self.opponent_deck_x, self.opponent_deck_y,
                         (num_cards * self.card_width), self.card_height)
@@ -77,13 +81,17 @@ class Board2(AbstractBoard):
                 x.update_vis(False)
 
             card = self.discard_deck_pile[len(self.discard_deck_pile) - 1]
-            card.draw()
+            card.draw(False)
         elif deck_type == "player":
             num_cards = len(self.player_deck)
             starting = (self.play_deck_width + self.player_deck_x) - (num_cards * self.card_width)
-            starting = starting / 2
-            card_pos = min(self.card_width,
-                           round((self.play_deck_width - self.card_width) / (num_cards - 1)))
+            starting = int(starting / 2)
+
+            if num_cards == 0 or num_cards == 1:
+                card_pos = self.card_width
+            else:
+                card_pos = min(self.card_width,
+                               round((self.play_deck_width - self.card_width) / (num_cards - 1)))
 
             update_rect(self.player_deck_collide_point, self.player_deck_x, self.player_deck_y,
                         (num_cards * self.card_width), self.card_height)
@@ -91,7 +99,7 @@ class Board2(AbstractBoard):
             for x in self.player_deck:
                 if not x.get_chosen():
                     x.update_vis(True)
-                    x.move(starting, self.player_deck, False)
+                    x.move(starting, self.player_deck_y, False)
                     x.update_card_block_area(starting + card_pos, self.card_height,
                                              self.card_width - card_pos, self.card_height)
                     x.draw()
@@ -132,31 +140,35 @@ class Board2(AbstractBoard):
     def deal(self, last_winner):
         counter = 0
         if last_winner == "player 1":
-            for card in self.deck:
-                card.change_in_play(True)
+            i = len(self.deck) - 1
+            while i >= 0:
+                self.deck[i].change_in_play(True)
                 if counter % 2 == 0:
-                    self.player_deck.append(card)
-                    self.deck.remove(card)
+                    self.player_deck.append(self.deck[i])
+                    self.deck.remove(self.deck[i])
                     self.draw_deck("player")
                 else:
-                    card.update_vis(False)
-                    self.opponent_deck.append(card)
-                    self.deck.remove(card)
+                    self.deck[i].update_vis(False)
+                    self.opponent_deck.append(self.deck[i])
+                    self.deck.remove(self.deck[i])
                     self.draw_deck("opponent")
                 counter += 1
+                i -= 1
         else:
-            for card in self.deck:
-                card.change_in_play(True)
+            i = len(self.deck) - 1
+            while i >= 0:
+                self.deck[i].change_in_play(True)
                 if counter % 2 == 1:
-                    self.player_deck.append(card)
-                    self.deck.remove(card)
+                    self.player_deck.append(self.deck[i])
+                    self.deck.remove(self.deck[i])
                     self.draw_deck("player")
                 else:
-                    card.update_vis(False)
-                    self.opponent_deck.append(card)
-                    self.deck.remove(card)
+                    self.deck[i].update_vis(False)
+                    self.opponent_deck.append(self.deck[i])
+                    self.deck.remove(self.deck[i])
                     self.draw_deck("opponent")
                 counter += 1
+                i -= 1
 
     # Method to move card from play pile to chosen pile
     def move_play_to_chosen(self, card, deck_type):
@@ -262,3 +274,13 @@ class Board2(AbstractBoard):
             elif cur_player == "opponent":
                 for card in self.opponent_chosen:
                     self.move_chosen_to_play(card, "opponent")
+
+    def rotate_deck(self):
+        temp_x = self.opponent_deck_x
+        temp_y = self.opponent_deck_y
+
+        self.opponent_deck_x = self.player_deck_x
+        self.opponent_deck_y = self.player_deck_y
+
+        self.player_deck_x = temp_x
+        self.player_deck_y = temp_y

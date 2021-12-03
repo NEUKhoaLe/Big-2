@@ -245,14 +245,12 @@ class Big2:
     def easy_difficulty(self):
         self.game = Game2(self.screen)
         self.game.enter_name()
-        
+        self.screen.fill(self.settings.bg_color)
+        self.game.start_game()
+
         while True:
             self.reset_drawn_stat_rect()
             self.clock.tick(self.settings.FPS)
-
-            self.screen.fill(self.settings.bg_color)
-
-            self.draw_back_button()
 
             # Watch for keyboard and mouse events.
             for event in pygame.event.get():

@@ -26,7 +26,9 @@ class Game2(AbstractGame):
                                    450, 525, self.screen)
 
     def start_game(self):
+        self.board.move_to_shuffle_pos()
         self.board.deal(self.turn)
+        self.update()
 
     # Enter name method
     def enter_name(self):
@@ -41,10 +43,14 @@ class Game2(AbstractGame):
 
             self.screen.fill(self.settings.bg_color)
 
+            string_size = 0
+
             if not entered_name1:
                 string = "Enter Player 1 name: " + player1_name
                 title = font.render(string, True, (255, 255, 255))
                 title_width = font.size(string)
+
+                string_size = title_width[0]
 
                 self.screen.blit(title, (500 - title_width[0]/2, 200 - title_width[1]/2))
 
@@ -52,6 +58,8 @@ class Game2(AbstractGame):
                 string = "Enter Player 2 name: " + player2_name
                 title = font.render(string, True, (255, 255, 255))
                 title_width = font.size(string)
+
+                string_size = title_width[0]
 
                 self.screen.blit(title, (500 - title_width[0]/2, 200 - title_width[1]/2))
 
@@ -70,9 +78,10 @@ class Game2(AbstractGame):
                         elif not entered_name2 and player2_name != "":
                             player2_name = player2_name[:-1]
                     else:
-                        if not entered_name1:
+                        if not entered_name1 and not font.size(event.unicode)[0] + string_size >= 1000:
                             player1_name += event.unicode
-                        elif entered_name1 and not entered_name2:
+                        elif entered_name1 and not entered_name2 \
+                                and not font.size(event.unicode)[0] + string_size >= 1000:
                             player2_name += event.unicode
 
                 if entered_name2 and entered_name1:
@@ -96,7 +105,8 @@ class Game2(AbstractGame):
     # Draw the player's names
     # Draw the buttons
     def update(self):
-        pass
+        self.screen.fill(self.settings.bg_color)
+        self.board.draw_board()
 
     def play_hand(self):
         pass

@@ -216,8 +216,8 @@ class AbstractBoard:
     # Method to move card to the shuffle deck position
     def move_to_shuffle_pos(self):
         for x in self.deck:
-            x.move(self.deck_x, self.deck_y, True)
             x.update_vis(False)
+            x.move(self.deck_x, self.deck_y, True)
 
     # Method to move cards to the discard pile
     def move_to_discard(self):
@@ -232,4 +232,9 @@ class AbstractBoard:
         pass
 
     def choose_card(self, mouse_x, mouse_y, cur_player):
+        pass
+
+    # swapping the position of each deck 90 degrees counter clockwise
+    # 180 degrees for two player
+    def rotate_deck(self):
         pass

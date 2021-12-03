@@ -1,4 +1,5 @@
 import pygame
+from Utils.Settings import Settings
 
 
 def _rotate_in_place(surface, top_left, angle):
@@ -21,6 +22,8 @@ class Cards:
         self.front_image = pygame.image.load(front_image)
         # Back image of the card
         self.back_image = pygame.image.load(back_image)
+
+        self.settings = Settings()
 
         # Card size
         self.width = 100
@@ -72,7 +75,7 @@ class Cards:
             y_distance *= -1
 
         if x_distance != 0 and y_distance != 0:
-            slope = y_distance/x_distance
+            slope = y_distance / x_distance
         else:
             slope = 0
 
@@ -103,19 +106,35 @@ class Cards:
                     else:
                         self.y += slope
 
-                self.draw(self.front)
+                self.draw(self.front, True)
+                pygame.time.wait(2)
         else:
             self.x = x
             self.y = y
+            self.draw(self.front, False)
+            pygame.time.wait(4)
+
+        self.draw(self.front)
 
         self.update_card_collision(self.x, self.y)
 
     # Draw method. Blit the image, and move the rect to the x, y position
-    def draw(self, *argv):
-        if self.front and argv[0]:
-            self.screen.blit(self.front_image, (self.x, self.y))
+    def draw(self, still_drawing=False, is_front=True):
+        if self.front and is_front:
+            if still_drawing:
+                temp_surface = pygame.Surface((self.settings.screen_width, self.settings.screen_height),
+                                              pygame.SRCALPHA, 32).convert_alpha()
+
+                temp_surface.blit(self.front_image, (self.x, self.y))
+                self.screen.blit(temp_surface, (0, 0))
+            else:
+                self.screen.blit(self.front_image, (self.x, self.y))
         else:
-            self.screen.blit(self.back_image, (self.x, self.y))
+            if still_drawing:
+                temp_surface = pygame.Surface((self.settings.screen_width, self.settings.screen_height))
+                temp_surface.blit(self.back_image, (self.x, self.y))
+            else:
+                self.screen.blit(self.back_image, (self.x, self.y))
 
         pygame.display.update()
 
@@ -139,12 +158,12 @@ class Cards:
 
         while new_degree > 0:
             if is_positive:
-                rotated_image, new_rect = _rotate_in_place(
-                    self.front_image if is_front else self.back_image, 1)
+                rotated_image, new_rect = _rotate_in_place(self.screen,
+                                                           self.front_image if is_front else self.back_image, 1)
                 self.screen.blit(rotated_image, new_rect.topleft)
             else:
-                rotated_image, new_rect = _rotate_in_place(
-                    self.front_image if is_front else self.back_image, -1)
+                rotated_image, new_rect = _rotate_in_place(self.screen,
+                                                           self.front_image if is_front else self.back_image, -1)
                 self.screen.blit(rotated_image, new_rect.topleft)
 
             new_degree -= 1
