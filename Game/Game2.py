@@ -10,7 +10,9 @@ class Game2(AbstractGame):
 
         super().__init__(win)
 
-        self.board = Board2(self.screen)
+        self.surface = pygame.surface.Surface((self.settings.screen_width, self.settings.screen_height))
+
+        self.board = Board2(self.display, self.surface)
 
         # The player here will be player 1
         self.player1 = Player()
@@ -20,10 +22,10 @@ class Game2(AbstractGame):
 
         # The Play button
         self.play_button = Buttons("Play", self.settings.game_button_font,
-                                   250, 525, self.screen)
+                                   250, 525, self.surface)
         # The Skip button
         self.skip_button = Buttons("Skip", self.settings.game_button_font,
-                                   450, 525, self.screen)
+                                   450, 525, self.surface)
 
     def start_game(self):
         self.board.move_to_shuffle_pos()
@@ -41,7 +43,8 @@ class Game2(AbstractGame):
 
             font = self.settings.game_mode_font
 
-            self.screen.fill(self.settings.bg_color)
+            self.surface.fill(self.settings.bg_color)
+            pygame.display.flip()
 
             string_size = 0
 
@@ -52,7 +55,7 @@ class Game2(AbstractGame):
 
                 string_size = title_width[0]
 
-                self.screen.blit(title, (500 - title_width[0]/2, 200 - title_width[1]/2))
+                self.surface.blit(title, (500 - title_width[0]/2, 200 - title_width[1]/2))
 
             elif entered_name1 and not entered_name2:
                 string = "Enter Player 2 name: " + player2_name
@@ -61,8 +64,9 @@ class Game2(AbstractGame):
 
                 string_size = title_width[0]
 
-                self.screen.blit(title, (500 - title_width[0]/2, 200 - title_width[1]/2))
+                self.surface.blit(title, (500 - title_width[0]/2, 200 - title_width[1]/2))
 
+            self.display.blit(self.surface, (0, 0))
             pygame.display.flip()
 
             for event in pygame.event.get():
@@ -92,6 +96,8 @@ class Game2(AbstractGame):
         self.player1.enter_name(player1_name)
         self.player2.enter_name(player2_name)
 
+        self.clear()
+
     # Dealing The Card
     def deal(self):
         pass
@@ -105,8 +111,16 @@ class Game2(AbstractGame):
     # Draw the player's names
     # Draw the buttons
     def update(self):
-        self.screen.fill(self.settings.bg_color)
+        self.clear()
+        self.display.blit(self.surface, (0, 0))
+        pygame.display.flip()
+        # self.surface.blit(self.skip_button, ())
+        # self.surface.blit(self.play_button, ())
         self.board.draw_board()
+
+    def clear(self):
+        self.display.fill(self.settings.bg_color)
+        self.surface.fill(self.settings.bg_color)
 
     def play_hand(self):
         pass

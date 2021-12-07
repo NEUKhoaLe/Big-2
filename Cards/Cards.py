@@ -11,10 +11,11 @@ def _rotate_in_place(surface, top_left, angle):
 
 class Cards:
 
-    def __init__(self, win, value, suit, front_image, back_image):
+    def __init__(self, display, surface, value, suit, front_image, back_image):
 
         # The screen
-        self.screen = win
+        self.display = display
+        self.surface = surface
         # Value of the card
         self.value = value
         # Suit of the card
@@ -123,14 +124,31 @@ class Cards:
     def draw(self, still_drawing=False, is_front=True):
         if self.front and is_front:
             if still_drawing:
-                self.screen.blit(self.front_image, (self.x, self.y))
+                temp_surface = copy.copy(self.surface)
+                self.surface.blit(self.front_image, (self.x, self.y))
+                self.update_draw()
+                self.surface = temp_surface
             else:
-                self.screen.blit(self.front_image, (self.x, self.y))
+                self.surface.blit(self.front_image, (self.x, self.y))
+                self.update_draw()
         else:
             if still_drawing:
-                self.screen.blit(self.back_image, (self.x, self.y))
+                temp_surface = copy.copy(self.surface)
+                self.surface.blit(self.back_image, (self.x, self.y))
+                self.update_draw()
+                self.surface = temp_surface
             else:
-                self.screen.blit(self.back_image, (self.x, self.y))
+                self.surface.blit(self.back_image, (self.x, self.y))
+                self.update_draw()
+
+    # Update draw
+    def update_draw(self):
+        self.display.fill(self.settings.bg_color)
+        self.display.blit(self.surface, (0, 0))
+        pygame.display.flip()
+
+    def reset_surface(self):
+        self.surface.fill(self.settings.bg_color)
 
     # Method to update the visibility of the card
     def update_vis(self, boolean):
@@ -152,13 +170,19 @@ class Cards:
 
         while new_degree > 0:
             if is_positive:
-                rotated_image, new_rect = _rotate_in_place(self.screen,
+                rotated_image, new_rect = _rotate_in_place(self.display,
                                                            self.front_image if is_front else self.back_image, 1)
-                self.screen.blit(rotated_image, new_rect.topleft)
+                temp_surface = self.surface
+                self.surface.blit(rotated_image, new_rect.topleft)
+                self.update_draw()
+                self.surface = temp_surface
             else:
-                rotated_image, new_rect = _rotate_in_place(self.screen,
+                rotated_image, new_rect = _rotate_in_place(self.display,
                                                            self.front_image if is_front else self.back_image, -1)
-                self.screen.blit(rotated_image, new_rect.topleft)
+                temp_surface = self.surface
+                self.surface.blit(rotated_image, new_rect.topleft)
+                self.update_draw()
+                self.surface = temp_surface
 
             new_degree -= 1
             if new_degree == 0:

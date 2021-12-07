@@ -6,8 +6,8 @@ def update_rect(rect, x, y, width, height):
 
 
 class Board2(AbstractBoard):
-    def __init__(self, screen):
-        super().__init__(screen)
+    def __init__(self, display, surface):
+        super().__init__(display, surface)
 
         self.opponent_deck_x = 50
         self.opponent_deck_y = 75
@@ -80,8 +80,10 @@ class Board2(AbstractBoard):
                 x.move(self.discard_deck_pile_x, self.discard_deck_pile_y, False)
                 x.update_vis(False)
 
-            card = self.discard_deck_pile[len(self.discard_deck_pile) - 1]
-            card.draw(False)
+            if len(self.discard_deck_pile) != 0:
+                card = self.discard_deck_pile[len(self.discard_deck_pile) - 1]
+                card.draw(False)
+
         elif deck_type == "player":
             num_cards = len(self.player_deck)
             starting = (self.play_deck_width + self.player_deck_x) - (num_cards * self.card_width)
