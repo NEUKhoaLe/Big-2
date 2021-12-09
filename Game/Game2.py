@@ -11,7 +11,7 @@ class Game2(AbstractGame):
         super().__init__(win)
 
         self.surface = pygame.surface.Surface((self.settings.screen_width, self.settings.screen_height))
-
+        self.surface.fill(self.settings.bg_color)
         self.board = Board2(self.display, self.surface)
 
         # The player here will be player 1

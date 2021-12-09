@@ -1,12 +1,14 @@
+import math
+
 import pygame
 from Utils.Settings import Settings
 import copy
 
 
-def _rotate_in_place(surface, top_left, angle):
-    rotated_image = pygame.transform.rotozoom(surface, angle, 1)
-    new_rect = rotated_image.get_rect(center=surface.get_rect(topLeft=top_left).center)
-    return rotated_image, new_rect
+def _rotate_in_place(image, top_left, degree):
+    rotated_image = pygame.transform.rotozoom(image, degree, 1)
+    rotated_rect = rotated_image.get_rect(center=image.get_rect(topleft=top_left).center)
+    return rotated_image, rotated_rect
 
 
 class Cards:
@@ -77,7 +79,7 @@ class Cards:
             y_distance *= -1
 
         if x_distance != 0 and y_distance != 0:
-            slope = y_distance / x_distance
+            slope = math.floor(y_distance / x_distance)
         else:
             slope = 0
 
@@ -88,35 +90,42 @@ class Cards:
                 if x_distance == 0:
                     if y_direction == "negative":
                         self.y += -1
+                        y_distance -= 1
                     else:
                         self.y += 1
+                        y_distance -= 1
 
                 elif y_distance == 0:
                     if x_direction == "negative":
                         self.x += -1
+                        x_distance -= 1
                     else:
                         self.x += 1
+                        x_distance -= 1
 
                 else:
                     if x_direction == "negative":
                         self.x += -1
+                        x_distance -= 1
                     else:
-                        self.y += -1 * slope
+                        self.x += 1
+                        x_distance -= 1
 
-                    if y_direction == "positive":
+                    if y_direction == "negative":
                         self.y += -1 * slope
+                        y_distance -= slope
                     else:
                         self.y += slope
+                        y_distance -= slope
 
-                self.draw(self.front, True)
-                pygame.time.wait(2)
+                self.draw(still_drawing=True, is_front=self.front)
+
         else:
             self.x = x
             self.y = y
-            self.draw(self.front, False)
-            pygame.time.wait(4)
+            self.draw(False, self.front)
 
-        self.draw(self.front)
+        self.draw(is_front=self.front)
 
         self.update_card_collision(self.x, self.y)
 
@@ -125,37 +134,48 @@ class Cards:
         if self.front and is_front:
             if still_drawing:
                 temp_surface = copy.copy(self.surface)
-                self.surface.blit(self.front_image, (self.x, self.y))
-                self.update_draw()
-                self.surface = temp_surface
+                temp_surface.blit(self.front_image, (self.x, self.y))
+                self.update_draw(permanent=False, surface=temp_surface)
             else:
                 self.surface.blit(self.front_image, (self.x, self.y))
-                self.update_draw()
+                self.update_draw(permanent=True)
         else:
             if still_drawing:
                 temp_surface = copy.copy(self.surface)
-                self.surface.blit(self.back_image, (self.x, self.y))
-                self.update_draw()
-                self.surface = temp_surface
+                temp_surface.blit(self.back_image, (self.x, self.y))
+                self.update_draw(permanent=False, surface=temp_surface)
             else:
                 self.surface.blit(self.back_image, (self.x, self.y))
-                self.update_draw()
+                self.update_draw(permanent=True)
+
+    def draw_rotation(self, image, place, permanent=False):
+        if not permanent:
+            temp_surface = copy.copy(self.surface)
+            temp_surface.blit(image, place)
+            self.update_draw(permanent=False, surface=temp_surface)
+        else:
+            self.surface.blit(image, place)
+            self.update_draw(permanent=True)
 
     # Update draw
-    def update_draw(self):
-        self.display.fill(self.settings.bg_color)
-        self.display.blit(self.surface, (0, 0))
+    def update_draw(self, permanent=False, surface=None):
+        if not permanent:
+            self.display.fill(self.settings.bg_color)
+            self.display.blit(surface, (0, 0))
+        else:
+            self.display.fill(self.settings.bg_color)
+            self.display.blit(self.surface, (0, 0))
         pygame.display.flip()
 
     def reset_surface(self):
-        self.surface.fill(self.settings.bg_color)
+        self.display.fill(self.settings.bg_color)
 
     # Method to update the visibility of the card
     def update_vis(self, boolean):
         self.front = boolean
 
     # Method to rotate the card smoothly
-    def rotate(self, degrees, is_front):
+    def rotate(self, degrees, is_front=True):
         is_positive = True if degrees >= 0 else False
 
         if not is_positive:
@@ -163,35 +183,31 @@ class Cards:
         else:
             new_degree = degrees
 
-        if is_front:
-            self.back_image = _rotate_in_place(self.back_image, (self.x, self.y), degrees)
-        else:
-            self.front_image = _rotate_in_place(self.front_image, (self.x, self.y), degrees)
+        temp_image = self.front_image.copy() if is_front else self.back_image.copy()
+        degree = 2
 
         while new_degree > 0:
             if is_positive:
-                rotated_image, new_rect = _rotate_in_place(self.display,
-                                                           self.front_image if is_front else self.back_image, 1)
-                temp_surface = self.surface
-                self.surface.blit(rotated_image, new_rect.topleft)
-                self.update_draw()
-                self.surface = temp_surface
-            else:
-                rotated_image, new_rect = _rotate_in_place(self.display,
-                                                           self.front_image if is_front else self.back_image, -1)
-                temp_surface = self.surface
-                self.surface.blit(rotated_image, new_rect.topleft)
-                self.update_draw()
-                self.surface = temp_surface
+                rotated_image, new_rect = _rotate_in_place(temp_image, (self.x, self.y), degree)
+                self.draw_rotation(image=rotated_image, place=new_rect.topleft)
 
-            new_degree -= 1
+                temp_image = self.front_image.copy() if is_front else self.back_image.copy()
+            else:
+                rotated_image, new_rect = _rotate_in_place(temp_image, (self.x, self.y), -1 * degree)
+                self.draw_rotation(rotated_image, new_rect.topleft)
+
+                temp_image = self.front_image.copy() if is_front else self.back_image.copy()
+
+            new_degree -= 2
+            degree += 2
+
             if new_degree == 0:
                 if is_front:
                     self.front_image = rotated_image
                 else:
                     self.back_image = rotated_image
 
-        self.draw(is_front)
+        self.draw(is_front=is_front)
 
     # Method to get the Width
     def get_width(self):

@@ -38,7 +38,6 @@ class Board2(AbstractBoard):
     def draw_deck(self, deck_type):
         if deck_type == "shuffle":
             self.move_to_shuffle_pos()
-            self.deck[0].draw(False)
         elif deck_type == "opponent":
             num_cards = len(self.opponent_deck)
             starting = (self.play_deck_width + self.opponent_deck_x) - (num_cards * self.card_width)
@@ -58,10 +57,10 @@ class Board2(AbstractBoard):
                     x.update_vis(False)
                     if x.cur_pos() == (self.deck_x, self.deck_y):
                         x.rotate(180)
+                        pass
                     x.move(starting, self.opponent_deck_y, False)
                     x.update_card_block_area(starting + card_pos, self.card_height,
                                              self.card_width - card_pos, self.card_height)
-                    x.draw()
 
                 starting += card_pos
         elif deck_type == "current":
@@ -72,7 +71,6 @@ class Board2(AbstractBoard):
             for x in self.current_play_pile:
                 x.update_vis(True)
                 x.move(starting, self.current_play_pile_y, False)
-                x.draw()
 
                 starting += x.get_width()
         elif deck_type == "discard":
@@ -104,9 +102,8 @@ class Board2(AbstractBoard):
                     x.move(starting, self.player_deck_y, False)
                     x.update_card_block_area(starting + card_pos, self.card_height,
                                              self.card_width - card_pos, self.card_height)
-                    x.draw()
 
-                starting += x.get_width()
+                starting += card_pos
         elif deck_type == "player-chosen":
             for card in self.player_chosen:
                 x, y = card.cur_pos()
@@ -149,11 +146,13 @@ class Board2(AbstractBoard):
                     self.player_deck.append(self.deck[i])
                     self.deck.remove(self.deck[i])
                     self.draw_deck("player")
+                    self.draw_board("shuffle")
                 else:
                     self.deck[i].update_vis(False)
                     self.opponent_deck.append(self.deck[i])
                     self.deck.remove(self.deck[i])
                     self.draw_deck("opponent")
+                    self.draw_board("shuffle")
                 counter += 1
                 i -= 1
         else:
@@ -286,3 +285,4 @@ class Board2(AbstractBoard):
 
         self.player_deck_x = temp_x
         self.player_deck_y = temp_y
+

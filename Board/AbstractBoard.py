@@ -4,8 +4,12 @@ from Cards.Cards import Cards
 from Utils.Settings import Settings
 
 
-def update_rect(rect, x, y, width, height):
-    return rect.update(x, y, width, height)
+def if_contains(list_words, word):
+    for w in list_words:
+        if w == word:
+            return True
+
+    return False
 
 
 class AbstractBoard:
@@ -204,7 +208,8 @@ class AbstractBoard:
                       "Assets/card-hearts-11.png",
                       "Assets/card-back1.png"),
                 Cards(self.display, self.surface, "Q", "Hearts",
-                      "Assets/card-hearts-12.png", "Assets/card-back1.png"),
+                      "Assets/card-hearts-12.png",
+                      "Assets/card-back1.png"),
                 Cards(self.display, self.surface, "K", "Hearts",
                       "Assets/card-hearts-13.png",
                       "Assets/card-back1.png")]
@@ -212,14 +217,21 @@ class AbstractBoard:
         return deck
 
     # Draw the board
-    def draw_board(self):
-        self.draw_deck("shuffle")
-        self.draw_deck("opponent")
-        self.draw_deck("current")
-        self.draw_deck("discard")
-        self.draw_deck("player")
-        self.draw_deck("player-chosen")
-        self.draw_deck("opponent-chosen")
+    def draw_board(self, *args):
+        if not if_contains(args, "shuffle"):
+            self.draw_deck("shuffle")
+        if not if_contains(args, "opponent"):
+            self.draw_deck("opponent")
+        if not if_contains(args, "current"):
+            self.draw_deck("current")
+        if not if_contains(args, "discard"):
+            self.draw_deck("discard")
+        if not if_contains(args, "player"):
+            self.draw_deck("player")
+        if not if_contains(args, "player-chosen"):
+            self.draw_deck("player-chosen")
+        if not if_contains(args, "opponent-chosen"):
+            self.draw_deck("opponent-chosen")
 
     def draw_deck(self, deck_type):
         pass
