@@ -56,11 +56,6 @@ class AbstractBoard:
         self.deck_x = 450
         self.deck_y = 425
 
-        self.opponent_deck_collide_point = pygame.Rect(self.opponent_deck_x, self.opponent_deck_y,
-                                                       0, 0)
-        self.player_deck_collide_point = pygame.Rect(self.player_deck_x, self.player_deck_y,
-                                                     0, 0)
-
         self.card_width = 100
         self.card_height = 150
 
@@ -74,10 +69,6 @@ class AbstractBoard:
         self.player_chosen = []
 
         self.deck = self.create_deck()
-        self.opponent_deck_collide_point = pygame.Rect(self.opponent_deck_x, self.opponent_deck_y,
-                                                       0, 0)
-        self.player_deck_collide_point = pygame.Rect(self.player_deck_x, self.player_deck_y,
-                                                     0, 0)
         self.draw_board()
 
     # Method to create the shuffled deck to begin dealing

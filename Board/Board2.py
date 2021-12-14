@@ -1,3 +1,5 @@
+import pygame
+
 from Board.AbstractBoard import AbstractBoard
 
 
@@ -22,6 +24,11 @@ class Board2(AbstractBoard):
 
         self.discard_deck_pile_x = 450
         self.discard_deck_pile_y = 250
+
+        self.opponent_deck_collide_point = pygame.Rect(self.opponent_deck_x, self.opponent_deck_y,
+                                                       0, 0)
+        self.player_deck_collide_point = pygame.Rect(self.player_deck_x, self.player_deck_y,
+                                                 0, 0)
 
         self.deck = self.create_deck()
 
@@ -74,7 +81,7 @@ class Board2(AbstractBoard):
 
                 starting += x.get_width()
         elif deck_type == "discard":
-            for x in self.current_play_pile:
+            for x in self.discard_deck_pile:
                 x.move(self.discard_deck_pile_x, self.discard_deck_pile_y, False)
                 x.update_vis(False)
 

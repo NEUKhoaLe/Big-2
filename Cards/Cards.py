@@ -246,3 +246,9 @@ class Cards:
     def handle_selected(self, mouse_x, mouse_y):
         return self.rect_card.collidepoint((mouse_x, mouse_y)) and not \
             self.rect_blocked.collidepoint((mouse_x, mouse_y))
+
+    def get_suit(self):
+        return self.suit
+
+    def get_value(self):
+        return self.value
