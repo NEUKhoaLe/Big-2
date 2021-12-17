@@ -1,5 +1,4 @@
 import math
-
 import pygame
 from Utils.Settings import Settings
 import copy
@@ -125,7 +124,7 @@ class Cards:
             self.y = y
             self.draw(False, self.front)
 
-        # self.draw(is_front=self.front)
+        self.draw(is_front=self.front)
 
         self.update_card_collision(self.x, self.y)
 
@@ -138,7 +137,7 @@ class Cards:
                 self.update_draw(permanent=False, surface=temp_surface)
             else:
                 self.surface.blit(self.front_image, (self.x, self.y))
-                self.update_draw(permanent=True)
+                # self.update_draw(permanent=True)
         else:
             if still_drawing:
                 temp_surface = copy.copy(self.surface)
@@ -146,7 +145,7 @@ class Cards:
                 self.update_draw(permanent=False, surface=temp_surface)
             else:
                 self.surface.blit(self.back_image, (self.x, self.y))
-                self.update_draw(permanent=True)
+                # self.update_draw(permanent=True)
 
     def draw_rotation(self, image, place, permanent=False):
         if not permanent:

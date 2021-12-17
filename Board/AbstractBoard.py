@@ -20,11 +20,10 @@ class AbstractBoard:
         self.settings = Settings()
         self.random = Random()
 
-        self.shuffledeck = ShuffleDeck(450, 425, self.create_deck(), self.display, self.surface)
+        self.shuffledeck = ShuffleDeck(450, 425, self.display, self.surface, deck=self.create_deck())
 
         self.card_width = 100
         self.card_height = 150
-
 
     # Method to reset the board
     def reset(self):
@@ -188,7 +187,7 @@ class AbstractBoard:
 
     # Method to shuffle the deck
     def shuffle_deck(self):
-        self.shuffle_deck.shuffle()
+        self.shuffledeck.shuffle()
 
     def deal(self, last_winner):
         pass
@@ -204,8 +203,8 @@ class AbstractBoard:
 
     # Method to move card to the shuffle deck position
     def move_to_shuffle_pos(self):
-        self.shuffle_deck.change_pos(0, 0, to_shuffle=True)
-        self.draw_deck(False)
+        self.shuffledeck.change_pos(0, 0, to_shuffle=True)
+        self.shuffledeck.draw_deck(False)
 
     # Method to move cards to the discard pile
     def move_to_discard(self):

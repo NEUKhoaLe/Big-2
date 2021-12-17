@@ -18,7 +18,7 @@ class OpponentDeck(AbstractDeck):
         self.collide_point = collide_point
         self.settings = Settings()
 
-        self.background = pygame.Surface(self.card_height, self.width)
+        self.background = pygame.Surface((self.width, self.card_height))
         self.background.fill(self.settings.bg_color)
 
     def change_pos(self, x, y):
@@ -51,7 +51,7 @@ class OpponentDeck(AbstractDeck):
                 x.update_vis(False)
                 if x.cur_pos() == (self.x, self.y):
                     x.rotate(180)
-                    pass
+
                 x.move(starting, self.y, False)
                 x.update_card_block_area(starting + card_pos, self.card_height,
                                          self.card_width - card_pos, self.card_height)
@@ -61,8 +61,7 @@ class OpponentDeck(AbstractDeck):
                 pass
 
             starting += card_pos
-
-        self.update()
+            self.update()
 
     def draw_rest_deck(self, card):
         for x in self.deck:

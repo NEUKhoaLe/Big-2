@@ -25,9 +25,9 @@ class AbstractDeck:
             for card in cards:
                 self.deck.remove(card)
         elif cards == "last":
-            return self.deck.remove(len(self.deck) - 1)
+            return self.deck.pop(len(self.deck) - 1)
         elif cards == "first":
-            return self.deck.remove(0)
+            return self.deck.pop(0)
         elif isinstance(cards, int):
             return self.deck.pop(cards)
         elif isinstance(cards, Cards):
@@ -59,6 +59,9 @@ class AbstractDeck:
         pass
 
     def flip_vis(self, boolean):
+        pass
+
+    def shuffle_deck(self):
         pass
 
     """

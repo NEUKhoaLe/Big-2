@@ -12,7 +12,7 @@ class CurrentDeck(AbstractDeck):
         self.width = width
         self.settings = Settings()
 
-        self.background = pygame.Surface(self.card_height, self.width)
+        self.background = pygame.Surface((self.card_height, self.width))
         self.background.fill(self.settings.bg_color)
 
     def change_pos(self, x, y):

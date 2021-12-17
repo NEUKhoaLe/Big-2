@@ -3,6 +3,7 @@ import pygame
 from Board.AbstractBoard import AbstractBoard
 from Cards.CurrentDeck import CurrentDeck
 from Cards.DiscardDeck import DiscardDeck
+from Cards.OpponentDeck import OpponentDeck
 from Cards.PlayerDeck import PlayerDeck
 
 
@@ -14,16 +15,14 @@ class Board2(AbstractBoard):
     def __init__(self, display, surface):
         super().__init__(display, surface)
 
-        self.opponent_deck_collide_point = pygame.Rect(self.opponent_deck_x, self.opponent_deck_y,
-                                                       0, 0)
-        self.player_deck_collide_point = pygame.Rect(self.player_deck_x, self.player_deck_y,
-                                                 0, 0)
+        self.opponent_deck_collide_point = pygame.Rect(250, 75, 0, 0)
+        self.player_deck_collide_point = pygame.Rect(250, 675, 0, 0)
 
         # The layout of the board
         # The player's Deck
         self.player_deck = PlayerDeck(250, 675, 800, self.player_deck_collide_point, self.display, self.surface)
         # The opponent's Deck
-        self.opponent_deck = PlayerDeck(250, 75, 800, self.opponent_deck_collide_point, self.display, self.surface)
+        self.opponent_deck = OpponentDeck(250, 75, 800, self.opponent_deck_collide_point, self.display, self.surface)
         # The current play deck: where we will place the cards
         # That are currently being played.
         self.current_deck = CurrentDeck(250, 425, 800, self.display, self.surface)
@@ -68,8 +67,10 @@ class Board2(AbstractBoard):
                 self.shuffledeck.card_change_in_play(i, True)
                 if counter % 2 == 0:
                     self.player_deck.add_card(self.shuffledeck.remove_card("last"))
+                    self.player_deck.draw_deck(True)
                 else:
                     self.opponent_deck.add_card(self.shuffledeck.remove_card("last"))
+                    self.opponent_deck.draw_deck(True)
                 counter += 1
                 i -= 1
         else:
@@ -78,8 +79,10 @@ class Board2(AbstractBoard):
                 self.shuffledeck.card_change_in_play(i, True)
                 if counter % 2 == 1:
                     self.opponent_deck.add_card(self.shuffledeck.remove_card("last"))
+                    self.opponent_deck.draw_deck(True)
                 else:
                     self.player_deck.add_card(self.shuffledeck.remove_card("last"))
+                    self.player_deck.draw_deck(True)
                 counter += 1
                 i -= 1
 
