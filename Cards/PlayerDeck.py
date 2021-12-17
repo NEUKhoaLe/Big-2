@@ -65,3 +65,7 @@ class PlayerDeck(AbstractDeck):
     def update(self):
         for card in self.deck:
             card.update_draw(True)
+
+    def flip_vis(self, boolean):
+        for card in self.deck:
+            card.update_vis(boolean)

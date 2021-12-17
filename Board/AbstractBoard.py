@@ -1,6 +1,7 @@
-import random
-import pygame
+from random import Random
+
 from Cards.Cards import Cards
+from Cards.ShuffleDeck import ShuffleDeck
 from Utils.Settings import Settings
 
 
@@ -17,59 +18,17 @@ class AbstractBoard:
         self.display = display
         self.surface = surface
         self.settings = Settings()
+        self.random = Random()
 
-        # The layout of the board
-        # The player's Deck
-        self.player_deck = []
-        # The opponent's Deck
-        self.opponent_deck = []
-        # The current play deck: where we will place the cards
-        # That are currently being played.
-        self.current_play_pile = []
-        # The Discard pile
-        self.discard_deck_pile = []
-
-        # Opponent chosen card(s)
-        self.opponent_chosen = []
-        # Player chosen card(s)
-        self.player_chosen = []
-
-        self.opponent_deck_x = 250
-        self.opponent_deck_y = 75
-
-        self.player_deck_x = 250
-        self.player_deck_y = 675
-
-        self.play_deck_width = 500
-
-        self.player_chosen_height = 600
-        self.opponent_chosen_height = 150
-
-        self.current_play_pile_x = 250
-        self.current_play_pile_y = 425
-
-        self.discard_deck_pile_x = 750
-        self.discard_deck_pile_y = 50
-
-        self.deck = self.create_deck()
-
-        self.deck_x = 450
-        self.deck_y = 425
+        self.shuffledeck = ShuffleDeck(450, 425, self.create_deck(), self.display, self.surface)
 
         self.card_width = 100
         self.card_height = 150
 
+
     # Method to reset the board
     def reset(self):
-        self.player_deck = []
-        self.opponent_deck = []
-        self.current_play_pile = []
-        self.discard_deck_pile = []
-        self.opponent_chosen = []
-        self.player_chosen = []
-
-        self.deck = self.create_deck()
-        self.draw_board()
+        pass
 
     # Method to create the shuffled deck to begin dealing
     def create_deck(self):
@@ -229,7 +188,7 @@ class AbstractBoard:
 
     # Method to shuffle the deck
     def shuffle_deck(self):
-        return random.shuffle(self.deck)
+        self.shuffle_deck.shuffle()
 
     def deal(self, last_winner):
         pass
@@ -245,18 +204,12 @@ class AbstractBoard:
 
     # Method to move card to the shuffle deck position
     def move_to_shuffle_pos(self):
-        for x in self.deck:
-            x.update_vis(False)
-            x.move(self.deck_x, self.deck_y, True)
+        self.shuffle_deck.change_pos(0, 0, to_shuffle=True)
+        self.draw_deck(False)
 
     # Method to move cards to the discard pile
     def move_to_discard(self):
-        for card in self.current_play_pile:
-            card.change_in_play(False)
-            self.discard_deck_pile.append(card)
-            self.draw_deck("discard")
-
-        self.current_play_pile = []
+        pass
 
     def flip_vis(self, deck_type, boolean):
         pass

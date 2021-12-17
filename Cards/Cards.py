@@ -125,7 +125,7 @@ class Cards:
             self.y = y
             self.draw(False, self.front)
 
-        self.draw(is_front=self.front)
+        # self.draw(is_front=self.front)
 
         self.update_card_collision(self.x, self.y)
 
