@@ -24,12 +24,13 @@ class ShuffleDeck(AbstractDeck):
             self.x = x
             self.y = y
 
-    def draw_deck(self, move_from_shuffle=False):
+    def draw_deck(self, move_from_shuffle=False, game_update=False):
         for x in self.deck:
             x.update_vis(False)
             x.move(self.x, self.y, True)
 
-        self.update()
+        if not game_update:
+            self.update()
 
     def update(self):
         for card in self.deck:
@@ -43,3 +44,7 @@ class ShuffleDeck(AbstractDeck):
 
     def card_change_in_play(self, index, boolean):
         self.deck[index].change_in_play(boolean)
+
+    def get_pos(self):
+        return self.x, self.y
+

@@ -5,8 +5,8 @@ from Cards.ShuffleDeck import ShuffleDeck
 from Utils.Settings import Settings
 
 
-def if_contains(list_words, word):
-    for w in list_words:
+def if_contains(args, word):
+    for w in args:
         if w == word:
             return True
 
@@ -167,23 +167,20 @@ class AbstractBoard:
         return deck
 
     # Draw the board
-    def draw_board(self, *args):
+    def draw_board(self, *args, game_update=False):
+        args = list(args)
         if not if_contains(args, "shuffle"):
-            self.draw_deck("shuffle")
+            self.draw_deck("shuffle", game_update)
         if not if_contains(args, "opponent"):
-            self.draw_deck("opponent")
+            self.draw_deck("opponent", game_update)
         if not if_contains(args, "current"):
-            self.draw_deck("current")
+            self.draw_deck("current", game_update)
         if not if_contains(args, "discard"):
-            self.draw_deck("discard")
+            self.draw_deck("discard", game_update)
         if not if_contains(args, "player"):
-            self.draw_deck("player")
-        if not if_contains(args, "player-chosen"):
-            self.draw_deck("player-chosen")
-        if not if_contains(args, "opponent-chosen"):
-            self.draw_deck("opponent-chosen")
+            self.draw_deck("player", game_update)
 
-    def draw_deck(self, deck_type):
+    def draw_deck(self, deck_type, game_update):
         pass
 
     # Method to shuffle the deck
@@ -203,9 +200,9 @@ class AbstractBoard:
         pass
 
     # Method to move card to the shuffle deck position
-    def move_to_shuffle_pos(self):
+    def move_to_shuffle_pos(self, game_update):
         self.shuffledeck.change_pos(0, 0, to_shuffle=True)
-        self.shuffledeck.draw_deck(False)
+        self.shuffledeck.draw_deck(False, game_update=game_update)
 
     # Method to move cards to the discard pile
     def move_to_discard(self):

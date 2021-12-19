@@ -28,15 +28,14 @@ class OpponentDeck(AbstractDeck):
         self.x = x
         self.y = y
 
-    def draw_deck(self, move_from_shuffle=False):
+    def draw_deck(self, move_from_shuffle=False, game_update=False):
         if not move_from_shuffle:
             self.surface.blit(self.background, (self.x, self.y))
 
         num_cards = len(self.deck)
         starting = max((self.width + self.x) - (num_cards * self.card_width), self.x)
-        starting = int(starting / 2)
 
-        if num_cards == 1 or num_cards == 0:
+        if num_cards == 0 or num_cards == 1:
             card_pos = self.card_width
         else:
             card_pos = min(self.card_width,
@@ -46,27 +45,31 @@ class OpponentDeck(AbstractDeck):
                     (num_cards * self.card_width), self.card_height)
 
         for x in self.deck:
+            self.surface.blit(self.background, (starting + 100, self.y))
+            self.draw_rest_deck(x)
+
+            if x.cur_pos() == (self.settings.shuffle_x, self.settings.shuffle_y):
+                x.rotate(180)
+
             if not x.get_chosen():
-                self.surface.blit(self.background, (starting + 100, self.y))
-
-                self.draw_rest_deck(x)
-
-                # x.update_vis(False
                 x.update_vis(True)
-                if x.cur_pos() == (self.settings.shuffle_x, self.settings.shuffle_y):
-                    x.rotate(180)
-
                 x.move(starting, self.y, False)
-
                 x.update_card_block_area(starting + card_pos, self.card_height,
                                          self.card_width - card_pos, self.card_height)
 
             # Do this portion
             else:
-                pass
+                x.move(starting, self.chosen_y, False)
+                original_x, original_y = x.cur_pos()
+                x.update_card_block_area(original_x + card_pos,
+                                         self.y,
+                                         self.card_width - card_pos,
+                                         self.y - self.chosen_y)
 
             starting += card_pos
-            self.update()
+
+            if not game_update:
+                self.update()
 
     def draw_rest_deck(self, card):
         index = self.deck.index(card)
@@ -82,3 +85,27 @@ class OpponentDeck(AbstractDeck):
     def flip_vis(self, boolean):
         for card in self.deck:
             card.update_vis(boolean)
+
+    def select_deck(self, mouse_x, mouse_y):
+        return self.collide_point.collidepoint((mouse_x, mouse_y))
+
+    def get_pos(self):
+        return self.x, self.y
+
+    def handle_selected(self, mouse_x, mouse_y):
+        for card in self.deck:
+            if card.handle_selected(mouse_x, mouse_y):
+                if card.get_chosen():
+                    self.move_to_deck(card)
+                    card.change_chosen(False)
+                    return
+                else:
+                    self.move_to_chosen(card)
+                    card.change_chosen(True)
+                    return
+
+    def move_to_deck(self, card):
+        self.chosen_deck.remove(card)
+
+    def move_to_chosen(self, card):
+        self.chosen_deck.append(card)

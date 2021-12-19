@@ -92,59 +92,75 @@ class Cards:
         # If it is not a move to shuffle position, then we want to move it incrementally.
         # If it is a  shuffle move, then we can instantly move it.
         if not shuffle:
-
-            if x_distance % 2 == 1:
-                x_distance -= 1
-            if y_distance % 2 == 1:
-                y_distance -= 1
-
             while x_distance != 0 or y_distance != 0:
+                if x_distance != 0:
+                    if x_distance % 4 == 1:
+                        self.x += 1 if x_direction == "positive" else -1
+                        x_distance -= 1
+                    elif x_distance % 4 == 2:
+                        self.x += 2 if x_direction == "positive" else -2
+                        x_distance -= 2
+                    elif x_distance % 4 == 3:
+                        self.x += 3 if x_direction == "positive" else -3
+                        x_distance -= 3
+
+                if y_distance != 0:
+                    if y_distance % 4 == 1:
+                        self.y += 1 if y_direction == "positive" else -1
+                        y_distance -= 1
+                    elif y_distance % 4 == 2:
+                        self.y += 2 if y_direction == "positive" else -2
+                        y_distance -= 2
+                    elif y_distance % 4 == 3:
+                        self.y += 3 if y_direction == "positive" else -3
+                        y_distance -= 3
+
                 if x_distance == 0:
                     if y_direction == "negative":
-                        self.y -= 2
-                        y_distance -= 2
+                        self.y -= min(4, y_distance)
+                        y_distance -= min(4, y_distance)
                     else:
-                        self.y += 2
-                        y_distance -= 2
+                        self.y += min(4, y_distance)
+                        y_distance -= min(4, y_distance)
 
                 elif y_distance == 0:
                     if x_direction == "negative":
-                        self.x -= 2
-                        x_distance -= 2
+                        self.x -= min(4, x_distance)
+                        x_distance -= min(4, x_distance)
                     else:
-                        self.x += 2
-                        x_distance -= 2
+                        self.x += min(4, x_distance)
+                        x_distance -= min(4, x_distance)
 
                 else:
                     if x_direction == "negative":
                         if y_slope:
-                            self.x += -2
-                            x_distance -= 2
+                            self.x -= min(4, x_distance)
+                            x_distance -= min(4, x_distance)
                         else:
-                            self.x += -2 * slope
-                            x_distance -= 2 * slope
+                            self.x -= min(4 * slope, x_distance)
+                            x_distance -= min(4 * slope, x_distance)
                     else:
                         if y_slope:
-                            self.x += 2
-                            x_distance -= 2
+                            self.x += min(4, x_distance)
+                            x_distance -= min(4, x_distance)
                         else:
-                            self.x += 2 * slope
-                            x_distance -= 2 * slope
+                            self.x += min(4 * slope, x_distance)
+                            x_distance -= min(4 * slope, x_distance)
 
                     if y_direction == "negative":
                         if y_slope:
-                            self.y += -2 * slope
-                            y_distance -= 2 * slope
+                            self.y -= min(y_distance, 4 * slope)
+                            y_distance -= min(4 * slope, y_distance)
                         else:
-                            self.y += -2
-                            y_distance -= 2
+                            self.y -= min(y_distance, 4)
+                            y_distance -= min(y_distance, 4)
                     else:
                         if y_slope:
-                            self.y += 2 * slope
-                            y_distance -= 2 * slope
+                            self.y += min(4 * slope, y_distance)
+                            y_distance -= min(4 * slope, y_distance)
                         else:
-                            self.y += 2
-                            y_distance -= 2
+                            self.y += min(4, y_distance)
+                            y_distance -= min(4, y_distance)
 
                 self.draw(still_drawing=True, is_front=self.front)
 

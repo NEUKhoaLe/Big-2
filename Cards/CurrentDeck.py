@@ -19,7 +19,7 @@ class CurrentDeck(AbstractDeck):
         self.x = x
         self.y = y
 
-    def draw_deck(self, move_from_shuffle=False):
+    def draw_deck(self, move_from_shuffle=False, game_update=False):
         if not move_from_shuffle:
             self.display.blit(self.background, (self.x, self.y))
 
@@ -36,7 +36,8 @@ class CurrentDeck(AbstractDeck):
 
             starting += x.get_width()
 
-        self.update()
+        if not game_update:
+            self.update()
 
     def draw_rest_deck(self, card):
         for x in self.deck:
@@ -48,3 +49,6 @@ class CurrentDeck(AbstractDeck):
     def update(self):
         for card in self.deck:
             card.update_draw(True)
+
+    def get_pos(self):
+        return self.x, self.y

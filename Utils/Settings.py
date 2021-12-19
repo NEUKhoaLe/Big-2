@@ -17,17 +17,17 @@ class Settings:
         self.game_button_font = pygame.font.SysFont('jetsbrainsmono.ttf', 36)
         self.player_name_font = pygame.font.SysFont('jetsbrainsmono.ttf', 50)
 
-        self.player_deck_2_x = 100
-        self.opponent_deck_2_x = 100
-        self.player_y = 675
+        self.player_deck_2_x = 50
+        self.opponent_deck_2_x = 50
+        self.player_y = 775
         self.opponent_y = 75
-        self.player_chosen_y = 600
+        self.player_chosen_y = 700
         self.opponent_chosen_y = 150
-        self.play_deck_width_2 = 800
+        self.play_deck_width_2 = 900
 
         self.current_deck_2_x = 100
         self.current_deck_y = 425
-        self.current_deck_width_2 = 800
+        self.current_deck_width_2 = 900
 
         self.discard_deck_x_2 = 750
         self.discard_deck_y_2 = 50

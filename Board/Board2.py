@@ -43,21 +43,17 @@ class Board2(AbstractBoard):
     # If it is the current play pile, we draw the card front
     # If it is in the chosen pile, we draw the card moving up
     # half its length
-    def draw_deck(self, deck_type):
+    def draw_deck(self, deck_type, game_update):
         if deck_type == "shuffle":
-            self.move_to_shuffle_pos()
+            self.move_to_shuffle_pos(game_update)
         elif deck_type == "opponent":
-            self.opponent_deck.draw_deck(False)
+            self.opponent_deck.draw_deck(False, game_update=game_update)
         elif deck_type == "current":
-            self.current_deck.draw_deck(False)
+            self.current_deck.draw_deck(False, game_update)
         elif deck_type == "discard":
-            self.discard_deck.draw_deck(False)
+            self.discard_deck.draw_deck(False, game_update)
         elif deck_type == "player":
-            self.player_deck.draw_deck()
-        elif deck_type == "player-chosen":
-            pass
-        elif deck_type == "opponent-chosen":
-            pass
+            self.player_deck.draw_deck(False, game_update)
 
     # Method to deal the shuffled card.
     # takes in the winner of the last game.
@@ -111,63 +107,26 @@ class Board2(AbstractBoard):
         elif deck_type == "player":
             self.player_deck.flip_vis(boolean)
 
+    def select_deck(self, mouse_x, mouse_y):
+        if self.player_deck.select_deck(mouse_x, mouse_y):
+            return "player"
+        elif self.opponent_deck.select_deck(mouse_x, mouse_y):
+            return "opponent"
+
     # Handle collision. Choosing a card. Passes in x and y position of mouse. First find which deck was chosen
     # and then go through every card in that deck to find the card. Move that card to the chosen
     # If a chosen card is selected, then it is "unchosen" i.e. removed from the chosen pile
     def choose_card(self, mouse_x, mouse_y, cur_player):
-        if self.opponent_deck_collide_point.collidepoint(mouse_x, mouse_y):
-            deck_type = "opponent"
-
-            if cur_player == deck_type:
-                for card in self.opponent_deck:
-                    if card.handle_selected():
-                        if card.get_chosen():
-                            self.move_chosen_to_play(card, deck_type)
-                        else:
-                            self.move_play_to_chosen(card, deck_type)
-        elif self.player_deck_collide_point.collidepoint(mouse_x, mouse_y):
-            deck_type = "player"
-
-            if cur_player == deck_type:
-                for card in self.player_deck:
-                    if card.get_chosen():
-                        self.move_chosen_to_play(card, deck_type)
-                    else:
-                        self.move_play_to_chosen(card, deck_type)
-        else:
-            for card in self.opponent_chosen:
-                if card.handle_selected(mouse_x, mouse_y) and cur_player == "opponent":
-                    if card.get_chosen():
-                        self.move_chosen_to_play(card, "opponent")
-                    else:
-                        self.move_play_to_chosen(card, "opponent")
-
-                    return
-            for card in self.player_chosen:
-                if card.handle_selected(mouse_x, mouse_y) and cur_player == "player":
-                    if card.get_chosen():
-                        self.move_chosen_to_play(card, "player")
-                    else:
-                        self.move_play_to_chosen(card, "player")
-
-                    return
-
-            if cur_player == "player":
-                for card in self.player_chosen:
-                    self.move_chosen_to_play(card, "player")
-            elif cur_player == "opponent":
-                for card in self.opponent_chosen:
-                    self.move_chosen_to_play(card, "opponent")
+        if self.select_deck(mouse_x, mouse_y) == "player":
+            self.player_deck.handle_selected(mouse_x, mouse_y)
+        elif self.select_deck(mouse_x, mouse_y) == "opponent":
+            self.opponent_deck.handle_selected(mouse_x, mouse_y)
 
     def rotate_deck(self):
-        temp_x = self.opponent_deck_x
-        temp_y = self.opponent_deck_y
+        temp_x, temp_y = self.opponent_deck.get_pos()
 
-        self.opponent_deck_x = self.player_deck_x
-        self.opponent_deck_y = self.player_deck_y
-
-        self.player_deck_x = temp_x
-        self.player_deck_y = temp_y
+        self.opponent_deck.change_pos(self.player_deck.get_pos()[0], self.player_deck.get_pos()[1])
+        self.player_deck.change_pos(temp_x, temp_y)
 
     def move_to_discard(self):
         pass

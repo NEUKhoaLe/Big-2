@@ -40,16 +40,28 @@ class AbstractDeck:
     def get_length(self):
         return len(self.deck)
 
-    def move_to_chosen(self):
+    def select_deck(self, mouse_x, mouse_y):
+        return False
+
+    def handle_selected(self, mouse_x, mouse_y):
+        pass
+
+    def move_to_chosen(self, card):
+        pass
+
+    def move_to_deck(self, card):
         pass
 
     def card_change_in_play(self, index, boolean):
         pass
 
-    def draw_deck(self, move_from_shuffle):
+    def draw_deck(self, move_from_shuffle, game_update=False):
         pass
 
     def change_pos(self, x, y):
+        pass
+
+    def get_pos(self):
         pass
 
     def update(self):
