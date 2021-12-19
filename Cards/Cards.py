@@ -77,45 +77,74 @@ class Cards:
         if y_direction == "negative":
             y_distance *= -1
 
+        y_slope = True
+
         if x_distance != 0 and y_distance != 0:
-            slope = math.floor(y_distance / x_distance)
+            if y_distance >= x_distance:
+                slope = math.floor(y_distance / x_distance)
+                y_slope = True
+            else:
+                slope = math.floor(x_distance / y_distance)
+                y_slope = False
         else:
             slope = 0
 
         # If it is not a move to shuffle position, then we want to move it incrementally.
         # If it is a  shuffle move, then we can instantly move it.
         if not shuffle:
+
+            if x_distance % 2 == 1:
+                x_distance -= 1
+            if y_distance % 2 == 1:
+                y_distance -= 1
+
             while x_distance != 0 or y_distance != 0:
                 if x_distance == 0:
                     if y_direction == "negative":
-                        self.y += -1
-                        y_distance -= 1
+                        self.y -= 2
+                        y_distance -= 2
                     else:
-                        self.y += 1
-                        y_distance -= 1
+                        self.y += 2
+                        y_distance -= 2
 
                 elif y_distance == 0:
                     if x_direction == "negative":
-                        self.x += -1
-                        x_distance -= 1
+                        self.x -= 2
+                        x_distance -= 2
                     else:
-                        self.x += 1
-                        x_distance -= 1
+                        self.x += 2
+                        x_distance -= 2
 
                 else:
                     if x_direction == "negative":
-                        self.x += -1
-                        x_distance -= 1
+                        if y_slope:
+                            self.x += -2
+                            x_distance -= 2
+                        else:
+                            self.x += -2 * slope
+                            x_distance -= 2 * slope
                     else:
-                        self.x += 1
-                        x_distance -= 1
+                        if y_slope:
+                            self.x += 2
+                            x_distance -= 2
+                        else:
+                            self.x += 2 * slope
+                            x_distance -= 2 * slope
 
                     if y_direction == "negative":
-                        self.y += -1 * slope
-                        y_distance -= slope
+                        if y_slope:
+                            self.y += -2 * slope
+                            y_distance -= 2 * slope
+                        else:
+                            self.y += -2
+                            y_distance -= 2
                     else:
-                        self.y += slope
-                        y_distance -= slope
+                        if y_slope:
+                            self.y += 2 * slope
+                            y_distance -= 2 * slope
+                        else:
+                            self.y += 2
+                            y_distance -= 2
 
                 self.draw(still_drawing=True, is_front=self.front)
 
@@ -206,7 +235,7 @@ class Cards:
                 else:
                     self.back_image = rotated_image
 
-        self.draw(is_front=is_front)
+        self.draw(still_drawing=True, is_front=is_front)
 
     # Method to get the Width
     def get_width(self):

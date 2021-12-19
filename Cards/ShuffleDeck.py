@@ -1,3 +1,5 @@
+import pygame
+
 from Cards.AbstractDeck import AbstractDeck
 from Utils.Settings import Settings
 
@@ -11,6 +13,8 @@ class ShuffleDeck(AbstractDeck):
         self.x = x
         self.y = y
         self.settings = Settings()
+        self.background = pygame.Surface((100, 150))
+        self.background.fill(self.settings.bg_color)
 
     def change_pos(self, x, y, to_shuffle=False):
         if to_shuffle:
@@ -30,6 +34,9 @@ class ShuffleDeck(AbstractDeck):
     def update(self):
         for card in self.deck:
             card.update_draw(True)
+
+        if len(self.deck) == 0:
+            self.surface.blit(self.background, (self.x, self.y))
 
     def shuffle(self):
         pass

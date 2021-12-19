@@ -28,8 +28,7 @@ class Game2(AbstractGame):
                                    450, 525, self.surface)
 
     def start_game(self):
-        self.board.move_to_shuffle_pos()
-        self.board.deal(self.turn)
+        self.deal()
         self.update()
 
     # Enter name method
@@ -100,23 +99,24 @@ class Game2(AbstractGame):
 
     # Dealing The Card
     def deal(self):
-        pass
+        self.board.move_to_shuffle_pos()
+        self.board.deal(self.turn)
 
     # Selecting a card/un-selecting cards, and or board buttons
-    def select(self):
-        pass
+    def select(self, mouse_x, mouse_y):
+
+        self.board.choose_card(mouse_x, mouse_y, self.turn)
 
     # Updating the game
     # Draw the board
     # Draw the player's names
     # Draw the buttons
     def update(self):
-        self.clear()
         self.display.blit(self.surface, (0, 0))
-        pygame.display.flip()
+        self.board.draw_board()
         # self.surface.blit(self.skip_button, ())
         # self.surface.blit(self.play_button, ())
-        self.board.draw_board()
+        pygame.display.flip()
 
     def clear(self):
         self.display.fill(self.settings.bg_color)
@@ -136,3 +136,6 @@ class Game2(AbstractGame):
 
     def change_score(self):
         pass
+
+    def get_turn(self):
+        return self.turn

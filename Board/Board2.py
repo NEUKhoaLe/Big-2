@@ -7,27 +7,31 @@ from Cards.OpponentDeck import OpponentDeck
 from Cards.PlayerDeck import PlayerDeck
 
 
-def update_rect(rect, x, y, width, height):
-    return rect.update(x, y, width, height)
-
-
 class Board2(AbstractBoard):
     def __init__(self, display, surface):
         super().__init__(display, surface)
 
-        self.opponent_deck_collide_point = pygame.Rect(250, 75, 0, 0)
-        self.player_deck_collide_point = pygame.Rect(250, 675, 0, 0)
+        self.opponent_deck_collide_point = pygame.Rect(self.settings.opponent_deck_2_x, self.settings.opponent_y,
+                                                       0, 0)
+        self.player_deck_collide_point = pygame.Rect(self.settings.player_deck_2_x, self.settings.player_y,
+                                                     0, 0)
 
         # The layout of the board
         # The player's Deck
-        self.player_deck = PlayerDeck(250, 675, 800, self.player_deck_collide_point, self.display, self.surface)
+        self.player_deck = PlayerDeck(self.settings.player_deck_2_x, self.settings.player_y,
+                                      self.settings.player_chosen_y, self.settings.play_deck_width_2,
+                                      self.player_deck_collide_point, self.display, self.surface)
         # The opponent's Deck
-        self.opponent_deck = OpponentDeck(250, 75, 800, self.opponent_deck_collide_point, self.display, self.surface)
+        self.opponent_deck = OpponentDeck(self.settings.opponent_deck_2_x, self.settings.opponent_y,
+                                          self.settings.opponent_chosen_y, self.settings.play_deck_width_2,
+                                          self.opponent_deck_collide_point, self.display, self.surface)
         # The current play deck: where we will place the cards
         # That are currently being played.
-        self.current_deck = CurrentDeck(250, 425, 800, self.display, self.surface)
+        self.current_deck = CurrentDeck(self.settings.current_deck_2_x, self.settings.current_deck_y,
+                                        self.settings.play_deck_width_2, self.display, self.surface)
         # The Discard pile
-        self.discard_deck = DiscardDeck(750, 50, self.display, self.surface)
+        self.discard_deck = DiscardDeck(self.settings.discard_deck_x_2, self.settings.discard_deck_y_2,
+                                        self.display, self.surface)
 
     # Method to draw a given deck given a deck type
     # If it is a shuffle deck: we will draw only the top back
@@ -107,8 +111,6 @@ class Board2(AbstractBoard):
         elif deck_type == "player":
             self.player_deck.flip_vis(boolean)
 
-    """
-    
     # Handle collision. Choosing a card. Passes in x and y position of mouse. First find which deck was chosen
     # and then go through every card in that deck to find the card. Move that card to the chosen
     # If a chosen card is selected, then it is "unchosen" i.e. removed from the chosen pile
@@ -166,8 +168,6 @@ class Board2(AbstractBoard):
 
         self.player_deck_x = temp_x
         self.player_deck_y = temp_y
-
-    """
 
     def move_to_discard(self):
         pass

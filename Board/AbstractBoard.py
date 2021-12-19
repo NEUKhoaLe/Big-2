@@ -20,7 +20,8 @@ class AbstractBoard:
         self.settings = Settings()
         self.random = Random()
 
-        self.shuffledeck = ShuffleDeck(450, 425, self.display, self.surface, deck=self.create_deck())
+        self.shuffledeck = ShuffleDeck(self.settings.shuffle_x, self.settings.shuffle_y,
+                                       self.display, self.surface, deck=self.create_deck())
 
         self.card_width = 100
         self.card_height = 150

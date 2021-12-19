@@ -9,12 +9,15 @@ def update_rect(rect, x, y, width, height):
 
 
 class PlayerDeck(AbstractDeck):
-    def __init__(self, x, y, width, collide_point, display, surface):
+    def __init__(self, x, y, chosen_y, width, collide_point, display, surface):
         super().__init__(display, surface)
         self.x = x
         self.y = y
+
         self.width = width
         self.collide_point = collide_point
+
+        self.chosen_y = chosen_y
         self.settings = Settings()
 
         self.background = pygame.Surface((self.width, self.card_height))
@@ -29,7 +32,7 @@ class PlayerDeck(AbstractDeck):
             self.surface.blit(self.background, (self.x, self.y))
 
         num_cards = len(self.deck)
-        starting = (self.width + self.x) - (num_cards * self.card_width)
+        starting = max((self.width + self.x) - (num_cards * self.card_width), self.x)
         starting = int(starting / 2)
 
         if num_cards == 0 or num_cards == 1:
@@ -43,7 +46,7 @@ class PlayerDeck(AbstractDeck):
 
         for x in self.deck:
             if not x.get_chosen():
-                self.surface.blit(self.background, (self.x, self.y))
+                self.surface.blit(self.background, (starting + 100, self.y))
 
                 self.draw_rest_deck(x)
 
@@ -60,11 +63,9 @@ class PlayerDeck(AbstractDeck):
             starting += card_pos
 
     def draw_rest_deck(self, card):
-        for x in self.deck:
-            if x.get_suit != card.get_suit() and x.get_value() != card.get_value():
-                x.draw(still_drawing=False)
-
-        # self.update()
+        index = self.deck.index(card)
+        for c in range(index + 1, len(self.deck)):
+            self.deck[c].draw(still_drawing=False)
 
     def update(self):
         for card in self.deck:

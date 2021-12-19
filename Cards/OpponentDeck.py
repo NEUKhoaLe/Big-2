@@ -1,8 +1,11 @@
 import pygame
 
-from Board.Board2 import update_rect
 from Cards.AbstractDeck import AbstractDeck
 from Utils.Settings import Settings
+
+
+def update_rect(rect, x, y, width, height):
+    return rect.update(x, y, width, height)
 
 
 class OpponentDeck(AbstractDeck):
@@ -27,10 +30,10 @@ class OpponentDeck(AbstractDeck):
 
     def draw_deck(self, move_from_shuffle=False):
         if not move_from_shuffle:
-            self.display.blit(self.background, (self.x, self.y))
+            self.surface.blit(self.background, (self.x, self.y))
 
         num_cards = len(self.deck)
-        starting = (self.width + self.x) - (num_cards * self.card_width)
+        starting = max((self.width + self.x) - (num_cards * self.card_width), self.x)
         starting = int(starting / 2)
 
         if num_cards == 1 or num_cards == 0:
@@ -44,15 +47,17 @@ class OpponentDeck(AbstractDeck):
 
         for x in self.deck:
             if not x.get_chosen():
-                self.display.blit(self.background, (self.x, self.y))
+                self.surface.blit(self.background, (starting + 100, self.y))
 
                 self.draw_rest_deck(x)
 
-                x.update_vis(False)
-                if x.cur_pos() == (self.x, self.y):
+                # x.update_vis(False
+                x.update_vis(True)
+                if x.cur_pos() == (self.settings.shuffle_x, self.settings.shuffle_y):
                     x.rotate(180)
 
                 x.move(starting, self.y, False)
+
                 x.update_card_block_area(starting + card_pos, self.card_height,
                                          self.card_width - card_pos, self.card_height)
 
@@ -64,15 +69,15 @@ class OpponentDeck(AbstractDeck):
             self.update()
 
     def draw_rest_deck(self, card):
-        for x in self.deck:
-            if x.get_suit != card.get_suit() and x.get_value() != card.get_value():
-                x.draw(True)
-
-        self.update()
+        index = self.deck.index(card)
+        for c in range(index + 1, len(self.deck)):
+            self.deck[c].draw(still_drawing=False)
 
     def update(self):
         for card in self.deck:
             card.update_draw(True)
+
+        pygame.display.flip()
 
     def flip_vis(self, boolean):
         for card in self.deck:

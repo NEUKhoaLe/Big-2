@@ -258,10 +258,13 @@ class Big2:
                     sys.exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
-                        self.menu_mouse_action()
-                        if self.back:
-                            self.back = False
-                            return
+                        if self.game.get_turn() == "player":
+                            mouse_x, mouse_y = pygame.mouse.get_pos()
+                            self.game.select(mouse_x, mouse_y)
+                        # self.menu_mouse_action()
+                        # if self.back:
+                        # self.back = False
+                        # return
 
             pygame.display.flip()
 
