@@ -52,17 +52,29 @@ class PlayerDeck(AbstractDeck):
             if not x.get_chosen():
                 x.update_vis(True)
                 if x.cur_pos()[1] == self.y:
+<<<<<<< HEAD
                     x.move(starting, self.y, False)
                 else:
                     x.move(starting, self.y, False)
 
                 x.move(starting, self.y, False)
                 x.update_card_block_area(starting + card_pos, self.y,
+=======
+                    x.move(starting, self.y, True)
+                else:
+                    x.move(starting, self.y, False)
+
+                x.update_card_block_area(starting + card_pos, self.card_height,
+>>>>>>> c9ab610 (Updated the code)
                                          self.card_width - card_pos, self.card_height)
 
             # Do this portion
             else:
+<<<<<<< HEAD
                 x.move(starting, self.chosen_y, False)
+=======
+                x.move(starting, self.chosen_y, True)
+>>>>>>> c9ab610 (Updated the code)
                 original_x, original_y = x.cur_pos()
                 x.update_card_block_area(original_x + card_pos,
                                          self.y,
@@ -71,7 +83,11 @@ class PlayerDeck(AbstractDeck):
 
             starting += card_pos
 
+<<<<<<< HEAD
             if not game_update and x.cur_pos()[1] != self.y:
+=======
+            if not game_update:
+>>>>>>> c9ab610 (Updated the code)
                 self.update()
 
     def draw_rest_deck(self, card):

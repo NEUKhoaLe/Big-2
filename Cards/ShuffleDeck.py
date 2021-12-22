@@ -25,9 +25,12 @@ class ShuffleDeck(AbstractDeck):
             self.y = y
 
     def draw_deck(self, move_from_shuffle=False, game_update=False):
+<<<<<<< HEAD
         if len(self.deck) == 0:
             self.surface.blit(self.background, (self.x, self.y))
 
+=======
+>>>>>>> c9ab610 (Updated the code)
         for x in self.deck:
             x.update_vis(False)
             x.move(self.x, self.y, True)

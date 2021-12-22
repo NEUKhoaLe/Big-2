@@ -167,6 +167,7 @@ class AbstractBoard:
         return deck
 
     # Draw the board
+<<<<<<< HEAD
     def draw_board(self, shuffle=True, opponent=True, player=True,
                    current=True, discard=True, game_update=False):
 
@@ -181,6 +182,21 @@ class AbstractBoard:
         if discard:
             self.draw_deck("discard", game_update)
 
+=======
+    def draw_board(self, *args, game_update=False):
+        args = list(args)
+        if not if_contains(args, "shuffle"):
+            self.draw_deck("shuffle", game_update)
+        if not if_contains(args, "opponent"):
+            self.draw_deck("opponent", game_update)
+        if not if_contains(args, "current"):
+            self.draw_deck("current", game_update)
+        if not if_contains(args, "discard"):
+            self.draw_deck("discard", game_update)
+        if not if_contains(args, "player"):
+            self.draw_deck("player", game_update)
+
+>>>>>>> c9ab610 (Updated the code)
     def draw_deck(self, deck_type, game_update):
         pass
 
