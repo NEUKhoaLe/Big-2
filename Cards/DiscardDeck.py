@@ -32,4 +32,3 @@ class DiscardDeck(AbstractDeck):
 
     def get_pos(self):
         return self.x, self.y
-

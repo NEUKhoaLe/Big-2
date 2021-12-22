@@ -29,7 +29,7 @@ class Game2(AbstractGame):
 
     def start_game(self):
         self.deal()
-        self.update("opponent", "player")
+        self.update()
 
     # Enter name method
     def enter_name(self):
@@ -105,15 +105,16 @@ class Game2(AbstractGame):
     # Selecting a card/un-selecting cards, and or board buttons
     def select(self, mouse_x, mouse_y):
         self.board.choose_card(mouse_x, mouse_y, self.turn)
-        self.update("player", "opponent")
+        self.update()
 
     # Updating the game
     # Draw the board
     # Draw the player's names
     # Draw the buttons
-    def update(self, *args):
+    def update(self, shuffle=True, opponent=True, player=True, current=True, discard=True):
         self.display.blit(self.surface, (0, 0))
-        self.board.draw_board(args, game_update=False)
+        self.board.draw_board(shuffle=shuffle, opponent=opponent, player=player,
+                              current=current, discard=discard, game_update=False)
         # self.surface.blit(self.skip_button, ())
         # self.surface.blit(self.play_button, ())
         pygame.display.flip()

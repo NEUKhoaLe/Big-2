@@ -53,8 +53,13 @@ class OpponentDeck(AbstractDeck):
 
             if not x.get_chosen():
                 x.update_vis(True)
+                if x.cur_pos()[1] == self.y:
+                    x.move(starting, self.y, False)
+                else:
+                    x.move(starting, self.y, False)
+
                 x.move(starting, self.y, False)
-                x.update_card_block_area(starting + card_pos, self.card_height,
+                x.update_card_block_area(starting + card_pos, self.y,
                                          self.card_width - card_pos, self.card_height)
 
             # Do this portion
@@ -68,7 +73,7 @@ class OpponentDeck(AbstractDeck):
 
             starting += card_pos
 
-            if not game_update:
+            if not game_update and x.cur_pos()[1] != self.y:
                 self.update()
 
     def draw_rest_deck(self, card):
