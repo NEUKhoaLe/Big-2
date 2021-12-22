@@ -1,237 +1,298 @@
-from random import Random
-
-from Cards.Cards import Cards
-from Cards.ShuffleDeck import ShuffleDeck
+import math
+import pygame
 from Utils.Settings import Settings
+import copy
 
 
-def if_contains(args, word):
-    for w in args:
-        if w == word:
-            return True
-
-    return False
+def _rotate_in_place(image, top_left, degree):
+    rotated_image = pygame.transform.rotozoom(image, degree, 1)
+    rotated_rect = rotated_image.get_rect(center=image.get_rect(topleft=top_left).center)
+    return rotated_image, rotated_rect
 
 
-class AbstractBoard:
-    def __init__(self, display, surface):
+class Cards:
+
+    def __init__(self, display, surface, value, suit, front_image, back_image):
+
+        # The screen
         self.display = display
         self.surface = surface
+        # Value of the card
+        self.value = value
+        # Suit of the card
+        self.suit = suit
+        # Front image of the card
+        self.front_image = pygame.image.load(front_image)
+        # Back image of the card
+        self.back_image = pygame.image.load(back_image)
+
         self.settings = Settings()
-        self.random = Random()
 
-        self.shuffledeck = ShuffleDeck(self.settings.shuffle_x, self.settings.shuffle_y,
-                                       self.display, self.surface, deck=self.create_deck())
+        # Card size
+        self.width = 100
+        self.height = 150
 
-        self.card_width = 100
-        self.card_height = 150
+        # We will default the size of the card to be 100, 150. We will be able
+        # to scale it when dealing.
+        self.front_image = pygame.transform.scale(self.front_image, (self.width, self.height))
+        self.back_image = pygame.transform.scale(self.back_image, (self.width, self.height))
 
-    # Method to reset the board
-    def reset(self):
-        pass
+        # Opponent card or User card
+        # We will make it default to true, so all cards will be dealt
+        # face up
+        self.front = True
 
-    # Method to create the shuffled deck to begin dealing
-    def create_deck(self):
-        deck = [Cards(self.display, self.surface, "A", "Spades",
-                      "Assets/card-spades-1.png", "Assets/card-back1.png"),
-                Cards(self.display, self.surface, "2", "Spades",
-                      "Assets/card-spades-2.png",
-                      "Assets/card-back1.png"),
-                Cards(self.display, self.surface, "3", "Spades",
-                      "Assets/card-spades-3.png", "Assets/card-back1.png"),
-                Cards(self.display, self.surface, "4", "Spades",
-                      "Assets/card-spades-4.png",
-                      "Assets/card-back1.png"),
-                Cards(self.display, self.surface, "5", "Spade",
-                      "Assets/card-spades-5.png", "Assets/card-back1.png"),
-                Cards(self.display, self.surface, "6", "Spades",
-                      "Assets/card-spades-6.png",
-                      "Assets/card-back1.png"),
-                Cards(self.display, self.surface, "7", "Spades",
-                      "Assets/card-spades-7.png", "Assets/card-back1.png"),
-                Cards(self.display, self.surface, "8", "Spades",
-                      "Assets/card-spades-8.png",
-                      "Assets/card-back1.png"),
-                Cards(self.display, self.surface, "9", "Spades",
-                      "Assets/card-spades-9.png", "Assets/card-back1.png"),
-                Cards(self.display, self.surface, "10", "Spades",
-                      "Assets/card-spades-10.png",
-                      "Assets/card-back1.png"),
-                Cards(self.display, self.surface, "J", "Spades",
-                      "Assets/card-spades-11.png", "Assets/card-back1.png"),
-                Cards(self.display, self.surface, "Q", "Spades",
-                      "Assets/card-spades-12.png",
-                      "Assets/card-back1.png"),
-                Cards(self.display, self.surface, "K", "Spades",
-                      "Assets/card-spades-13.png", "Assets/card-back1.png"),
-                Cards(self.display, self.surface, "A", "Clubs",
-                      "Assets/card-clubs-1.png",
-                      "Assets/card-back1.png"),
-                Cards(self.display, self.surface, "2", "Clubs",
-                      "Assets/card-clubs-2.png", "Assets/card-back1.png"),
-                Cards(self.display, self.surface, "3", "Clubs",
-                      "Assets/card-clubs-3.png",
-                      "Assets/card-back1.png"),
-                Cards(self.display, self.surface, "4", "Clubs",
-                      "Assets/card-clubs-4.png", "Assets/card-back1.png"),
-                Cards(self.display, self.surface, "5", "Clubs",
-                      "Assets/card-clubs-5.png",
-                      "Assets/card-back1.png"),
-                Cards(self.display, self.surface, "6", "Clubs",
-                      "Assets/card-clubs-6.png", "Assets/card-back1.png"),
-                Cards(self.display, self.surface, "7", "Clubs",
-                      "Assets/card-clubs-7.png",
-                      "Assets/card-back1.png"),
-                Cards(self.display, self.surface, "8", "Clubs",
-                      "Assets/card-clubs-8.png", "Assets/card-back1.png"),
-                Cards(self.display, self.surface, "9", "Clubs",
-                      "Assets/card-clubs-9.png",
-                      "Assets/card-back1.png"),
-                Cards(self.display, self.surface, "10", "Clubs",
-                      "Assets/card-clubs-10.png", "Assets/card-back1.png"),
-                Cards(self.display, self.surface, "J", "Clubs",
-                      "Assets/card-clubs-11.png",
-                      "Assets/card-back1.png"),
-                Cards(self.display, self.surface, "Q", "Clubs",
-                      "Assets/card-clubs-12.png", "Assets/card-back1.png"),
-                Cards(self.display, self.surface, "K", "Clubs",
-                      "Assets/card-clubs-13.png",
-                      "Assets/card-back1.png"),
-                Cards(self.display, self.surface, "A", "Diamonds",
-                      "Assets/card-diamonds-1.png", "Assets/card-back1.png"),
-                Cards(self.display, self.surface, "2", "Diamonds",
-                      "Assets/card-diamonds-2.png",
-                      "Assets/card-back1.png"),
-                Cards(self.display, self.surface, "3", "Diamonds",
-                      "Assets/card-diamonds-3.png", "Assets/card-back1.png"),
-                Cards(self.display, self.surface, "4", "Diamonds",
-                      "Assets/card-diamonds-4.png",
-                      "Assets/card-back1.png"),
-                Cards(self.display, self.surface, "5", "Diamonds",
-                      "Assets/card-diamonds-5.png", "Assets/card-back1.png"),
-                Cards(self.display, self.surface, "6", "Diamonds",
-                      "Assets/card-diamonds-6.png",
-                      "Assets/card-back1.png"),
-                Cards(self.display, self.surface, "7", "Diamonds",
-                      "Assets/card-diamonds-7.png", "Assets/card-back1.png"),
-                Cards(self.display, self.surface, "8", "Diamonds",
-                      "Assets/card-diamonds-8.png",
-                      "Assets/card-back1.png"),
-                Cards(self.display, self.surface, "9", "Diamonds",
-                      "Assets/card-diamonds-9.png", "Assets/card-back1.png"),
-                Cards(self.display, self.surface, "10", "Diamonds",
-                      "Assets/card-diamonds-10.png",
-                      "Assets/card-back1.png"),
-                Cards(self.display, self.surface, "J", "Diamonds",
-                      "Assets/card-diamonds-11.png", "Assets/card-back1.png"),
-                Cards(self.display, self.surface, "Q", "Diamonds",
-                      "Assets/card-diamonds-12.png",
-                      "Assets/card-back1.png"),
-                Cards(self.display, self.surface, "K", "Diamonds",
-                      "Assets/card-diamonds-13.png", "Assets/card-back1.png"),
-                Cards(self.display, self.surface, "A", "Hearts",
-                      "Assets/card-hearts-1.png",
-                      "Assets/card-back1.png"),
-                Cards(self.display, self.surface, "2", "Hearts",
-                      "Assets/card-hearts-2.png", "Assets/card-back1.png"),
-                Cards(self.display, self.surface, "3", "Hearts",
-                      "Assets/card-hearts-3.png",
-                      "Assets/card-back1.png"),
-                Cards(self.display, self.surface, "4", "Hearts",
-                      "Assets/card-hearts-4.png", "Assets/card-back1.png"),
-                Cards(self.display, self.surface, "5", "Hearts",
-                      "Assets/card-hearts-5.png",
-                      "Assets/card-back1.png"),
-                Cards(self.display, self.surface, "6", "Hearts",
-                      "Assets/card-hearts-6.png", "Assets/card-back1.png"),
-                Cards(self.display, self.surface, "7", "Hearts",
-                      "Assets/card-hearts-7.png",
-                      "Assets/card-back1.png"),
-                Cards(self.display, self.surface, "8", "Hearts",
-                      "Assets/card-hearts-8.png", "Assets/card-back1.png"),
-                Cards(self.display, self.surface, "9", "Hearts",
-                      "Assets/card-hearts-9.png",
-                      "Assets/card-back1.png"),
-                Cards(self.display, self.surface, "10", "Hearts",
-                      "Assets/card-hearts-10.png", "Assets/card-back1.png"),
-                Cards(self.display, self.surface, "J", "Hearts",
-                      "Assets/card-hearts-11.png",
-                      "Assets/card-back1.png"),
-                Cards(self.display, self.surface, "Q", "Hearts",
-                      "Assets/card-hearts-12.png",
-                      "Assets/card-back1.png"),
-                Cards(self.display, self.surface, "K", "Hearts",
-                      "Assets/card-hearts-13.png",
-                      "Assets/card-back1.png")]
+        # Card Location
+        self.x = -200
+        self.y = -200
 
-        return deck
+        # If a player has clicked on this card
+        self.chosen = False
 
-    # Draw the board
-<<<<<<< HEAD
-    def draw_board(self, shuffle=True, opponent=True, player=True,
-                   current=True, discard=True, game_update=False):
+        # This boolean determines whether this card is in play (ie whether it is in the opponent's or player's hand)
+        # This is to help with collision. If it is not in the player's hand, then the player should
+        # not be able to click on the card
+        self.in_play = False
 
-        if shuffle:
-            self.draw_deck("shuffle", game_update)
-        if opponent:
-            self.draw_deck("opponent", game_update)
-        if player:
-            self.draw_deck("player", game_update)
-        if current:
-            self.draw_deck("current", game_update)
-        if discard:
-            self.draw_deck("discard", game_update)
+        # rect used to handle clicking and collision
+        self.rect_card = pygame.Rect(self.x, self.y, self.width, self.height)
+        # rect used to calculate the area that is blocked by the card above
+        self.rect_blocked = pygame.Rect(0, 0, 0, 0)
 
-=======
-    def draw_board(self, *args, game_update=False):
-        args = list(args)
-        if not if_contains(args, "shuffle"):
-            self.draw_deck("shuffle", game_update)
-        if not if_contains(args, "opponent"):
-            self.draw_deck("opponent", game_update)
-        if not if_contains(args, "current"):
-            self.draw_deck("current", game_update)
-        if not if_contains(args, "discard"):
-            self.draw_deck("discard", game_update)
-        if not if_contains(args, "player"):
-            self.draw_deck("player", game_update)
+    # Move the card to a different location
+    # If we are moving the card to the shuffle position, we will make it appear
+    # instantly. If shuffle is true, then we are moving it to the shuffle
+    # position. If it is false, we are dealing, playing, which will have a smooth position.
+    # We have to move the image and the rectangle at the same time.
+    def move(self, x, y, shuffle=False):
+        x_distance = x - self.x
+        y_distance = y - self.y
 
->>>>>>> c9ab610 (Updated the code)
-    def draw_deck(self, deck_type, game_update):
-        pass
+        x_direction = "positive" if (x_distance > 0) else "negative"
+        y_direction = "positive" if (y_distance > 0) else "negative"
 
-    # Method to shuffle the deck
-    def shuffle_deck(self):
-        self.shuffledeck.shuffle()
+        # We save whether it is negative, we want the distance to be positive.
+        if x_direction == "negative":
+            x_distance *= -1
+        if y_direction == "negative":
+            y_distance *= -1
 
-    def deal(self, last_winner):
-        pass
+        y_slope = True
 
-    def move_play_to_chosen(self, card, deck_type):
-        pass
+        if x_distance != 0 and y_distance != 0:
+            if y_distance >= x_distance:
+                slope = math.floor(y_distance / x_distance)
+                y_slope = True
+            else:
+                slope = math.floor(x_distance / y_distance)
+                y_slope = False
+        else:
+            slope = 0
 
-    def move_chosen_to_play(self, card, deck_type):
-        pass
+        # If it is not a move to shuffle position, then we want to move it incrementally.
+        # If it is a  shuffle move, then we can instantly move it.
+        if not shuffle:
+            while x_distance != 0 or y_distance != 0:
+                if x_distance != 0:
+                    if x_distance % 4 == 1:
+                        self.x += 1 if x_direction == "positive" else -1
+                        x_distance -= 1
+                    elif x_distance % 4 == 2:
+                        self.x += 2 if x_direction == "positive" else -2
+                        x_distance -= 2
+                    elif x_distance % 4 == 3:
+                        self.x += 3 if x_direction == "positive" else -3
+                        x_distance -= 3
 
-    def move_chosen_to_current(self, pile_from, cards):
-        pass
+                if y_distance != 0:
+                    if y_distance % 4 == 1:
+                        self.y += 1 if y_direction == "positive" else -1
+                        y_distance -= 1
+                    elif y_distance % 4 == 2:
+                        self.y += 2 if y_direction == "positive" else -2
+                        y_distance -= 2
+                    elif y_distance % 4 == 3:
+                        self.y += 3 if y_direction == "positive" else -3
+                        y_distance -= 3
 
-    # Method to move card to the shuffle deck position
-    def move_to_shuffle_pos(self, game_update):
-        self.shuffledeck.change_pos(0, 0, to_shuffle=True)
-        self.shuffledeck.draw_deck(False, game_update=game_update)
+                if x_distance == 0:
+                    if y_direction == "negative":
+                        self.y -= min(4, y_distance)
+                        y_distance -= min(4, y_distance)
+                    else:
+                        self.y += min(4, y_distance)
+                        y_distance -= min(4, y_distance)
 
-    # Method to move cards to the discard pile
-    def move_to_discard(self):
-        pass
+                elif y_distance == 0:
+                    if x_direction == "negative":
+                        self.x -= min(4, x_distance)
+                        x_distance -= min(4, x_distance)
+                    else:
+                        self.x += min(4, x_distance)
+                        x_distance -= min(4, x_distance)
 
-    def flip_vis(self, deck_type, boolean):
-        pass
+                else:
+                    if x_direction == "negative":
+                        if y_slope:
+                            self.x -= min(4, x_distance)
+                            x_distance -= min(4, x_distance)
+                        else:
+                            self.x -= min(4 * slope, x_distance)
+                            x_distance -= min(4 * slope, x_distance)
+                    else:
+                        if y_slope:
+                            self.x += min(4, x_distance)
+                            x_distance -= min(4, x_distance)
+                        else:
+                            self.x += min(4 * slope, x_distance)
+                            x_distance -= min(4 * slope, x_distance)
 
-    def choose_card(self, mouse_x, mouse_y, cur_player):
-        pass
+                    if y_direction == "negative":
+                        if y_slope:
+                            self.y -= min(y_distance, 4 * slope)
+                            y_distance -= min(4 * slope, y_distance)
+                        else:
+                            self.y -= min(y_distance, 4)
+                            y_distance -= min(y_distance, 4)
+                    else:
+                        if y_slope:
+                            self.y += min(4 * slope, y_distance)
+                            y_distance -= min(4 * slope, y_distance)
+                        else:
+                            self.y += min(4, y_distance)
+                            y_distance -= min(4, y_distance)
 
-    # swapping the position of each deck 90 degrees counter clockwise
-    # 180 degrees for two player
-    def rotate_deck(self):
-        pass
+                self.draw(still_drawing=True, is_front=self.front)
+
+        else:
+            self.x = x
+            self.y = y
+            self.draw(False, self.front)
+
+        self.draw(is_front=self.front)
+
+        self.update_card_collision(self.x, self.y)
+
+    # Draw method. Blit the image, and move the rect to the x, y position
+    def draw(self, still_drawing=False, is_front=True):
+        if self.front and is_front:
+            if still_drawing:
+                temp_surface = copy.copy(self.surface)
+                temp_surface.blit(self.front_image, (self.x, self.y))
+                self.update_draw(permanent=False, surface=temp_surface)
+            else:
+                self.surface.blit(self.front_image, (self.x, self.y))
+                # self.update_draw(permanent=True)
+        else:
+            if still_drawing:
+                temp_surface = copy.copy(self.surface)
+                temp_surface.blit(self.back_image, (self.x, self.y))
+                self.update_draw(permanent=False, surface=temp_surface)
+            else:
+                self.surface.blit(self.back_image, (self.x, self.y))
+                # self.update_draw(permanent=True)
+
+    def draw_rotation(self, image, place, permanent=False):
+        if not permanent:
+            temp_surface = copy.copy(self.surface)
+            temp_surface.blit(image, place)
+            self.update_draw(permanent=False, surface=temp_surface)
+        else:
+            self.surface.blit(image, place)
+            self.update_draw(permanent=True)
+
+    # Update draw
+    def update_draw(self, permanent=False, surface=None):
+        if not permanent:
+            self.display.fill(self.settings.bg_color)
+            self.display.blit(surface, (0, 0))
+        else:
+            self.display.fill(self.settings.bg_color)
+            self.display.blit(self.surface, (0, 0))
+        pygame.display.flip()
+
+    def reset_surface(self):
+        self.display.fill(self.settings.bg_color)
+
+    # Method to update the visibility of the card
+    def update_vis(self, boolean):
+        self.front = boolean
+
+    # Method to rotate the card smoothly
+    def rotate(self, degrees, is_front=True):
+        is_positive = True if degrees >= 0 else False
+
+        if not is_positive:
+            new_degree = degrees * -1
+        else:
+            new_degree = degrees
+
+        temp_image = self.front_image.copy() if is_front else self.back_image.copy()
+        degree = 2
+
+        while new_degree > 0:
+            if is_positive:
+                rotated_image, new_rect = _rotate_in_place(temp_image, (self.x, self.y), degree)
+                self.draw_rotation(image=rotated_image, place=new_rect.topleft)
+
+                temp_image = self.front_image.copy() if is_front else self.back_image.copy()
+            else:
+                rotated_image, new_rect = _rotate_in_place(temp_image, (self.x, self.y), -1 * degree)
+                self.draw_rotation(rotated_image, new_rect.topleft)
+
+                temp_image = self.front_image.copy() if is_front else self.back_image.copy()
+
+            new_degree -= 2
+            degree += 2
+
+            if new_degree == 0:
+                if is_front:
+                    self.front_image = rotated_image
+                else:
+                    self.back_image = rotated_image
+
+        self.draw(still_drawing=True, is_front=is_front)
+
+    # Method to get the Width
+    def get_width(self):
+        return self.width
+
+    # Method to get the Height
+    def get_height(self):
+        return self.height
+
+    # Return the current position of the card
+    def cur_pos(self):
+        return self.x, self.y
+
+    # Change the status of the chosen status of this card
+    def change_chosen(self, boolean):
+        self.chosen = boolean
+
+    # return the status of whether a card is chosen
+    def get_chosen(self):
+        return self.chosen
+
+    # Change the status of the in play instance
+    def change_in_play(self, boolean):
+        self.in_play = boolean
+
+    # return the status of the in play instance
+    def get_in_play(self):
+        return self.in_play
+
+    def update_card_collision(self, x, y):
+        self.rect_card.update(x, y, self.width, self.height)
+
+    def update_card_block_area(self, x, y, width, height):
+        self.rect_blocked.update(x, y, width, height)
+
+    def handle_selected(self, mouse_x, mouse_y):
+        return self.rect_card.collidepoint((mouse_x, mouse_y)) and not \
+            self.rect_blocked.collidepoint((mouse_x, mouse_y))
+
+    def get_suit(self):
+        return self.suit
+
+    def get_value(self):
+        return self.value

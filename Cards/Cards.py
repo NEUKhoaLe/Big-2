@@ -94,23 +94,6 @@ class Cards:
         if not shuffle:
             while x_distance != 0 or y_distance != 0:
                 if x_distance != 0:
-<<<<<<< HEAD
-                    if x_distance % 6 == 1:
-                        self.x += 1 if x_direction == "positive" else -1
-                        x_distance -= 1
-                    elif x_distance % 6 == 2:
-                        self.x += 2 if x_direction == "positive" else -2
-                        x_distance -= 2
-                    elif x_distance % 6 == 3:
-                        self.x += 3 if x_direction == "positive" else -3
-                        x_distance -= 3
-                    elif x_distance % 6 == 4:
-                        self.x += 4 if x_direction == "positive" else -4
-                        x_distance -= 4
-                    elif x_distance % 6 == 5:
-                        self.x += 5 if x_direction == "positive" else -5
-                        x_distance -= 5
-=======
                     if x_distance % 4 == 1:
                         self.x += 1 if x_direction == "positive" else -1
                         x_distance -= 1
@@ -120,7 +103,6 @@ class Cards:
                     elif x_distance % 4 == 3:
                         self.x += 3 if x_direction == "positive" else -3
                         x_distance -= 3
->>>>>>> c9ab610 (Updated the code)
 
                 if y_distance != 0:
                     if y_distance % 4 == 1:
@@ -132,30 +114,6 @@ class Cards:
                     elif y_distance % 4 == 3:
                         self.y += 3 if y_direction == "positive" else -3
                         y_distance -= 3
-<<<<<<< HEAD
-                    elif y_distance % 6 == 4:
-                        self.y += 4 if y_direction == "positive" else -4
-                        y_distance -= 4
-                    elif y_distance % 6 == 5:
-                        self.y += 5 if y_direction == "positive" else -5
-                        y_distance -= 5
-
-                if x_distance == 0:
-                    if y_direction == "negative":
-                        self.y -= min(6, y_distance)
-                        y_distance -= min(6, y_distance)
-                    else:
-                        self.y += min(6, y_distance)
-                        y_distance -= min(6, y_distance)
-
-                elif y_distance == 0:
-                    if x_direction == "negative":
-                        self.x -= min(6, x_distance)
-                        x_distance -= min(6, x_distance)
-                    else:
-                        self.x += min(6, x_distance)
-                        x_distance -= min(6, x_distance)
-=======
 
                 if x_distance == 0:
                     if y_direction == "negative":
@@ -172,40 +130,10 @@ class Cards:
                     else:
                         self.x += min(4, x_distance)
                         x_distance -= min(4, x_distance)
->>>>>>> c9ab610 (Updated the code)
 
                 else:
                     if x_direction == "negative":
                         if y_slope:
-<<<<<<< HEAD
-                            self.x -= min(6, x_distance)
-                            x_distance -= min(6, x_distance)
-                        else:
-                            self.x -= min(6 * slope, x_distance)
-                            x_distance -= min(6 * slope, x_distance)
-                    else:
-                        if y_slope:
-                            self.x += min(6, x_distance)
-                            x_distance -= min(6, x_distance)
-                        else:
-                            self.x += min(6 * slope, x_distance)
-                            x_distance -= min(6 * slope, x_distance)
-
-                    if y_direction == "negative":
-                        if y_slope:
-                            self.y -= min(y_distance, 6 * slope)
-                            y_distance -= min(6 * slope, y_distance)
-                        else:
-                            self.y -= min(y_distance, 6)
-                            y_distance -= min(y_distance, 6)
-                    else:
-                        if y_slope:
-                            self.y += min(6 * slope, y_distance)
-                            y_distance -= min(6 * slope, y_distance)
-                        else:
-                            self.y += min(6, y_distance)
-                            y_distance -= min(6, y_distance)
-=======
                             self.x -= min(4, x_distance)
                             x_distance -= min(4, x_distance)
                         else:
@@ -233,14 +161,13 @@ class Cards:
                         else:
                             self.y += min(4, y_distance)
                             y_distance -= min(4, y_distance)
->>>>>>> c9ab610 (Updated the code)
 
                 self.draw(still_drawing=True, is_front=self.front)
 
         else:
             self.x = x
             self.y = y
-            self.draw(still_drawing=False, is_front=self.front)
+            self.draw(False, self.front)
 
         self.draw(is_front=self.front)
 
