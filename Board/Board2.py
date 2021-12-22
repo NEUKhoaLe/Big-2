@@ -47,15 +47,6 @@ class Board2(AbstractBoard):
         if deck_type == "shuffle":
             self.move_to_shuffle_pos(game_update)
         elif deck_type == "opponent":
-<<<<<<< HEAD
-            self.opponent_deck.draw_deck(False, game_update)
-        elif deck_type == "player":
-            self.player_deck.draw_deck(False, game_update)
-        elif deck_type == "current":
-            self.current_deck.draw_deck(False, game_update)
-        elif deck_type == "discard":
-            self.discard_deck.draw_deck(False, game_update)
-=======
             self.opponent_deck.draw_deck(False, game_update=game_update)
         elif deck_type == "current":
             self.current_deck.draw_deck(False, game_update)
@@ -63,7 +54,6 @@ class Board2(AbstractBoard):
             self.discard_deck.draw_deck(False, game_update)
         elif deck_type == "player":
             self.player_deck.draw_deck(False, game_update)
->>>>>>> c9ab610 (Updated the code)
 
     # Method to deal the shuffled card.
     # takes in the winner of the last game.
