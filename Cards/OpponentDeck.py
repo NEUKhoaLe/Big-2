@@ -53,7 +53,11 @@ class OpponentDeck(AbstractDeck):
 
             if not x.get_chosen():
                 x.update_vis(True)
-                x.move(starting, self.y, False)
+                if x.cur_pos()[1] == self.y:
+                    x.move(starting, self.y, True)
+                else:
+                    x.move(starting, self.y, False)
+
                 x.update_card_block_area(starting + card_pos, self.card_height,
                                          self.card_width - card_pos, self.card_height)
 

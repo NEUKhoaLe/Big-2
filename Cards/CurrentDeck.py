@@ -21,14 +21,14 @@ class CurrentDeck(AbstractDeck):
 
     def draw_deck(self, move_from_shuffle=False, game_update=False):
         if not move_from_shuffle:
-            self.display.blit(self.background, (self.x, self.y))
+            self.surface.blit(self.background, (self.x, self.y))
 
         num_cards = len(self.deck)
         starting = (self.width + self.x) - (num_cards * self.width)
         starting = starting / 2
 
         for x in self.deck:
-            self.display.blit(self.background, (self.x, self.y))
+            self.surface.blit(self.background, (self.x, self.y))
 
             self.draw_rest_deck(x)
             x.update_vis(True)
@@ -36,19 +36,19 @@ class CurrentDeck(AbstractDeck):
 
             starting += x.get_width()
 
-        if not game_update:
-            self.update()
+            if not game_update:
+                self.update()
 
     def draw_rest_deck(self, card):
-        for x in self.deck:
-            if x.get_suit != card.get_suit() and x.get_value() != card.get_value():
-                x.draw(True)
-
-        self.update()
+        index = self.deck.index(card)
+        for c in range(index + 1, len(self.deck)):
+            self.deck[c].draw(still_drawing=False)
 
     def update(self):
         for card in self.deck:
             card.update_draw(True)
+
+        pygame.display.flip()
 
     def get_pos(self):
         return self.x, self.y

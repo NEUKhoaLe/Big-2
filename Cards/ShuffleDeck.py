@@ -37,7 +37,11 @@ class ShuffleDeck(AbstractDeck):
             card.update_draw(True)
 
         if len(self.deck) == 0:
+            pygame.display.flip()
+            print("Drawing")
             self.surface.blit(self.background, (self.x, self.y))
+
+        pygame.display.flip()
 
     def shuffle(self):
         pass

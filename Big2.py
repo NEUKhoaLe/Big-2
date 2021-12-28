@@ -247,6 +247,7 @@ class Big2:
         self.game.enter_name()
         self.screen.fill(self.settings.bg_color)
         self.game.start_game()
+        start_game = True
 
         while True:
             self.reset_drawn_stat_rect()
@@ -265,8 +266,9 @@ class Big2:
                         # if self.back:
                         # self.back = False
                         # return
-
-            pygame.display.flip()
+            if start_game:
+                self.game.update()
+                start_game = False
 
     def hard_difficulty(self):
         while True:

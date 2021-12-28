@@ -166,6 +166,18 @@ class AbstractBoard:
 
         return deck
 
+    def draw_board2(self, shuffle=True, opponent=True, current=True, discard=True, player=True):
+        if shuffle:
+            self.draw_deck("shuffle", False)
+        if opponent:
+            self.draw_deck("opponent", False)
+        if current:
+            self.draw_deck("current", False)
+        if discard:
+            self.draw_deck("discard", False)
+        if player:
+            self.draw_deck("player", False)
+
     # Draw the board
     def draw_board(self, *args, game_update=False):
         args = list(args)

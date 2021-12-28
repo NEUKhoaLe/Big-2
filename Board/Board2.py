@@ -47,7 +47,7 @@ class Board2(AbstractBoard):
         if deck_type == "shuffle":
             self.move_to_shuffle_pos(game_update)
         elif deck_type == "opponent":
-            self.opponent_deck.draw_deck(False, game_update=game_update)
+            self.opponent_deck.draw_deck(False, game_update)
         elif deck_type == "current":
             self.current_deck.draw_deck(False, game_update)
         elif deck_type == "discard":
@@ -85,6 +85,8 @@ class Board2(AbstractBoard):
                     self.player_deck.draw_deck(True)
                 counter += 1
                 i -= 1
+
+        pygame.display.flip()
 
     # Method to move card from play pile to chosen pile
     def move_play_to_chosen(self, card, deck_type):
