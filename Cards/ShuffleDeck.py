@@ -29,17 +29,17 @@ class ShuffleDeck(AbstractDeck):
             x.update_vis(False)
             x.move(self.x, self.y, True)
 
-        if not game_update:
-            self.update()
+        self.update(game_update)
 
-    def update(self):
+    def update(self, game_update):
         for card in self.deck:
             card.update_draw(True)
 
         if len(self.deck) == 0:
             self.surface.blit(self.background, (self.x, self.y))
 
-        pygame.display.flip()
+        if not game_update:
+            pygame.display.flip()
 
     def shuffle(self):
         pass

@@ -36,19 +36,19 @@ class CurrentDeck(AbstractDeck):
 
             starting += x.get_width()
 
-            if not game_update:
-                self.update()
+            self.update(game_update)
 
     def draw_rest_deck(self, card):
         index = self.deck.index(card)
         for c in range(index + 1, len(self.deck)):
             self.deck[c].draw(still_drawing=False)
 
-    def update(self):
+    def update(self, game_update):
         for card in self.deck:
             card.update_draw(True)
 
-        pygame.display.flip()
+        if not game_update:
+            pygame.display.flip()
 
     def get_pos(self):
         return self.x, self.y

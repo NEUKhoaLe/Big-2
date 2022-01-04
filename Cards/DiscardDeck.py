@@ -21,7 +21,7 @@ class DiscardDeck(AbstractDeck):
             card = self.deck[len(self.deck) - 1]
             card.draw(is_front=False)
 
-            self.update()
+            self.update(game_update)
 
         else:
             for x in self.deck:
@@ -29,13 +29,14 @@ class DiscardDeck(AbstractDeck):
                 x.update_vis(False)
 
                 if not game_update:
-                    self.update()
+                    self.update(game_update)
 
-    def update(self):
+    def update(self, game_update):
         for card in self.deck:
             card.update_draw(True)
 
-        pygame.display.flip()
+        if not game_update:
+            pygame.display.flip()
 
     def get_pos(self):
         return self.x, self.y

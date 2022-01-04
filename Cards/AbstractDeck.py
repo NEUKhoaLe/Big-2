@@ -64,7 +64,7 @@ class AbstractDeck:
     def get_pos(self):
         pass
 
-    def update(self):
+    def update(self, game_update):
         pass
 
     def reset(self):

@@ -18,6 +18,7 @@ class PlayerDeck(AbstractDeck):
         self.collide_point = collide_point
 
         self.chosen_deck = []
+        self.was_chosen_deck = []
 
         self.chosen_y = chosen_y
         self.settings = Settings()
@@ -45,11 +46,14 @@ class PlayerDeck(AbstractDeck):
                            round((self.width - self.card_width) / (num_cards - 1)))
 
         update_rect(self.collide_point, self.x, self.y,
-                    (num_cards * self.card_width), self.card_height)
+                    min((num_cards * self.card_width), self.width), self.card_height)
 
         for i in range(len(self.deck)):
-            self.surface.blit(self.half_card, (starting, self.chosen_y))
-            self.surface.blit(self.background, (starting + 100, self.y))
+            if self.was_chosen_deck.__contains__(self.deck[i]):
+                self.surface.blit(self.half_card, (starting, self.chosen_y))
+                self.was_chosen_deck.remove(self.deck[i])
+
+            self.surface.blit(self.background, (starting + self.card_width, self.y))
 
             x = self.deck[i]
 
@@ -63,8 +67,12 @@ class PlayerDeck(AbstractDeck):
                     x.move(starting, self.y, False)
 
                 if i != len(self.deck) - 1:
-                    x.update_card_block_area(starting + card_pos, self.y,
-                                             self.card_width - card_pos, self.card_height)
+                    if not self.deck[i + 1].get_chosen():
+                        x.update_card_block_area(starting + card_pos, self.y,
+                                                 self.card_width - card_pos, self.card_height)
+                    else:
+                        x.update_card_block_area(starting + card_pos, self.y,
+                                                 self.card_width - card_pos, self.card_height/2)
                 else:
                     x.update_card_block_area(starting + card_pos, self.y, 0, 0)
 
@@ -74,17 +82,22 @@ class PlayerDeck(AbstractDeck):
                 original_x, original_y = x.cur_pos()
 
                 if i != len(self.deck) - 1:
-                    x.update_card_block_area(original_x + card_pos,
-                                             self.y,
-                                             self.card_width - card_pos,
-                                             self.y - self.chosen_y)
+                    if not self.deck[i+1].get_chosen():
+                        x.update_card_block_area(original_x + card_pos,
+                                                 self.y,
+                                                 self.card_width - card_pos,
+                                                 self.y - self.chosen_y)
+                    else:
+                        x.update_card_block_area(original_x + card_pos,
+                                                 self.y + self.card_height/2,
+                                                 self.card_width - card_pos,
+                                                 self.card_height/2)
                 else:
                     x.update_card_block_area(original_x + card_pos, self.y, 0, 0)
 
             starting += card_pos
 
-            if not game_update:
-                self.update()
+            self.update(game_update)
 
     def draw_rest_deck(self, card):
         index = self.deck.index(card)
@@ -92,11 +105,12 @@ class PlayerDeck(AbstractDeck):
             if not (self.deck[c].get_chosen() and c == index + 1):
                 self.deck[c].draw(still_drawing=False)
 
-    def update(self):
+    def update(self, game_update):
         for card in self.deck:
             card.update_draw(True)
 
-        pygame.display.flip()
+        if not game_update:
+            pygame.display.flip()
 
     def flip_vis(self, boolean):
         for card in self.deck:
@@ -120,6 +134,7 @@ class PlayerDeck(AbstractDeck):
                 if card.get_chosen():
                     self.move_to_deck(card)
                     card.change_chosen(False)
+                    self.was_chosen_deck.append(card)
                     return
                 else:
                     self.move_to_chosen(card)
