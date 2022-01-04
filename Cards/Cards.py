@@ -218,10 +218,11 @@ class Cards:
         if not permanent:
             self.display.fill(self.settings.bg_color)
             self.display.blit(surface, (0, 0))
+            pygame.display.flip()
         else:
             self.display.fill(self.settings.bg_color)
             self.display.blit(self.surface, (0, 0))
-        pygame.display.flip()
+            # pygame.display.flip()
 
     def reset_surface(self):
         self.display.fill(self.settings.bg_color)

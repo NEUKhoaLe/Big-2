@@ -61,7 +61,7 @@ class PlayerDeck(AbstractDeck):
 
             if not x.get_chosen():
                 x.update_vis(True)
-                if x.cur_pos()[1] == self.y:
+                if x.cur_pos()[1] == self.y or x.cur_pos()[1] == self.chosen_y:
                     x.move(starting, self.y, True)
                 else:
                     x.move(starting, self.y, False)
@@ -89,9 +89,9 @@ class PlayerDeck(AbstractDeck):
                                                  self.y - self.chosen_y)
                     else:
                         x.update_card_block_area(original_x + card_pos,
-                                                 self.y + self.card_height/2,
+                                                 self.chosen_y,
                                                  self.card_width - card_pos,
-                                                 self.card_height/2)
+                                                 self.card_height)
                 else:
                     x.update_card_block_area(original_x + card_pos, self.y, 0, 0)
 
