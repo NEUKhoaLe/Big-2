@@ -22,6 +22,8 @@ class OpponentDeck(AbstractDeck):
         self.settings = Settings()
 
         self.background = pygame.Surface((self.width, self.card_height))
+        self.half_card = pygame.Surface((self.width, self.card_height/2))
+        self.half_card.fill(self.settings.bg_color)
         self.background.fill(self.settings.bg_color)
 
     def change_pos(self, x, y):
@@ -44,8 +46,12 @@ class OpponentDeck(AbstractDeck):
         update_rect(self.collide_point, self.x, self.y,
                     (num_cards * self.card_width), self.card_height)
 
-        for x in self.deck:
+        for i in range(len(self.deck)):
+            self.surface.blit(self.half_card, (starting, self.y + self.card_height))
             self.surface.blit(self.background, (starting + 100, self.y))
+
+            x = self.deck[i]
+
             self.draw_rest_deck(x)
 
             if x.cur_pos() == (self.settings.shuffle_x, self.settings.shuffle_y):
@@ -58,17 +64,24 @@ class OpponentDeck(AbstractDeck):
                 else:
                     x.move(starting, self.y, False)
 
-                x.update_card_block_area(starting + card_pos, self.card_height,
-                                         self.card_width - card_pos, self.card_height)
+                if i != len(self.deck) - 1:
+                    x.update_card_block_area(starting + card_pos, self.y,
+                                             self.card_width - card_pos, self.card_height)
+                else:
+                    x.update_card_block_area(starting + card_pos, self.y, 0, 0)
 
             # Do this portion
             else:
                 x.move(starting, self.chosen_y, False)
                 original_x, original_y = x.cur_pos()
-                x.update_card_block_area(original_x + card_pos,
-                                         self.y,
-                                         self.card_width - card_pos,
-                                         self.y - self.chosen_y)
+
+                if i != len(self.deck) - 1:
+                    x.update_card_block_area(original_x + card_pos,
+                                             self.y,
+                                             self.card_width - card_pos,
+                                             self.chosen_y - self.y)
+                else:
+                    x.update_card_block_area(original_x + card_pos, self.y, 0, 0)
 
             starting += card_pos
 
@@ -78,7 +91,8 @@ class OpponentDeck(AbstractDeck):
     def draw_rest_deck(self, card):
         index = self.deck.index(card)
         for c in range(index + 1, len(self.deck)):
-            self.deck[c].draw(still_drawing=False)
+            if not (self.deck[c].get_chosen() and c == index + 1):
+                self.deck[c].draw(still_drawing=False)
 
     def update(self):
         for card in self.deck:
@@ -91,7 +105,13 @@ class OpponentDeck(AbstractDeck):
             card.update_vis(boolean)
 
     def select_deck(self, mouse_x, mouse_y):
-        return self.collide_point.collidepoint((mouse_x, mouse_y))
+        general_deck = self.collide_point.collidepoint((mouse_x, mouse_y))
+        collide = False
+
+        for card in self.deck:
+            collide = collide or card.handle_selected(mouse_x, mouse_y)
+
+        return collide or general_deck
 
     def get_pos(self):
         return self.x, self.y

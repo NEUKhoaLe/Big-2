@@ -247,7 +247,8 @@ class Big2:
         self.game.enter_name()
         self.screen.fill(self.settings.bg_color)
         self.game.start_game()
-        start_game = True
+
+        self.game.update()
 
         while True:
             self.reset_drawn_stat_rect()
@@ -261,14 +262,14 @@ class Big2:
                     if event.button == 1:
                         if self.game.get_turn() == "player 1":
                             mouse_x, mouse_y = pygame.mouse.get_pos()
-                            self.game.select(mouse_x, mouse_y)
-                        # self.menu_mouse_action()
-                        # if self.back:
-                        # self.back = False
-                        # return
-            if start_game:
-                self.game.update()
-                start_game = False
+                            deck_selected = self.game.select(mouse_x, mouse_y)
+
+                            if deck_selected == "player":
+                                self.game.update(o=False, c=False, d=False, s=False)
+                            elif deck_selected == "opponent":
+                                self.game.update(p=False, c=False, d=False, s=False)
+
+            pygame.display.flip()
 
     def hard_difficulty(self):
         while True:

@@ -121,8 +121,10 @@ class Board2(AbstractBoard):
     def choose_card(self, mouse_x, mouse_y, cur_player):
         if self.select_deck(mouse_x, mouse_y) == "player":
             self.player_deck.handle_selected(mouse_x, mouse_y)
+            return "player"
         elif self.select_deck(mouse_x, mouse_y) == "opponent":
             self.opponent_deck.handle_selected(mouse_x, mouse_y)
+            return "opponent"
 
     def rotate_deck(self):
         temp_x, temp_y = self.opponent_deck.get_pos()

@@ -194,7 +194,7 @@ class Cards:
                 self.update_draw(permanent=False, surface=temp_surface)
             else:
                 self.surface.blit(self.front_image, (self.x, self.y))
-                # self.update_draw(permanent=True)
+                # slf.update_draw(permanent=True)
         else:
             if still_drawing:
                 temp_surface = copy.copy(self.surface)
@@ -308,3 +308,6 @@ class Cards:
 
     def get_value(self):
         return self.value
+
+    def equals(self, card):
+        return (self.get_value() == card.get_value()) and (self.get_suit() == card.get_suit())
