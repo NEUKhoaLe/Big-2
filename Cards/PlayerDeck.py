@@ -234,3 +234,6 @@ class PlayerDeck(AbstractDeck):
                 card = self.deck[i]
                 card.draw(still_drawing=False)
                 i += 1
+
+    def get_chosen(self):
+        return self.chosen_deck.copy()

@@ -10,7 +10,7 @@ def update_rect(rect, x, y, width, height):
     return rect.update(x, y, width, height)
 
 
-class OpponentDeck(AbstractDeck):
+class OppositeDeck(AbstractDeck):
     def __init__(self, x, y, chosen_y, width, collide_point, display, surface):
         super().__init__(display, surface)
         self.x = x

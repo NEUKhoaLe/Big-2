@@ -76,6 +76,12 @@ class AbstractDeck:
     def shuffle_deck(self):
         pass
 
+    def get_chosen(self):
+        pass
+
+    def get_deck(self):
+        return self.deck.copy()
+
     """
     A deck needs a:
     - list to store the cards

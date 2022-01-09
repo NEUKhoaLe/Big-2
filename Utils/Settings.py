@@ -18,11 +18,11 @@ class Settings:
         self.player_name_font = pygame.font.SysFont('jetsbrainsmono.ttf', 50)
 
         self.player_deck_2_x = 50
-        self.opponent_deck_2_x = 50
+        self.opposite_deck_2_x = 50
         self.player_y = 775
-        self.opponent_y = 75
+        self.opposite_y = 75
         self.player_chosen_y = 700
-        self.opponent_chosen_y = 150
+        self.opposite_chosen_y = 150
         self.play_deck_width_2 = 900
 
         self.current_deck_2_x = 100
@@ -31,6 +31,17 @@ class Settings:
 
         self.discard_deck_x_2 = 750
         self.discard_deck_y_2 = 50
+
+        self.player_name_x = 500
+        self.player_name_y = 963
+
+        self.opposite_name_x = 500
+        self.opposite_name_y = 37
+
+        self.play_button_x = 802
+        self.play_button_y = 963
+        self.skip_button_x = 903
+        self.skip_button_y = 963
 
         self.shuffle_x = 450
         self.shuffle_y = 425

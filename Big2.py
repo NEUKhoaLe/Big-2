@@ -260,13 +260,13 @@ class Big2:
                     sys.exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
-                        if self.game.get_turn() == "player 1":
+                        if self.game.get_turn() == "player":
                             mouse_x, mouse_y = pygame.mouse.get_pos()
                             deck_selected = self.game.select(mouse_x, mouse_y)
 
                             if deck_selected == "player":
                                 self.game.update(o=False, c=False, d=False, s=False)
-                            elif deck_selected == "opponent":
+                            elif deck_selected == "opposite":
                                 self.game.update(p=False, c=False, d=False, s=False)
 
             pygame.display.flip()

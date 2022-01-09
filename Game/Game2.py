@@ -12,20 +12,21 @@ class Game2(AbstractGame):
 
         self.surface = pygame.surface.Surface((self.settings.screen_width, self.settings.screen_height))
         self.surface.fill(self.settings.bg_color)
-        self.board = Board2(self.display, self.surface)
 
         # The player here will be player 1
-        self.player1 = Player()
-        self.player2 = Player()
+        self.player1 = Player(self.surface, player_type="player")
+        self.player2 = Player(self.surface, player_type="opposite")
 
-        self.turn = "player 1"
+        self.board = Board2(self.display, self.surface, self.player1, self.player2)
+
+        self.turn = "player"
 
         # The Play button
-        self.play_button = Buttons("Play", self.settings.game_button_font,
-                                   250, 525, self.surface)
+        self.play_button = Buttons("  Play  ", self.settings.game_button_font,
+                                   self.settings.play_button_x, self.settings.play_button_y, self.surface)
         # The Skip button
-        self.skip_button = Buttons("Skip", self.settings.game_button_font,
-                                   450, 525, self.surface)
+        self.skip_button = Buttons("  Skip  ", self.settings.game_button_font,
+                                   self.settings.skip_button_x, self.settings.skip_button_y, self.surface)
 
     def start_game(self):
         self.deal()
@@ -96,6 +97,8 @@ class Game2(AbstractGame):
         self.player2.enter_name(player2_name)
 
         self.clear()
+        self.player1.draw_name()
+        self.player2.draw_name()
 
     # Dealing The Card
     def deal(self):
@@ -104,7 +107,12 @@ class Game2(AbstractGame):
 
     # Selecting a card/un-selecting cards, and or board buttons
     def select(self, mouse_x, mouse_y):
-        return self.board.choose_card(mouse_x, mouse_y, self.turn)
+        if self.play_button.collide_point(mouse_x, mouse_y):
+            self.board.play(self.turn)
+        elif self.skip_button.collide_point(mouse_x, mouse_y):
+            self.change_turn()
+        else:
+            return self.board.choose_card(mouse_x, mouse_y, self.turn)
         # self.update()
 
     # Updating the game
@@ -112,7 +120,11 @@ class Game2(AbstractGame):
     # Draw the player's .display.flip()names
     # Draw the buttons
     def update(self, s=True, o=True, c=True, d=True, p=True):
-        self.board.draw_board(shuffle=s, opponent=o, current=c, discard=d, player=p)
+        self.player1.draw_name()
+        self.player2.draw_name()
+        self.skip_button.draw_button()
+        self.play_button.draw_button()
+        self.board.draw_board(shuffle=s, opposite=o, current=c, discard=d, player=p)
 
     def clear(self):
         self.surface.fill(self.settings.bg_color)
@@ -123,11 +135,11 @@ class Game2(AbstractGame):
     def quit(self):
         pass
 
-    def skip_turn(self):
-        pass
-
     def change_turn(self):
-        pass
+        if self.turn == "player":
+            self.turn = "opposite"
+        elif self.turn == "opposite":
+            self.turn = "player"
 
     def change_score(self):
         pass

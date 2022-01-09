@@ -3,15 +3,15 @@ import pygame
 from Board.AbstractBoard import AbstractBoard
 from Cards.CurrentDeck import CurrentDeck
 from Cards.DiscardDeck import DiscardDeck
-from Cards.OpponentDeck import OpponentDeck
 from Cards.PlayerDeck import PlayerDeck
+from Cards.OppositeDeck import OppositeDeck
 
 
 class Board2(AbstractBoard):
-    def __init__(self, display, surface):
+    def __init__(self, display, surface, player, opposite):
         super().__init__(display, surface)
 
-        self.opponent_deck_collide_point = pygame.Rect(self.settings.opponent_deck_2_x, self.settings.opponent_y,
+        self.opposite_deck_collide_point = pygame.Rect(self.settings.opposite_deck_2_x, self.settings.opposite_y,
                                                        0, 0)
         self.player_deck_collide_point = pygame.Rect(self.settings.player_deck_2_x, self.settings.player_y,
                                                      0, 0)
@@ -22,9 +22,16 @@ class Board2(AbstractBoard):
                                       self.settings.player_chosen_y, self.settings.play_deck_width_2,
                                       self.player_deck_collide_point, self.display, self.surface)
         # The opponent's Deck
-        self.opponent_deck = OpponentDeck(self.settings.opponent_deck_2_x, self.settings.opponent_y,
-                                          self.settings.opponent_chosen_y, self.settings.play_deck_width_2,
-                                          self.opponent_deck_collide_point, self.display, self.surface)
+        self.opposite_deck = OppositeDeck(self.settings.opposite_deck_2_x, self.settings.opposite_y,
+                                          self.settings.opposite_chosen_y, self.settings.play_deck_width_2,
+                                          self.opposite_deck_collide_point, self.display, self.surface)
+
+        self.player = player
+        self.opposite = opposite
+
+        self.player.enter_deck(self.player_deck)
+        self.opposite.enter_deck(self.opposite_deck)
+
         # The current play deck: where we will place the cards
         # That are currently being played.
         self.current_deck = CurrentDeck(self.settings.current_deck_2_x, self.settings.current_deck_y,
@@ -46,14 +53,14 @@ class Board2(AbstractBoard):
     def draw_deck(self, deck_type, game_update):
         if deck_type == "shuffle":
             self.move_to_shuffle_pos(game_update)
-        elif deck_type == "opponent":
-            self.opponent_deck.draw_deck(False, game_update)
+        elif deck_type == "opposite":
+            self.opposite.draw_deck(False, game_update)
         elif deck_type == "current":
             self.current_deck.draw_deck(False, game_update)
         elif deck_type == "discard":
             self.discard_deck.draw_deck(False, game_update)
         elif deck_type == "player":
-            self.player_deck.draw_deck(False, game_update)
+            self.player.draw_deck(False, game_update)
 
     # Method to deal the shuffled card.
     # takes in the winner of the last game.
@@ -61,16 +68,16 @@ class Board2(AbstractBoard):
     # Must implement the move.
     def deal(self, last_winner):
         counter = 0
-        if last_winner == "player 1":
+        if last_winner == "player":
             i = self.shuffledeck.get_length() - 1
             while i >= 0:
                 self.shuffledeck.card_change_in_play(i, True)
                 if counter % 2 == 0:
-                    self.player_deck.add_card(self.shuffledeck.remove_card("last"))
-                    self.player_deck.draw_deck(True)
+                    self.player.add_card(self.shuffledeck.remove_card("last"))
+                    self.player.draw_deck(True)
                 else:
-                    self.opponent_deck.add_card(self.shuffledeck.remove_card("last"))
-                    self.opponent_deck.draw_deck(True)
+                    self.opposite.add_card(self.shuffledeck.remove_card("last"))
+                    self.opposite.draw_deck(True)
                 counter += 1
                 i -= 1
         else:
@@ -78,11 +85,11 @@ class Board2(AbstractBoard):
             while i >= 0:
                 self.shuffledeck.card_change_in_play(i, True)
                 if counter % 2 == 1:
-                    self.opponent_deck.add_card(self.shuffledeck.remove_card("last"))
-                    self.opponent_deck.draw_deck(True)
+                    self.opposite.add_card(self.shuffledeck.remove_card("last"))
+                    self.opposite.draw_deck(True)
                 else:
-                    self.player_deck.add_card(self.shuffledeck.remove_card("last"))
-                    self.player_deck.draw_deck(True)
+                    self.player.add_card(self.shuffledeck.remove_card("last"))
+                    self.player.draw_deck(True)
                 counter += 1
                 i -= 1
 
@@ -99,38 +106,95 @@ class Board2(AbstractBoard):
     def move_chosen_to_current(self, pile_from, cards):
         if pile_from == "player":
             pass
-        elif pile_from == "opponent":
+        elif pile_from == "opposite":
             pass
 
     # Method to flip the visibility.
     def flip_vis(self, deck_type, boolean):
-        if deck_type == "opponent":
-            self.opponent_deck.flip_vis(boolean)
+        if deck_type == "opposite":
+            self.opposite.flip_vis(boolean)
         elif deck_type == "player":
-            self.player_deck.flip_vis(boolean)
+            self.player.flip_vis(boolean)
 
     def select_deck(self, mouse_x, mouse_y):
-        if self.player_deck.select_deck(mouse_x, mouse_y):
+        if self.player.select_deck(mouse_x, mouse_y):
             return "player"
-        elif self.opponent_deck.select_deck(mouse_x, mouse_y):
-            return "opponent"
+        elif self.opposite.select_deck(mouse_x, mouse_y):
+            return "opposite"
 
     # Handle collision. Choosing a card. Passes in x and y position of mouse. First find which deck was chosen
     # and then go through every card in that deck to find the card. Move that card to the chosen
     # If a chosen card is selected, then it is "unchosen" i.e. removed from the chosen pile
     def choose_card(self, mouse_x, mouse_y, cur_player):
         if self.select_deck(mouse_x, mouse_y) == "player":
-            self.player_deck.handle_selected(mouse_x, mouse_y)
+            self.player.handle_selected(mouse_x, mouse_y)
             return "player"
-        elif self.select_deck(mouse_x, mouse_y) == "opponent":
-            self.opponent_deck.handle_selected(mouse_x, mouse_y)
-            return "opponent"
+        elif self.select_deck(mouse_x, mouse_y) == "opposite":
+            self.opposite.handle_selected(mouse_x, mouse_y)
+            return "opposite"
 
     def rotate_deck(self):
-        temp_x, temp_y = self.opponent_deck.get_pos()
+        temp_x, temp_y = self.opposite.get_pos()
 
-        self.opponent_deck.change_pos(self.player_deck.get_pos()[0], self.player_deck.get_pos()[1])
-        self.player_deck.change_pos(temp_x, temp_y)
+        self.opposite.change_pos(self.player.get_pos()[0], self.player.get_pos()[1])
+        self.player.change_pos(temp_x, temp_y)
 
     def move_to_discard(self):
         pass
+
+    def play(self, turn):
+        operating_deck = None
+        if turn == "player":
+            operating_deck = self.player.get_chosen_deck()
+        elif turn == "opposite":
+            operating_deck = self.opposite.get_chosen_deck()
+
+        if self.valid_move(operating_deck):
+            pass
+
+    # It is a valid move if:
+    # - There is cards in the chosen deck
+    # - there is no cards in the current pile
+    # - there are the same number of cards in the chosen and the current deck
+    # - If there are more than 1 card, then the cards must either be:
+    # - Doubles, Triples, or Quadruples
+    # - Consecutive, with at least 3 in a row
+    # - Doubles consecutive, with at least 3
+    # - If there are only one card, then it must follow these rules:
+    # - Specials > 2 > A > K > Q > J > 10 > 9 > 8 > 7 > 6 > 5 > 4 > 3 > 2
+    # - Hearts > Diamonds > Clubs > Spades
+    # - Specials have to be these:
+    # - Doubles Consecutive, with 3 in a row being better than ONE 2 of any suit
+    # - Doubles Consecutive with 4 in a row or better is stronger than TWO 2 of any suits,
+    # - And can be played at any point.
+    # - Quadruple of any number is stronger than TWO 2 of any suits
+    # Special Rules:
+    # - If a player has 12 cards that is in a row (3 to A) they automatically win
+    # - If a player has 6 pairs of cards, then they automatically win
+    # - If a player has 4 2's, they automatically win
+    def valid_move(self, operating_deck):
+        if len(operating_deck) == 0:
+            return False
+
+        if len(operating_deck) != self.current_deck.get_length():
+            return False
+
+        if self.current_deck.get_length() == 0:
+            if len(operating_deck) == 1:
+                return True
+            elif len(operating_deck) == 2:
+                return self.is_double(operating_deck)
+            elif len(operating_deck) >= 3:
+                if len(operating_deck) % 2 == 0:
+                    pass
+
+    def is_double(self, operating_deck):
+        return operating_deck[0].get_value() == operating_deck[1].get_value()
+
+    def is_consecutive(self, operating_deck):
+        i = 1
+        while i < len(operating_deck):
+            if operating_deck[i-1].get_value() != operating_deck[i].get_value() + 1:
+                return False
+
+        return True

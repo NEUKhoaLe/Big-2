@@ -166,11 +166,11 @@ class AbstractBoard:
 
         return deck
 
-    def draw_board(self, shuffle=True, opponent=True, current=True, discard=True, player=True):
+    def draw_board(self, shuffle=True, opposite=True, current=True, discard=True, player=True):
         if shuffle:
             self.draw_deck("shuffle", False)
-        if opponent:
-            self.draw_deck("opponent", False)
+        if opposite:
+            self.draw_deck("opposite", False)
         if current:
             self.draw_deck("current", False)
         if discard:
@@ -215,4 +215,19 @@ class AbstractBoard:
     # swapping the position of each deck 90 degrees counter clockwise
     # 180 degrees for two player
     def rotate_deck(self):
+        pass
+
+    def play(self, turn):
+        pass
+
+    def valid_move(self, turn):
+        pass
+
+    def is_double(self, operating_deck):
+        pass
+
+    def is_consecutive(self, operating_deck):
+        pass
+
+    def is_consecutive_double(self, operating_deck):
         pass
