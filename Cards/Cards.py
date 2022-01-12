@@ -64,7 +64,7 @@ class Cards:
     # instantly. If shuffle is true, then we are moving it to the shuffle
     # position. If it is false, we are dealing, playing, which will have a smooth position.
     # We have to move the image and the rectangle at the same time.
-    def move(self, x, y, shuffle=False):
+    def move(self, x, y, shuffle=False, drag=False):
         x_distance = x - self.x
         y_distance = y - self.y
 
@@ -181,7 +181,10 @@ class Cards:
             self.y = y
             self.draw(False, self.front)
 
-        self.draw(is_front=self.front)
+        if not drag:
+            self.draw(is_front=self.front)
+        else:
+            self.draw(is_front=self.front, still_drawing=True)
 
         self.update_card_collision(self.x, self.y)
 

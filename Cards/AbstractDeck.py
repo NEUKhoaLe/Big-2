@@ -43,7 +43,7 @@ class AbstractDeck:
     def select_deck(self, mouse_x, mouse_y):
         return False
 
-    def handle_selected(self, mouse_x, mouse_y):
+    def handle_selected(self, mouse_x, mouse_y, dragging):
         pass
 
     def move_to_chosen(self, card):
@@ -82,11 +82,8 @@ class AbstractDeck:
     def get_deck(self):
         return self.deck.copy()
 
-    """
-    A deck needs a:
-    - list to store the cards
-    - Method to add cards
-    - Method to remove cards
-    - To draw selective cards
-    - Reset method.
-    """
+    def move_to_mouse(self, mouse_x, mouse_y):
+        pass
+
+    def undrag(self, mouse_x, mouse_y):
+        pass

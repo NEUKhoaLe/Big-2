@@ -209,7 +209,7 @@ class AbstractBoard:
     def flip_vis(self, deck_type, boolean):
         pass
 
-    def choose_card(self, mouse_x, mouse_y, cur_player):
+    def choose_card(self, mouse_x, mouse_y, cur_player, dragging):
         pass
 
     # swapping the position of each deck 90 degrees counter clockwise
@@ -230,4 +230,10 @@ class AbstractBoard:
         pass
 
     def is_consecutive_double(self, operating_deck):
+        pass
+
+    def move_to_mouse(self, mouse_x, mouse_y, turn):
+        pass
+
+    def undrag(self, mouse_x, mouse_y, turn):
         pass

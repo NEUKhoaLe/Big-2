@@ -155,7 +155,7 @@ class OppositeDeck(AbstractDeck):
     def get_pos(self):
         return self.x, self.y
 
-    def handle_selected(self, mouse_x, mouse_y):
+    def handle_selected(self, mouse_x, mouse_y, dragging):
         i = len(self.deck) - 1
         while i >= 0:
             card = self.deck[i]

@@ -23,6 +23,12 @@ class PlayerDeck(AbstractDeck):
 
         self.was_chosen_deck = []
         self.to_be_chosen_cards = []
+
+        self.drag_card = []
+        self.drag_card_original_index = -1
+        self.mouse_x_offset = -1
+        self.mouse_y_offset = -1
+
         self.card_mid_point_y = self.y - self.card_height/2
 
         self.chosen_y = chosen_y
@@ -151,12 +157,20 @@ class PlayerDeck(AbstractDeck):
     def get_pos(self):
         return self.x, self.y
 
-    def handle_selected(self, mouse_x, mouse_y):
+    def handle_selected(self, mouse_x, mouse_y, dragging):
         i = len(self.deck) - 1
         while i >= 0:
             card = self.deck[i]
             if card.handle_selected(mouse_x, mouse_y):
-                if card.get_chosen():
+                if dragging:
+                    self.drag_card.append(card)
+                    self.drag_card_original_index = i
+                    self.deck.remove(card)
+                    card_x, card_y = card.cur_pos()
+                    self.mouse_x_offset = card_x - mouse_x
+                    self.mouse_y_offset = card_y - mouse_y
+                    return
+                elif card.get_chosen():
                     self.move_to_deck(card)
                     card.change_chosen(False)
                     self.was_chosen_deck.append(card)
@@ -237,3 +251,31 @@ class PlayerDeck(AbstractDeck):
 
     def get_chosen(self):
         return self.chosen_deck.copy()
+
+    def move_to_mouse(self, mouse_x, mouse_y):
+        new_pos_x = mouse_x + self.mouse_x_offset
+        new_pos_y = mouse_y + self.mouse_y_offset
+
+        self.drag_card[0].move(new_pos_x, new_pos_y, drag=True)
+
+    def undrag(self, mouse_x, mouse_y):
+        i = len(self.deck) - 1
+        successful = False
+
+        while i >= 0:
+            card = self.deck[i]
+            if card.handle_selected(mouse_x, mouse_y) and not card.equals(self.drag_card[0]):
+                self.deck.insert(i, self.drag_card.pop())
+                successful = True
+                break
+
+            i -= 1
+
+        if not successful:
+            self.deck.insert(self.drag_card_original_index, self.drag_card.pop())
+
+        self.drag_card_original_index = -1
+        self.mouse_y_offset = -1
+        self.mouse_x_offset = -1
+        self.drag_card = []
+

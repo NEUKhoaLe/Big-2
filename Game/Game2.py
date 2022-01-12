@@ -21,6 +21,8 @@ class Game2(AbstractGame):
 
         self.turn = "player"
 
+        self.have_selected_card_drag = False
+
         # The Play button
         self.play_button = Buttons("  Play  ", self.settings.game_button_font,
                                    self.settings.play_button_x, self.settings.play_button_y, self.surface)
@@ -112,7 +114,7 @@ class Game2(AbstractGame):
         elif self.skip_button.collide_point(mouse_x, mouse_y):
             self.change_turn()
         else:
-            return self.board.choose_card(mouse_x, mouse_y, self.turn)
+            return self.board.choose_card(mouse_x, mouse_y, self.turn, False)
         # self.update()
 
     # Updating the game
@@ -146,3 +148,15 @@ class Game2(AbstractGame):
 
     def get_turn(self):
         return self.turn
+
+    def dragging_card(self, mouse_x, mouse_y, dragging):
+        if not self.have_selected_card_drag and dragging:
+            self.board.choose_card(mouse_x, mouse_y, self.turn, dragging)
+            self.have_selected_card_drag = True
+
+        if dragging and self.have_selected_card_drag:
+            self.board.move_to_mouse(mouse_x, mouse_y, self.turn)
+
+        if not dragging:
+            self.board.undrag(mouse_x, mouse_y, self.turn)
+            self.have_selected_card_drag = False

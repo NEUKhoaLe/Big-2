@@ -125,12 +125,12 @@ class Board2(AbstractBoard):
     # Handle collision. Choosing a card. Passes in x and y position of mouse. First find which deck was chosen
     # and then go through every card in that deck to find the card. Move that card to the chosen
     # If a chosen card is selected, then it is "unchosen" i.e. removed from the chosen pile
-    def choose_card(self, mouse_x, mouse_y, cur_player):
+    def choose_card(self, mouse_x, mouse_y, cur_player, dragging):
         if self.select_deck(mouse_x, mouse_y) == "player":
-            self.player.handle_selected(mouse_x, mouse_y)
+            self.player.handle_selected(mouse_x, mouse_y, dragging)
             return "player"
         elif self.select_deck(mouse_x, mouse_y) == "opposite":
-            self.opposite.handle_selected(mouse_x, mouse_y)
+            self.opposite.handle_selected(mouse_x, mouse_y, dragging)
             return "opposite"
 
     def rotate_deck(self):
@@ -198,3 +198,15 @@ class Board2(AbstractBoard):
                 return False
 
         return True
+
+    def move_to_mouse(self, mouse_x, mouse_y, turn):
+        if turn == "player":
+            self.player.move_to_mouse(mouse_x, mouse_y)
+        elif turn == "opposite":
+            self.opposite.move_to_mouse(mouse_x, mouse_y)
+
+    def undrag(self, mouse_x, mouse_y, turn):
+        if turn == "player":
+            self.player.undrag(mouse_x, mouse_y)
+        elif turn == "opposite":
+            self.opposite.undrag(mouse_x, mouse_y)

@@ -24,6 +24,8 @@ class Big2:
 
         self.game = None
 
+        self.dragging = None
+
         self.back_button = Buttons("Back", back_font, 25, 25, self.screen)
         self.solo_button = Buttons("Single Player", main_screen_font, 500, 500, self.screen)
         self.multi_button = Buttons("Multi Player", main_screen_font, 500, 550, self.screen)
@@ -247,6 +249,7 @@ class Big2:
         self.game.enter_name()
         self.screen.fill(self.settings.bg_color)
         self.game.start_game()
+        self.dragging = False
 
         self.game.update()
 
@@ -268,6 +271,19 @@ class Big2:
                                 self.game.update(o=False, c=False, d=False, s=False)
                             elif deck_selected == "opposite":
                                 self.game.update(p=False, c=False, d=False, s=False)
+                    if event.button == 3:
+                        self.dragging = True
+                if event.type == pygame.MOUSEBUTTONUP:
+                    if event.button == 3:
+                        self.dragging = False
+                        mouse_x, mouse_y = pygame.mouse.get_pos()
+
+                        self.game.dragging_card(mouse_x, mouse_y, self.dragging)
+                        self.game.update()
+
+            if self.dragging:
+                mouse_x, mouse_y = pygame.mouse.get_pos()
+                self.game.dragging_card(mouse_x, mouse_y, self.dragging)
 
             pygame.display.flip()
 
