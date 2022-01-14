@@ -268,18 +268,21 @@ class Big2:
                             deck_selected = self.game.select(mouse_x, mouse_y)
 
                             if deck_selected == "player":
-                                self.game.update(o=False, c=False, d=False, s=False)
-                            elif deck_selected == "opposite":
-                                self.game.update(p=False, c=False, d=False, s=False)
+                                self.game.update(o=False, c=False, d=False, s=False, gu=False)
+                        elif self.game.get_turn() == "opposite":
+                            mouse_x, mouse_y = pygame.mouse.get_pos()
+                            deck_selected = self.game.select(mouse_x, mouse_y)
+                            if deck_selected == "opposite":
+                                self.game.update(p=False, c=False, d=False, s=False, gu=False)
                     if event.button == 3:
                         self.dragging = True
                 if event.type == pygame.MOUSEBUTTONUP:
                     if event.button == 3:
                         self.dragging = False
                         mouse_x, mouse_y = pygame.mouse.get_pos()
-
                         self.game.dragging_card(mouse_x, mouse_y, self.dragging)
-                        self.game.update()
+
+                        self.game.update(gu=True)
 
             if self.dragging:
                 mouse_x, mouse_y = pygame.mouse.get_pos()

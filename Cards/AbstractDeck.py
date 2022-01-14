@@ -1,3 +1,5 @@
+import pygame
+
 from Cards.Cards import Cards
 
 
@@ -40,13 +42,7 @@ class AbstractDeck:
     def get_length(self):
         return len(self.deck)
 
-    def select_deck(self, mouse_x, mouse_y):
-        return False
-
     def handle_selected(self, mouse_x, mouse_y, dragging):
-        pass
-
-    def move_to_chosen(self, card):
         pass
 
     def move_to_deck(self, card):
@@ -58,6 +54,12 @@ class AbstractDeck:
     def draw_deck(self, move_from_shuffle, game_update=False):
         pass
 
+    def update_draw(self):
+        for card in self.deck:
+            card.draw(still_drawing=False)
+
+        self.update(False)
+
     def change_pos(self, x, y):
         pass
 
@@ -65,25 +67,17 @@ class AbstractDeck:
         pass
 
     def update(self, game_update):
-        pass
+        for card in self.deck:
+            card.update_draw(True)
+
+        if not game_update:
+            pygame.display.flip()
 
     def reset(self):
-        pass
-
-    def flip_vis(self, boolean):
         pass
 
     def shuffle_deck(self):
         pass
 
-    def get_chosen(self):
-        pass
-
     def get_deck(self):
         return self.deck.copy()
-
-    def move_to_mouse(self, mouse_x, mouse_y):
-        pass
-
-    def undrag(self, mouse_x, mouse_y):
-        pass

@@ -54,13 +54,25 @@ class Board2(AbstractBoard):
         if deck_type == "shuffle":
             self.move_to_shuffle_pos(game_update)
         elif deck_type == "opposite":
-            self.opposite.draw_deck(False, game_update)
+            if game_update:
+                self.opposite.update_draw()
+            else:
+                self.opposite.draw_deck(False, game_update)
         elif deck_type == "current":
-            self.current_deck.draw_deck(False, game_update)
+            if game_update:
+                self.current_deck.update_draw()
+            else:
+                self.current_deck.draw_deck(False, game_update)
         elif deck_type == "discard":
-            self.discard_deck.draw_deck(False, game_update)
+            if game_update:
+                self.discard_deck.update_draw()
+            else:
+                self.discard_deck.draw_deck(False, game_update)
         elif deck_type == "player":
-            self.player.draw_deck(False, game_update)
+            if game_update:
+                self.player.update_draw()
+            else:
+                self.player.draw_deck(False, game_update)
 
     # Method to deal the shuffled card.
     # takes in the winner of the last game.
@@ -126,12 +138,12 @@ class Board2(AbstractBoard):
     # and then go through every card in that deck to find the card. Move that card to the chosen
     # If a chosen card is selected, then it is "unchosen" i.e. removed from the chosen pile
     def choose_card(self, mouse_x, mouse_y, cur_player, dragging):
-        if self.select_deck(mouse_x, mouse_y) == "player":
-            self.player.handle_selected(mouse_x, mouse_y, dragging)
-            return "player"
-        elif self.select_deck(mouse_x, mouse_y) == "opposite":
-            self.opposite.handle_selected(mouse_x, mouse_y, dragging)
-            return "opposite"
+        if self.select_deck(mouse_x, mouse_y) == "player" and cur_player == "player":
+            return self.player.handle_selected(mouse_x, mouse_y, dragging)
+        elif self.select_deck(mouse_x, mouse_y) == "opposite" and cur_player == "opposite":
+            return self.opposite.handle_selected(mouse_x, mouse_y, dragging)
+        else:
+            return "Not Selected " + cur_player
 
     def rotate_deck(self):
         temp_x, temp_y = self.opposite.get_pos()

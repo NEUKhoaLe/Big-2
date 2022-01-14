@@ -28,8 +28,7 @@ class DiscardDeck(AbstractDeck):
                 x.move(self.x, self.y, False)
                 x.update_vis(False)
 
-                if not game_update:
-                    self.update(game_update)
+            self.update(game_update)
 
     def update(self, game_update):
         for card in self.deck:

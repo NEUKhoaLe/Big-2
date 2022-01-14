@@ -121,12 +121,12 @@ class Game2(AbstractGame):
     # Draw the board
     # Draw the player's .display.flip()names
     # Draw the buttons
-    def update(self, s=True, o=True, c=True, d=True, p=True):
+    def update(self, s=True, o=True, c=True, d=True, p=True, gu=False):
         self.player1.draw_name()
         self.player2.draw_name()
         self.skip_button.draw_button()
         self.play_button.draw_button()
-        self.board.draw_board(shuffle=s, opposite=o, current=c, discard=d, player=p)
+        self.board.draw_board(shuffle=s, opposite=o, current=c, discard=d, player=p, gu=gu)
 
     def clear(self):
         self.surface.fill(self.settings.bg_color)
@@ -151,12 +151,19 @@ class Game2(AbstractGame):
 
     def dragging_card(self, mouse_x, mouse_y, dragging):
         if not self.have_selected_card_drag and dragging:
-            self.board.choose_card(mouse_x, mouse_y, self.turn, dragging)
-            self.have_selected_card_drag = True
+            answer = self.board.choose_card(mouse_x, mouse_y, self.turn, dragging)
+            if answer == "Not Selected player" or answer == "Not Selected opposite":
+                self.have_selected_card_drag = False
+                return "nothing"
+            else:
+                self.have_selected_card_drag = True
 
         if dragging and self.have_selected_card_drag:
             self.board.move_to_mouse(mouse_x, mouse_y, self.turn)
 
         if not dragging:
-            self.board.undrag(mouse_x, mouse_y, self.turn)
-            self.have_selected_card_drag = False
+            if self.have_selected_card_drag:
+                self.board.undrag(mouse_x, mouse_y, self.turn)
+                self.have_selected_card_drag = False
+            else:
+                return "nothing"

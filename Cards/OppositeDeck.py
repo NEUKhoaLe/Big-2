@@ -1,38 +1,16 @@
-from math import ceil
 
 import pygame
 
-from Cards.AbstractDeck import AbstractDeck
-from Utils.Settings import Settings
+from Cards.SideDeck import SideDeck
 
 
 def update_rect(rect, x, y, width, height):
     return rect.update(x, y, width, height)
 
 
-class OppositeDeck(AbstractDeck):
+class OppositeDeck(SideDeck):
     def __init__(self, x, y, chosen_y, width, collide_point, display, surface):
-        super().__init__(display, surface)
-        self.x = x
-        self.y = y
-        self.width = width
-
-        self.chosen_deck = []
-        self.was_chosen_deck = []
-        self.to_be_chosen_cards = []
-        self.chosen_y = chosen_y
-
-        self.collide_point = collide_point
-        self.settings = Settings()
-
-        self.background = pygame.Surface((self.width, self.card_height))
-        self.half_card = pygame.Surface((self.width, self.card_height/2))
-        self.half_card.fill(self.settings.bg_color)
-        self.background.fill(self.settings.bg_color)
-
-    def change_pos(self, x, y):
-        self.x = x
-        self.y = y
+        super().__init__(x, y, chosen_y, width, collide_point, display, surface)
 
     def draw_deck(self, move_from_shuffle=False, game_update=False):
         if not move_from_shuffle:
@@ -73,8 +51,8 @@ class OppositeDeck(AbstractDeck):
                 self.draw_rest_deck(x)
 
                 x.update_vis(True)
-                if x.cur_pos()[1] == self.y or x.cur_pos()[1] == self.chosen_y:
-
+                if x.cur_pos()[1] == self.y or x.cur_pos()[1] == self.chosen_y\
+                        or self.was_drag_card.__contains__(x):
                     x.move(starting, self.y, True)
                 else:
                     x.move(starting, self.y, False)
@@ -103,7 +81,9 @@ class OppositeDeck(AbstractDeck):
 
                 self.draw_rest_deck(x)
 
-                x.move(starting, self.chosen_y, False)
+                if not self.was_drag_card.__contains__(x):
+                    x.move(starting, self.chosen_y, True)
+
                 original_x, original_y = x.cur_pos()
 
                 if i != len(self.deck) - 1:
@@ -122,119 +102,41 @@ class OppositeDeck(AbstractDeck):
                     x.update_card_block_area(original_x + card_pos, self.y, 0, 0)
 
             starting += card_pos
+            if self.was_drag_card.__contains__(x):
+                self.was_drag_card.remove(x)
 
-            self.update(game_update)
-
-    def draw_rest_deck(self, card):
-        index = self.deck.index(card)
-        for c in range(index + 1, len(self.deck)):
-            if (not (self.deck[c].get_chosen() and c == index + 1)) \
-                    or self.to_be_chosen_cards.__contains__(self.deck[c]):
-                self.deck[c].draw(still_drawing=False)
-
-    def update(self, game_update):
-        for card in self.deck:
-            card.update_draw(True)
-
-        if not game_update:
-            pygame.display.flip()
-
-    def flip_vis(self, boolean):
-        for card in self.deck:
-            card.update_vis(boolean)
-
-    def select_deck(self, mouse_x, mouse_y):
-        general_deck = self.collide_point.collidepoint((mouse_x, mouse_y))
-        collide = False
-
-        for card in self.deck:
-            collide = collide or card.handle_selected(mouse_x, mouse_y)
-
-        return collide or general_deck
-
-    def get_pos(self):
-        return self.x, self.y
+        self.update(game_update)
 
     def handle_selected(self, mouse_x, mouse_y, dragging):
         i = len(self.deck) - 1
         while i >= 0:
             card = self.deck[i]
             if card.handle_selected(mouse_x, mouse_y):
-                if card.get_chosen():
+                if dragging:
+                    self.drag_card.append(card)
+                    self.drag_card_original_index = i
+                    self.deck.remove(card)
+                    card_x, card_y = card.cur_pos()
+                    self.mouse_x_offset = card_x - mouse_x
+                    self.mouse_y_offset = card_y - mouse_y
+
+                    self.surface.blit(self.background, (card.cur_pos()))
+
+                    self.draw_rest_deck(self.deck[max(i - 1, 0)], for_drag=True)
+                    self.update(False)
+
+                    return "opposite"
+                elif card.get_chosen():
                     self.move_to_deck(card)
                     card.change_chosen(False)
                     self.was_chosen_deck.append(card)
-                    return
+                    return "opposite"
                 else:
                     self.move_to_chosen(card)
                     card.change_chosen(True)
                     self.to_be_chosen_cards.append(card)
-                    return
+                    return "opposite"
             i -= 1
 
-    def move_to_deck(self, card):
-        self.chosen_deck.remove(card)
-
-    def move_to_chosen(self, card):
-        self.chosen_deck.append(card)
-
-    def get_cover_width(self, index, card_pos, for_chosen):
-        remaining_width = self.card_width - card_pos
-        num_cards = min(index, ceil(remaining_width/card_pos))
-        min_width = card_pos
-
-        if num_cards == index:
-            i = index - 1
-            manual_break = False
-            while i >= 0:
-                card = self.deck[i]
-                if for_chosen:
-                    if card.get_chosen():
-                        min_width = min(self.card_width, min_width + card_pos)
-                    else:
-                        manual_break = True
-                        break
-                else:
-                    if not card.get_chosen():
-                        min_width = min(self.card_width, min_width + card_pos)
-                    else:
-                        manual_break = True
-                        break
-                i -= 1
-            if not manual_break:
-                if not min_width == self.card_width:
-                    min_width = self.card_width
-        else:
-            i = index - 1
-            while i >= index - num_cards:
-                card = self.deck[i]
-                if for_chosen:
-                    if card.get_chosen():
-                        min_width = min(self.card_width, min_width + card_pos)
-                    else:
-                        break
-                else:
-                    if not card.get_chosen():
-                        min_width = min(self.card_width, min_width + card_pos)
-                    else:
-                        break
-                i -= 1
-
-        return min_width
-
-    def draw_previous(self, index, card_pos):
-        remaining_width = self.card_width - card_pos
-        num_cards = min(index, ceil(remaining_width/card_pos))
-
-        if num_cards == index:
-            i = 0
-            while i < index:
-                card = self.deck[i]
-                card.draw(still_drawing=False)
-                i += 1
-        else:
-            i = index - num_cards
-            while i < index:
-                card = self.deck[i]
-                card.draw(still_drawing=False)
-                i += 1
+        if dragging and len(self.drag_card) == 0:
+            return "Not Selected opposite"

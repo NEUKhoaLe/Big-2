@@ -50,7 +50,7 @@ class Player:
         return self.deck.select_deck(mouse_x, mouse_y)
 
     def handle_selected(self, mouse_x, mouse_y, dragging):
-        self.deck.handle_selected(mouse_x, mouse_y, dragging)
+        return self.deck.handle_selected(mouse_x, mouse_y, dragging)
 
     def get_pos(self):
         return self.deck.get_pos()
@@ -66,3 +66,6 @@ class Player:
 
     def move_to_mouse(self, mouse_x, mouse_y):
         self.deck.move_to_mouse(mouse_x, mouse_y)
+
+    def update_draw(self):
+        self.deck.update_draw()
