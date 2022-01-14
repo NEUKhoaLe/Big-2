@@ -7,6 +7,16 @@ from Cards.PlayerDeck import PlayerDeck
 from Cards.OppositeDeck import OppositeDeck
 
 
+def is_same(operating_deck):
+    i = 0
+
+    while i < len(operating_deck) - 1:
+        if operating_deck[i].get_value() != operating_deck[i+1].get_value():
+            return False
+
+    return True
+
+
 class Board2(AbstractBoard):
     def __init__(self, display, surface, player, opposite):
         super().__init__(display, surface)
@@ -195,13 +205,16 @@ class Board2(AbstractBoard):
             if len(operating_deck) == 1:
                 return True
             elif len(operating_deck) == 2:
-                return self.is_double(operating_deck)
+                return is_same(operating_deck)
             elif len(operating_deck) >= 3:
-                if len(operating_deck) % 2 == 0:
-                    pass
-
-    def is_double(self, operating_deck):
-        return operating_deck[0].get_value() == operating_deck[1].get_value()
+                valid = False
+                valid = valid or self.is_consecutive(operating_deck)
+                if len(operating_deck) == 3:
+                    valid = valid or is_same(operating_deck)
+                if len(operating_deck) == 4:
+                    valid = valid or is_same(operating_deck)
+                if len(operating_deck) % 2 == 0 and len(operating_deck) >= 6:
+                    valid = valid or self.is_double_consecutive(operating_deck)
 
     def is_consecutive(self, operating_deck):
         i = 1
@@ -210,6 +223,19 @@ class Board2(AbstractBoard):
                 return False
 
         return True
+
+    def is_double_consecutive(self, operating_deck):
+        interval = len(operating_deck) / 2
+        i = 0
+        temp = []
+        valid = True
+
+        while i < interval:
+            temp.append(operating_deck[i * 2])
+            valid = valid and is_same([operating_deck[i * 2], operating_deck[(i * 2) + 1]])
+            i += 1
+
+        return valid and self.is_consecutive(temp)
 
     def move_to_mouse(self, mouse_x, mouse_y, turn):
         if turn == "player":
