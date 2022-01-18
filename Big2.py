@@ -1,8 +1,18 @@
 import pygame
 import sys
+
+from Bots.EasyBot import EasyBot
 from Utils.Settings import Settings
 from Utils.Buttons import Buttons
-from Game.Game2 import Game2
+from Game.Game2Bot import Game2Bot
+
+"""
+This is the Big 2. It will represent the client. It will speak to a server.
+When a player launches the game, they will become the client.
+
+Big 2 is the class that will communicate to the server through a network.
+This game will be run through a client-server networking system.
+"""
 
 
 class Big2:
@@ -68,7 +78,7 @@ class Big2:
         title = title_font.render("Big 2", True, (255, 255, 255))
         title_width = title_font.size("Big 2")
 
-        self.screen.blit(title, (500 - title_width[0]/2, 200 - title_width[1]/2))
+        self.screen.blit(title, (500 - title_width[0] / 2, 200 - title_width[1] / 2))
 
         self.solo_button.draw_button()
         self.multi_button.draw_button()
@@ -244,9 +254,17 @@ class Big2:
     """
     A Game class that is the API. It stores all the methods that is required for you to run a game.
     """
+
     def easy_difficulty(self):
-        self.game = Game2(self.screen)
-        self.game.enter_name()
+        surface = pygame.surface.Surface((self.settings.screen_width, self.settings.screen_height))
+        surface.fill(self.settings.bg_color)
+
+        player_1 = self.enter_name(surface)
+        player_2 = "easy bot"
+        # player_2 = EasyBot()
+
+        self.game = Game2Bot(surface, self.screen)
+        self.game.create_player(player_1, player_2)
         self.screen.fill(self.settings.bg_color)
         self.game.start_game()
         self.dragging = False
@@ -388,6 +406,50 @@ class Big2:
                             return
 
             pygame.display.flip()
+
+    # Enter name method
+    def enter_name(self, surface):
+        entered_name1 = False
+        player1_name = ""
+
+        while not entered_name1:
+
+            font = self.settings.game_mode_font
+
+            surface.fill(self.settings.bg_color)
+            pygame.display.flip()
+
+            string_size = 0
+
+            if not entered_name1:
+                string = "Enter Player 1 name: " + player1_name
+                title = font.render(string, True, (255, 255, 255))
+                title_width = font.size(string)
+
+                string_size = title_width[0]
+
+                surface.blit(title, (500 - title_width[0]/2, 200 - title_width[1]/2))
+
+            self.screen.blit(surface, (0, 0))
+            pygame.display.flip()
+
+            for event in pygame.event.get():
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RETURN:
+                        if not entered_name1 and player1_name != "":
+                            entered_name1 = True
+                    elif event.key == pygame.K_BACKSPACE:
+                        if not entered_name1 and player1_name != "":
+                            player1_name = player1_name[:-1]
+                    else:
+                        if not entered_name1 and not font.size(event.unicode)[0] + string_size >= 1000:
+                            player1_name += event.unicode
+                if entered_name1:
+                    break
+
+            pygame.display.flip()
+
+        return player1_name
 
 
 # The statement that runs the main program
