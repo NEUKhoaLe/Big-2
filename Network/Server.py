@@ -15,10 +15,11 @@ s.listen(2)
 print("Waiting for a connection, Server Started.")
 
 
-def threaded_client(connections):
+def threaded_client(conn):
+    conn.send(str.encode("Connected"))
     while True:
         try:
-            data = connections.recv(2048)
+            data = conn.recv(2048)
             reply = data.decode("utf-8")
 
             if not data:
@@ -28,12 +29,12 @@ def threaded_client(connections):
                 print("Received: ", reply)
                 print("Sending: ", reply)
 
-            connections.sendall(str.encode(reply))
+            conn.sendall(str.encode(reply))
         except:
             break
 
     print("Lost connection.")
-    connections.close()
+    conn.close()
 
 
 while True:
