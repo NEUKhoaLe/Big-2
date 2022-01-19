@@ -7,8 +7,10 @@ class Network:
         self.server = "192.168.1.241"
         self.port = 5555
         self.addr = (self.server, self.port)
-        self.id = self.connect()
-        print(self.id)
+        self.game = self.connect()
+
+    def get_game(self):
+        return self.game
 
     def connect(self):
         try:

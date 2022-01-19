@@ -256,16 +256,7 @@ class Big2:
     """
 
     def easy_difficulty(self):
-        surface = pygame.surface.Surface((self.settings.screen_width, self.settings.screen_height))
-        surface.fill(self.settings.bg_color)
-
-        player_1 = self.enter_name(surface)
-        player_2 = "easy bot"
-        # player_2 = EasyBot()
-
-        self.game = Game2Bot(surface, self.screen)
-        self.game.create_player(player_1, player_2)
-        self.screen.fill(self.settings.bg_color)
+        self.game = Game2Bot(self.screen)
         self.game.start_game()
         self.dragging = False
 
