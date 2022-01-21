@@ -180,6 +180,7 @@ class Game4Bot(AbstractGame):
     def quit(self):
         pass
 
+
     def change_turn(self):
         if self.turn == "player":
             self.turn = "right"
