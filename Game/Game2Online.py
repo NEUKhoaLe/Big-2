@@ -17,6 +17,9 @@ class Game2Online(AbstractGame):
         self.player1 = None
         self.player2 = None
 
+        self.server_ready = False
+
+
         # The Play button
         self.play_button = Buttons("  Play  ", self.settings.game_button_font,
                                    self.settings.play_button_x, self.settings.play_button_y, self.surface)

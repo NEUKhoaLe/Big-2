@@ -268,6 +268,7 @@ class Cards:
                     self.back_image = rotated_image
 
         self.draw(still_drawing=True, is_front=is_front)
+        self.rect_card = self.front_image.get_rect() if is_front else self.back_image.get_rect()
 
     # Method to get the Width
     def get_width(self):

@@ -2,6 +2,7 @@ import pygame
 import sys
 
 from Bots.EasyBot import EasyBot
+from Game.Game4Bot import Game4Bot
 from Utils.Settings import Settings
 from Utils.Buttons import Buttons
 from Game.Game2Bot import Game2Bot
@@ -85,7 +86,7 @@ class Big2:
         self.rules_button.draw_button()
 
     # Function that handles all the mouse left click action
-    def menu_mouse_action(self):
+    def menu_mouse_action(self, num_player=2):
         mouseX, mouseY = pygame.mouse.get_pos()
 
         if self.back_button.collide_point(mouseX, mouseY):
@@ -105,9 +106,9 @@ class Big2:
         elif self.four_player_online_button.collide_point(mouseX, mouseY):
             self.four_player_online_mode()
         elif self.easy_difficulty_button.collide_point(mouseX, mouseY):
-            self.easy_difficulty()
+            self.easy_difficulty(num_player)
         elif self.hard_difficulty_button.collide_point(mouseX, mouseY):
-            self.hard_difficulty()
+            self.hard_difficulty(num_player)
 
     # Function that resets all the rectangles drawn status
     def reset_drawn_stat_rect(self):
@@ -215,7 +216,7 @@ class Big2:
                     sys.exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
-                        self.menu_mouse_action()
+                        self.menu_mouse_action(2)
                         if self.back:
                             self.back = False
                             return
@@ -238,7 +239,7 @@ class Big2:
                     sys.exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
-                        self.menu_mouse_action()
+                        self.menu_mouse_action(4)
                         if self.back:
                             self.back = False
                             return
@@ -255,8 +256,8 @@ class Big2:
     A Game class that is the API. It stores all the methods that is required for you to run a game.
     """
 
-    def easy_difficulty(self):
-        self.game = Game2Bot(self.screen)
+    def easy_difficulty(self, num_player):
+        self.game = Game2Bot(self.screen) if num_player == 2 else Game4Bot(self.screen)
         self.game.start_game()
         self.dragging = False
 
@@ -277,12 +278,22 @@ class Big2:
                             deck_selected = self.game.select(mouse_x, mouse_y)
 
                             if deck_selected == "player":
-                                self.game.update(o=False, c=False, d=False, s=False, gu=False)
+                                self.game.update(o=False, c=False, d=False, s=False, l=False, r=False, gu=False)
                         elif self.game.get_turn() == "opposite":
                             mouse_x, mouse_y = pygame.mouse.get_pos()
                             deck_selected = self.game.select(mouse_x, mouse_y)
                             if deck_selected == "opposite":
-                                self.game.update(p=False, c=False, d=False, s=False, gu=False)
+                                self.game.update(p=False, c=False, d=False, s=False, l=False, r=False, gu=False)
+                        elif self.game.get_turn() == "left":
+                            mouse_x, mouse_y = pygame.mouse.get_pos()
+                            deck_selected = self.game.select(mouse_x, mouse_y)
+                            if deck_selected == "left":
+                                self.game.update(o=False, r=False, p=False, c=False, d=False, s=False, gu=False)
+                        elif self.game.get_turn() == "right":
+                            mouse_x, mouse_y = pygame.mouse.get_pos()
+                            deck_selected = self.game.select(mouse_x, mouse_y)
+                            if deck_selected == "right":
+                                self.game.update(o=False, l=False, p=False, c=False, d=False, s=False, gu=False)
                     if event.button == 3:
                         self.dragging = True
                 if event.type == pygame.MOUSEBUTTONUP:
@@ -299,7 +310,7 @@ class Big2:
 
             pygame.display.flip()
 
-    def hard_difficulty(self):
+    def hard_difficulty(self, num_player):
         while True:
             self.reset_drawn_stat_rect()
             self.clock.tick(self.settings.FPS)

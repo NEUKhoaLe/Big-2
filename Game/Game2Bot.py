@@ -137,11 +137,11 @@ class Game2Bot(AbstractGame):
     # Draw the board
     # Draw the player's .display.flip()names
     # Draw the buttons
-    def update(self, s=True, o=True, c=True, d=True, p=True, gu=False):
+    def update(self, s=True, o=True, c=True, d=True, l=True, r=True, p=True, gu=False):
         self.draw_player_name()
         self.skip_button.draw_button()
         self.play_button.draw_button()
-        self.board.draw_board(shuffle=s, opposite=o, current=c, discard=d, player=p, gu=gu)
+        self.board.draw_board(shuffle=s, opposite=o, current=c, discard=d, player=p, left=l, right=r, gu=gu)
 
     def clear(self):
         self.surface.fill(self.settings.bg_color)

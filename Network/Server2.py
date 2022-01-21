@@ -11,10 +11,13 @@ try:
 except socket.error as e:
     str(e)
 
-s.listen(2)
+s.listen()
 print("Waiting for a connection, Server Started.")
 
-def threaded_client(conn):
+idCount = 0
+
+
+def threaded_client(conn, player, game_id):
     conn.send(str.encode("Connected"))
     while True:
         try:
@@ -40,4 +43,14 @@ while True:
     conn, addr = s.accept()
     print("Connected to: ", addr)
 
-    start_new_thread(threaded_client, (conn,))
+    idCount += 1
+    player = 0
+    game_id = (idCount - 1) // 2
+
+    if idCount % 2 == 1:
+        # games[game_id] =
+        pass
+    else:
+        pass
+
+    start_new_thread(threaded_client, (conn, player, game_id))

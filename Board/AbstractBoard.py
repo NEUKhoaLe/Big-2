@@ -166,7 +166,8 @@ class AbstractBoard:
 
         return deck
 
-    def draw_board(self, shuffle=True, opposite=True, current=True, discard=True, player=True, gu=True):
+    def draw_board(self, shuffle=True, opposite=True, current=True, discard=True, player=True,
+                   left=True, right=False, gu=True):
         if shuffle:
             self.draw_deck("shuffle", gu)
         if opposite:
@@ -177,6 +178,10 @@ class AbstractBoard:
             self.draw_deck("discard", gu)
         if player:
             self.draw_deck("player", gu)
+        if left:
+            self.draw_deck("left", gu)
+        if right:
+            self.draw_deck("right", gu)
 
     def draw_deck(self, deck_type, game_update):
         pass

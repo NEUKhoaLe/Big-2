@@ -1,13 +1,13 @@
 import pygame
 
-from Cards.SideDeck import SideDeck
+from Cards.TopBottomDeck import TopBottomDeck
 
 
 def update_rect(rect, x, y, width, height):
     return rect.update(x, y, width, height)
 
 
-class PlayerDeck(SideDeck):
+class PlayerDeck(TopBottomDeck):
     def __init__(self, x, y, chosen_y, width, collide_point, display, surface):
         super().__init__(x, y, chosen_y, width, collide_point, display, surface)
 
@@ -28,7 +28,7 @@ class PlayerDeck(SideDeck):
                     min((num_cards * self.card_width), self.width), self.card_height)
 
         for i in range(len(self.deck)):
-            self.surface.blit(self.background, (starting + self.card_width, self.y))
+            self.surface.blit(self.background, (starting + card_pos, self.y))
 
             x = self.deck[i]
 
@@ -113,7 +113,7 @@ class PlayerDeck(SideDeck):
                     self.mouse_x_offset = card_x - mouse_x
                     self.mouse_y_offset = card_y - mouse_y
 
-                    self.surface.blit(self.background, (card.cur_pos()))
+                    self.surface.blit(self.full_card, (card.cur_pos()))
 
                     self.draw_rest_deck(self.deck[max(i - 1, 0)], for_drag=True)
                     self.update(False)
