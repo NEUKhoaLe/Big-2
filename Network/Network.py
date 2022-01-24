@@ -8,15 +8,15 @@ class Network:
         self.server = "192.168.1.241"
         self.port = 5555
         self.addr = (self.server, self.port)
-        self.game = self.connect()
+        self.player = self.connect()
 
-    def get_game(self):
-        return self.game
+    def get_player(self):
+        return self.player
 
     def connect(self):
         try:
             self.client.connect(self.addr)
-            return self.client.recv(4096).decode()
+            return self.client.recv(2048).decode()
         except:
             pass
 

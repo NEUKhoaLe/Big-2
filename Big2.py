@@ -3,6 +3,7 @@ import sys
 
 from Bots.EasyBot import EasyBot
 from Game.Game4Bot import Game4Bot
+from Network.Network import Network
 from Utils.Settings import Settings
 from Utils.Buttons import Buttons
 from Game.Game2Bot import Game2Bot
@@ -34,6 +35,7 @@ class Big2:
         self.back = False
 
         self.game = None
+        self.player_number = None
 
         self.dragging = None
 
@@ -346,6 +348,47 @@ class Big2:
     # The main function that handles the pygame events on the Multi Player Screen
     def multi_player(self):
         """The screen for multiplayer set up"""
+
+        # Get the client's name
+        temp = pygame.Surface((self.settings.screen_width, self.settings.screen_height))
+        self.screen.blit(temp, (0, 0))
+        client_name = self.enter_name(temp)
+
+        # Connect to the network, which will automatically get the player number.
+        network = Network()
+        # Get the player number
+        self.player_number = str(network.get_player())
+        # Get the game to initialize and add the player name into the server's game client
+        self.game = network.send("get")
+
+        # Process: Client-prediction Server Reconciliation
+        # We want the client to always be the deck at the bottom. So when
+        # We get the game client from the server. We switch rotate the board.
+        # Do the action on the client, then rotate it back.
+        # In the beginning, just to add the name, we do not have to do rotation.
+        if self.player_number == 1:
+            self.game.create_player(client_name, None, None, None)
+        elif self.player_number == 2:
+            self.game.create_player(None, client_name, None, None)
+        elif self.player_number == 3:
+            self.game.create_player(None, None, client_name, None)
+        elif self.player_number == 4:
+            self.game.create_player(None, None, None, client_name)
+
+        # After changing the name in the client side, we send the instruction to the
+        # Server. The below are the server instructions so far:
+        # "click <x y>" - selecting card, playing, skipping, choosing a card
+        # "name <name>"
+        # "swap index index"
+
+        # Dragging will be a client side action. Only when we release AND does a swap movement
+        # then we will update the server.
+        # after sending the instruction, we reconcile.
+        # In this reconciliation process, if everything is the same, then nothing happens
+        # If everything is not, we will draw the server's game state, as the server is
+        # the authority here.
+        self.game.reconcile(network.send(client_name))
+
         while True:
             self.reset_drawn_stat_rect()
             self.clock.tick(self.settings.FPS)
