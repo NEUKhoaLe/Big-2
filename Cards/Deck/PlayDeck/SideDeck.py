@@ -28,6 +28,8 @@ class SideDeck(AbstractDeck):
 
         self.card_mid_point_y = self.y - self.card_height/2
 
+        self.card_pos = -1
+
         self.chosen_x = chosen_x
         self.settings = Settings()
 
@@ -107,7 +109,8 @@ class SideDeck(AbstractDeck):
     def get_chosen(self):
         return self.chosen_deck.copy()
 
-    def draw_previous(self, index, card_pos):
+    def draw_previous(self, index):
+        card_pos = self.card_pos
         remaining_width = self.card_width - card_pos
         num_cards = min(index, ceil(remaining_width/card_pos))
 
@@ -126,7 +129,8 @@ class SideDeck(AbstractDeck):
                     card.draw(still_drawing=False)
                 i += 1
 
-    def get_cover_length(self, index, card_pos, for_chosen):
+    def get_cover_length(self, index, for_chosen):
+        card_pos = self.card_pos
         remaining_width = self.card_width - card_pos
         num_cards = min(index, ceil(remaining_width/card_pos))
         min_width = card_pos

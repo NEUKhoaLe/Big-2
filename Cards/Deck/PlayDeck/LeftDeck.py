@@ -20,16 +20,16 @@ class LeftDeck(SideDeck):
         starting = max((self.length + self.y) - (num_cards * self.card_width), self.y)
 
         if num_cards == 0 or num_cards == 1:
-            card_pos = self.card_width
+            self.card_pos = self.card_width
         else:
-            card_pos = min(self.card_width,
-                           round((self.length - self.card_width) / (num_cards - 1)))
+            self.card_pos = min(self.card_width,
+                                round((self.length - self.card_width) / (num_cards - 1)))
 
         update_rect(self.collide_point, self.x, self.y,
                     self.card_height, min((num_cards * self.card_width), self.length))
 
         for i in range(len(self.deck)):
-            self.surface.blit(self.full_card, (self.x, starting + card_pos))
+            self.surface.blit(self.full_card, (self.x, starting + self.card_pos))
 
             x = self.deck[i]
 
@@ -39,14 +39,14 @@ class LeftDeck(SideDeck):
             if not x.get_chosen():
                 # We draw the background, then draw the previous cards, then proceed.
                 if self.was_chosen_deck.__contains__(x):
-                    length = self.get_cover_length(i, card_pos, for_chosen=False)
+                    length = self.get_cover_length(i, for_chosen=False)
                     self.half_card = pygame.Surface((self.card_height/2, length + 2))
                     self.half_card.fill(self.settings.bg_color)
                     self.surface.blit(self.half_card,
                                       (self.x + self.card_height, starting + self.card_width - length))
                     self.was_chosen_deck.remove(x)
 
-                self.draw_previous(i, card_pos)
+                self.draw_previous(i)
 
                 self.draw_rest_deck(x)
 
@@ -59,25 +59,25 @@ class LeftDeck(SideDeck):
 
                 if i != len(self.deck) - 1:
                     if not self.deck[i+1].get_chosen():
-                        x.update_card_block_area(self.x, starting + card_pos,
-                                                 self.card_height, self.card_width - card_pos)
+                        x.update_card_block_area(self.x, starting + self.card_pos,
+                                                 self.card_height, self.card_width - self.card_pos)
                     else:
-                        x.update_card_block_area(self.x + self.card_height/2, starting + card_pos,
-                                                 self.card_height/2, self.card_width - card_pos)
+                        x.update_card_block_area(self.x + self.card_height/2, starting + self.card_pos,
+                                                 self.card_height/2, self.card_width - self.card_pos)
                 else:
-                    x.update_card_block_area(self.x, starting + card_pos, 0, 0)
+                    x.update_card_block_area(self.x, starting + self.card_pos, 0, 0)
 
             # Do this portion
             else:
                 if self.to_be_chosen_cards.__contains__(x):
-                    length = self.get_cover_length(i, card_pos, for_chosen=True)
+                    length = self.get_cover_length(i, for_chosen=True)
                     self.half_card = pygame.Surface((self.card_height/2, length + 2))
                     self.half_card.fill(self.settings.bg_color)
                     self.surface.blit(self.half_card,
                                       (self.x + self.card_height/2, starting + self.card_width - length))
                     self.to_be_chosen_cards.remove(x)
 
-                self.draw_previous(i, card_pos)
+                self.draw_previous(i)
 
                 self.draw_rest_deck(x)
 
@@ -88,18 +88,18 @@ class LeftDeck(SideDeck):
                 if i != len(self.deck) - 1:
                     if not self.deck[i+1].get_chosen():
                         x.update_card_block_area(self.x + self.card_height/2,
-                                                 original_y + card_pos,
+                                                 original_y + self.card_pos,
                                                  self.chosen_x - self.x,
-                                                 self.card_width - card_pos)
+                                                 self.card_width - self.card_pos)
                     else:
                         x.update_card_block_area(self.chosen_x,
-                                                 original_y + card_pos,
+                                                 original_y + self.card_pos,
                                                  self.card_height,
-                                                 self.card_width - card_pos)
+                                                 self.card_width - self.card_pos)
                 else:
-                    x.update_card_block_area(self.y, original_x + card_pos, 0, 0)
+                    x.update_card_block_area(self.y, original_x + self.card_pos, 0, 0)
 
-            starting += card_pos
+            starting += self.card_pos
             if self.was_drag_card.__contains__(x):
                 self.was_drag_card.remove(x)
 
@@ -120,6 +120,7 @@ class LeftDeck(SideDeck):
 
                     self.surface.blit(self.full_card, (card.cur_pos()))
 
+                    self.draw_previous(i)
                     self.draw_rest_deck(self.deck[max(i - 1, 0)], for_drag=True)
                     self.update(False)
 

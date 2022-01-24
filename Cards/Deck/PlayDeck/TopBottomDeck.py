@@ -28,12 +28,16 @@ class TopBottomDeck(AbstractDeck):
 
         self.card_mid_point_y = self.y - self.card_height/2
 
+        self.card_pos = -1
+
         self.chosen_y = chosen_y
         self.settings = Settings()
 
         self.background = pygame.Surface((self.width, self.card_height))
+        self.half_background = pygame.Surface((self.width, self.card_height/2))
         self.full_card = pygame.Surface((self.card_width, self.card_height))
         self.half_card = pygame.Surface((self.width, self.card_height/2))
+        self.half_background.fill(self.settings.bg_color)
         self.full_card.fill(self.settings.bg_color)
         self.half_card.fill(self.settings.bg_color)
         self.background.fill(self.settings.bg_color)
@@ -107,7 +111,9 @@ class TopBottomDeck(AbstractDeck):
     def get_chosen(self):
         return self.chosen_deck.copy()
 
-    def draw_previous(self, index, card_pos):
+    def draw_previous(self, index):
+        card_pos = self.card_pos
+
         remaining_width = self.card_width - card_pos
         num_cards = min(index, ceil(remaining_width/card_pos))
 
@@ -126,7 +132,8 @@ class TopBottomDeck(AbstractDeck):
                     card.draw(still_drawing=False)
                 i += 1
 
-    def get_cover_width(self, index, card_pos, for_chosen):
+    def get_cover_width(self, index, for_chosen):
+        card_pos = self.card_pos
         remaining_width = self.card_width - card_pos
         num_cards = min(index, ceil(remaining_width/card_pos))
         min_width = card_pos
