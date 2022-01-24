@@ -258,6 +258,11 @@ class Big2:
 
     def easy_difficulty(self, num_player):
         self.game = Game2Bot(self.screen) if num_player == 2 else Game4Bot(self.screen)
+        temp = pygame.Surface((self.settings.screen_width, self.settings.screen_height))
+        self.screen.blit(temp, (0, 0))
+        player1_name = self.enter_name(temp)
+
+        self.game.create_player(player1_name, "easy bot", "easy bot", "easy bot")
         self.game.start_game()
         self.dragging = False
 

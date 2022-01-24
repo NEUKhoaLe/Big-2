@@ -34,11 +34,6 @@ class Game4Bot(AbstractGame):
         self.skip_button = Buttons("  Skip  ", self.settings.game_button_font,
                                    self.settings.skip_button_x, self.settings.skip_button_y, self.surface)
 
-        player1_name = self.enter_name(self.surface)
-        self.create_player(player1_name, "easy bot", "easy bot", "easy bot")
-
-        self.display.fill(self.settings.bg_color)
-
     def enter_name(self, surface):
         entered_name1 = False
         player1_name = ""

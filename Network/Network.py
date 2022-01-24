@@ -1,4 +1,5 @@
 import socket
+import pickle
 
 
 class Network:
@@ -15,7 +16,7 @@ class Network:
     def connect(self):
         try:
             self.client.connect(self.addr)
-            return self.client.recv(2048).decode()
+            return self.client.recv(4096).decode()
         except:
             pass
 
