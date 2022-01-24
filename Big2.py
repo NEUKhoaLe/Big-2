@@ -348,6 +348,88 @@ class Big2:
     # The main function that handles the pygame events on the Multi Player Screen
     def multi_player(self):
         """The screen for multiplayer set up"""
+        while True:
+            self.reset_drawn_stat_rect()
+            self.clock.tick(self.settings.FPS)
+
+            self.screen.fill(self.settings.bg_color)
+
+            self.draw_back_button()
+            self.draw_online_game_mode_button()
+
+            # Watch for keyboard and mouse events
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    sys.exit()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        self.menu_mouse_action()
+                        if self.back:
+                            self.back = False
+                            return
+
+            pygame.display.flip()
+
+    # Two player online mode main method
+    def two_player_online_mode(self):
+        # Get the client's name
+        temp = pygame.Surface((self.settings.screen_width, self.settings.screen_height))
+        self.screen.blit(temp, (0, 0))
+        client_name = self.enter_name(temp)
+
+        # Connect to the network, which will automatically get the player number.
+        network = Network()
+        # Get the player number
+        self.player_number = str(network.get_player())
+        # Get the game to initialize and add the player name into the server's game client
+        self.game = network.send("get")
+
+        # Process: Client-prediction Server Reconciliation
+        # We want the client to always be the deck at the bottom. So when
+        # We get the game client from the server. We switch rotate the board.
+        # Do the action on the client, then rotate it back.
+        # In the beginning, just to add the name, we do not have to do rotation.
+        if self.player_number == 1:
+            self.game.create_player(client_name, None)
+        elif self.player_number == 2:
+            self.game.create_player(None, client_name)
+        # After changing the name in the client side, we send the instruction to the
+        # Server. The below are the server instructions so far:
+        # "click <x y>" - selecting card, playing, skipping, choosing a card
+        # "name <name>"
+        # "swap index index"
+
+        # Dragging will be a client side action. Only when we release AND does a swap movement
+        # then we will update the server.
+        # after sending the instruction, we reconcile.
+        # In this reconciliation process, if everything is the same, then nothing happens
+        # If everything is not, we will draw the server's game state, as the server is
+        # the authority here.
+        self.game.reconcile(network.send(client_name))
+
+        while True:
+            self.reset_drawn_stat_rect()
+            self.clock.tick(self.settings.FPS)
+
+            self.screen.fill(self.settings.bg_color)
+
+            self.draw_back_button()
+
+            # Watch for keyboard and mouse events.
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    sys.exit()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        self.menu_mouse_action()
+                        if self.back:
+                            self.back = False
+                            return
+
+            pygame.display.flip()
+
+    # Four player online mode main method
+    def four_player_online_mode(self):
 
         # Get the client's name
         temp = pygame.Surface((self.settings.screen_width, self.settings.screen_height))
@@ -389,53 +471,6 @@ class Big2:
         # the authority here.
         self.game.reconcile(network.send(client_name))
 
-        while True:
-            self.reset_drawn_stat_rect()
-            self.clock.tick(self.settings.FPS)
-
-            self.screen.fill(self.settings.bg_color)
-
-            self.draw_back_button()
-            self.draw_online_game_mode_button()
-
-            # Watch for keyboard and mouse events
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    sys.exit()
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    if event.button == 1:
-                        self.menu_mouse_action()
-                        if self.back:
-                            self.back = False
-                            return
-
-            pygame.display.flip()
-
-    # Two player online mode main method
-    def two_player_online_mode(self):
-        while True:
-            self.reset_drawn_stat_rect()
-            self.clock.tick(self.settings.FPS)
-
-            self.screen.fill(self.settings.bg_color)
-
-            self.draw_back_button()
-
-            # Watch for keyboard and mouse events.
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    sys.exit()
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    if event.button == 1:
-                        self.menu_mouse_action()
-                        if self.back:
-                            self.back = False
-                            return
-
-            pygame.display.flip()
-
-    # Four player online mode main method
-    def four_player_online_mode(self):
         while True:
             self.reset_drawn_stat_rect()
             self.clock.tick(self.settings.FPS)
