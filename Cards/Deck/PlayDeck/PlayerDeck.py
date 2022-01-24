@@ -11,7 +11,7 @@ class PlayerDeck(TopBottomDeck):
     def __init__(self, x, y, chosen_y, width, collide_point, display, surface):
         super().__init__(x, y, chosen_y, width, collide_point, display, surface)
 
-    def draw_deck(self, move_from_shuffle=False, game_update=False):
+    def draw_deck(self, move_from_shuffle=False, game_update=False, draw=True):
         if not move_from_shuffle:
             self.surface.blit(self.background, (self.x, self.y))
             self.surface.blit(self.half_background, (self.x, self.chosen_y))
@@ -42,15 +42,16 @@ class PlayerDeck(TopBottomDeck):
                     self.surface.blit(self.half_card, (starting + self.card_width - width, self.chosen_y))
                     self.was_chosen_deck.remove(x)
 
-                self.draw_previous(i)
+                if draw:
+                    self.draw_previous(i)
+                    self.draw_rest_deck(x)
 
-                self.draw_rest_deck(x)
                 x.update_vis(True)
                 if x.cur_pos()[1] == self.y or x.cur_pos()[1] == self.chosen_y\
                         or self.was_drag_card.__contains__(x):
-                    x.move(starting, self.y, True)
+                    x.move(starting, self.y, shuffle=True, draw=draw)
                 else:
-                    x.move(starting, self.y, False)
+                    x.move(starting, self.y, shuffle=False, draw=draw)
 
                 if i != len(self.deck) - 1:
                     if not self.deck[i + 1].get_chosen():
@@ -72,11 +73,11 @@ class PlayerDeck(TopBottomDeck):
                                       (starting + self.card_width - width, self.y + self.card_height/2))
                     self.to_be_chosen_cards.remove(x)
 
-                self.draw_previous(i)
+                if draw:
+                    self.draw_previous(i)
+                    self.draw_rest_deck(x)
 
-                self.draw_rest_deck(x)
-
-                x.move(starting, self.chosen_y, True)
+                x.move(starting, self.chosen_y, shuffle=True, draw=draw)
 
                 original_x, original_y = x.cur_pos()
 

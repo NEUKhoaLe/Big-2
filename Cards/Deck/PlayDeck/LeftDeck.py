@@ -12,9 +12,10 @@ class LeftDeck(SideDeck):
     def __init__(self, x, y, chosen_x, width, collide_point, display, surface):
         super().__init__(x, y, chosen_x, width, collide_point, display, surface)
 
-    def draw_deck(self, move_from_shuffle=False, game_update=False):
+    def draw_deck(self, move_from_shuffle=False, game_update=False, draw=True):
         if not move_from_shuffle:
             self.surface.blit(self.background, (self.x, self.y))
+            self.surface.blit(self.half_background, (self.x + self.card_height, self.y))
 
         num_cards = len(self.deck)
         starting = max((self.length + self.y) - (num_cards * self.card_width), self.y)
@@ -46,16 +47,16 @@ class LeftDeck(SideDeck):
                                       (self.x + self.card_height, starting + self.card_width - length))
                     self.was_chosen_deck.remove(x)
 
-                self.draw_previous(i)
-
-                self.draw_rest_deck(x)
+                if draw:
+                    self.draw_previous(i)
+                    self.draw_rest_deck(x)
 
                 x.update_vis(True)
                 if x.cur_pos()[0] == self.x or x.cur_pos()[0] == self.chosen_x \
                         or self.was_drag_card.__contains__(x):
-                    x.move(self.x, starting, True)
+                    x.move(self.x, starting, shuffle=True, draw=draw)
                 else:
-                    x.move(self.x, starting, False)
+                    x.move(self.x, starting, shuffle=False, draw=draw)
 
                 if i != len(self.deck) - 1:
                     if not self.deck[i+1].get_chosen():
@@ -77,11 +78,11 @@ class LeftDeck(SideDeck):
                                       (self.x + self.card_height/2, starting + self.card_width - length))
                     self.to_be_chosen_cards.remove(x)
 
-                self.draw_previous(i)
+                if draw:
+                    self.draw_previous(i)
+                    self.draw_rest_deck(x)
 
-                self.draw_rest_deck(x)
-
-                x.move(self.chosen_x, starting, True)
+                x.move(self.chosen_x, starting, shuffle=True, draw=draw)
 
                 original_x, original_y = x.cur_pos()
 

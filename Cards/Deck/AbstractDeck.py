@@ -51,7 +51,7 @@ class AbstractDeck:
     def card_change_in_play(self, index, boolean):
         pass
 
-    def draw_deck(self, move_from_shuffle, game_update=False):
+    def draw_deck(self, move_from_shuffle, game_update=False, draw=True):
         pass
 
     def update_draw(self):

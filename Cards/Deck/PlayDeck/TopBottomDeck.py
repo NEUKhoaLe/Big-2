@@ -42,7 +42,7 @@ class TopBottomDeck(AbstractDeck):
         self.half_card.fill(self.settings.bg_color)
         self.background.fill(self.settings.bg_color)
 
-    def draw_deck(self, move_from_shuffle=False, game_update=False):
+    def draw_deck(self, move_from_shuffle=False, game_update=False, draw=True):
         pass
 
     def change_pos(self, x, y):
@@ -95,7 +95,8 @@ class TopBottomDeck(AbstractDeck):
         if not successful:
             self.deck.insert(self.drag_card_original_index, self.drag_card.pop())
 
-        self.draw_deck(game_update=False)
+        self.draw_deck(game_update=True, draw=False)
+        self.update_draw()
 
         self.drag_card_original_index = -1
         self.mouse_y_offset = -1
