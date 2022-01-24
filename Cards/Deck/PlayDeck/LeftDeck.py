@@ -1,98 +1,103 @@
+
 import pygame
 
-from Cards.TopBottomDeck import TopBottomDeck
+from Cards.Deck.PlayDeck.SideDeck import SideDeck
 
 
 def update_rect(rect, x, y, width, height):
     return rect.update(x, y, width, height)
 
 
-class PlayerDeck(TopBottomDeck):
-    def __init__(self, x, y, chosen_y, width, collide_point, display, surface):
-        super().__init__(x, y, chosen_y, width, collide_point, display, surface)
+class LeftDeck(SideDeck):
+    def __init__(self, x, y, chosen_x, width, collide_point, display, surface):
+        super().__init__(x, y, chosen_x, width, collide_point, display, surface)
 
     def draw_deck(self, move_from_shuffle=False, game_update=False):
         if not move_from_shuffle:
             self.surface.blit(self.background, (self.x, self.y))
 
         num_cards = len(self.deck)
-        starting = max((self.width + self.x) - (num_cards * self.card_width), self.x)
+        starting = max((self.length + self.y) - (num_cards * self.card_width), self.y)
 
         if num_cards == 0 or num_cards == 1:
             card_pos = self.card_width
         else:
             card_pos = min(self.card_width,
-                           round((self.width - self.card_width) / (num_cards - 1)))
+                           round((self.length - self.card_width) / (num_cards - 1)))
 
         update_rect(self.collide_point, self.x, self.y,
-                    min((num_cards * self.card_width), self.width), self.card_height)
+                    self.card_height, min((num_cards * self.card_width), self.length))
 
         for i in range(len(self.deck)):
-            self.surface.blit(self.background, (starting + card_pos, self.y))
+            self.surface.blit(self.full_card, (self.x, starting + card_pos))
 
             x = self.deck[i]
+
+            if x.cur_pos() == (self.settings.shuffle_x, self.settings.shuffle_y):
+                x.rotate(270)
 
             if not x.get_chosen():
                 # We draw the background, then draw the previous cards, then proceed.
                 if self.was_chosen_deck.__contains__(x):
-                    width = self.get_cover_width(i, card_pos, for_chosen=False)
-                    self.half_card = pygame.Surface((width, self.card_height/2))
+                    length = self.get_cover_length(i, card_pos, for_chosen=False)
+                    self.half_card = pygame.Surface((self.card_height/2, length + 2))
                     self.half_card.fill(self.settings.bg_color)
-                    self.surface.blit(self.half_card, (starting + self.card_width - width, self.chosen_y))
+                    self.surface.blit(self.half_card,
+                                      (self.x + self.card_height, starting + self.card_width - length))
                     self.was_chosen_deck.remove(x)
 
                 self.draw_previous(i, card_pos)
 
                 self.draw_rest_deck(x)
+
                 x.update_vis(True)
-                if x.cur_pos()[1] == self.y or x.cur_pos()[1] == self.chosen_y\
+                if x.cur_pos()[0] == self.x or x.cur_pos()[0] == self.chosen_x \
                         or self.was_drag_card.__contains__(x):
-                    x.move(starting, self.y, True)
+                    x.move(self.x, starting, True)
                 else:
-                    x.move(starting, self.y, False)
+                    x.move(self.x, starting, False)
 
                 if i != len(self.deck) - 1:
-                    if not self.deck[i + 1].get_chosen():
-                        x.update_card_block_area(starting + card_pos, self.y,
-                                                 self.card_width - card_pos, self.card_height)
+                    if not self.deck[i+1].get_chosen():
+                        x.update_card_block_area(self.x, starting + card_pos,
+                                                 self.card_height, self.card_width - card_pos)
                     else:
-                        x.update_card_block_area(starting + card_pos, self.y,
-                                                 self.card_width - card_pos, self.card_height/2)
+                        x.update_card_block_area(self.x + self.card_height/2, starting + card_pos,
+                                                 self.card_height/2, self.card_width - card_pos)
                 else:
-                    x.update_card_block_area(starting + card_pos, self.y, 0, 0)
+                    x.update_card_block_area(self.x, starting + card_pos, 0, 0)
 
             # Do this portion
             else:
                 if self.to_be_chosen_cards.__contains__(x):
-                    width = self.get_cover_width(i, card_pos, for_chosen=True)
-                    self.half_card = pygame.Surface((width, self.card_height/2))
+                    length = self.get_cover_length(i, card_pos, for_chosen=True)
+                    self.half_card = pygame.Surface((self.card_height/2, length + 2))
                     self.half_card.fill(self.settings.bg_color)
                     self.surface.blit(self.half_card,
-                                      (starting + self.card_width - width, self.y + self.card_height/2))
+                                      (self.x + self.card_height/2, starting + self.card_width - length))
                     self.to_be_chosen_cards.remove(x)
 
                 self.draw_previous(i, card_pos)
 
                 self.draw_rest_deck(x)
 
-                if not self.was_drag_card.__contains__(x):
-                    x.move(starting, self.chosen_y, True)
+                x.move(self.chosen_x, starting, True)
 
                 original_x, original_y = x.cur_pos()
 
                 if i != len(self.deck) - 1:
                     if not self.deck[i+1].get_chosen():
-                        x.update_card_block_area(original_x + card_pos,
-                                                 self.y,
-                                                 self.card_width - card_pos,
-                                                 self.y - self.chosen_y)
+                        x.update_card_block_area(self.x + self.card_height/2,
+                                                 original_y + card_pos,
+                                                 self.chosen_x - self.x,
+                                                 self.card_width - card_pos)
                     else:
-                        x.update_card_block_area(original_x + card_pos,
-                                                 self.chosen_y,
-                                                 self.card_width - card_pos,
-                                                 self.card_height)
+                        x.update_card_block_area(self.chosen_x,
+                                                 original_y + card_pos,
+                                                 self.card_height,
+                                                 self.card_width - card_pos)
                 else:
-                    x.update_card_block_area(original_x + card_pos, self.y, 0, 0)
+                    x.update_card_block_area(self.y, original_x + card_pos, 0, 0)
 
             starting += card_pos
             if self.was_drag_card.__contains__(x):
@@ -118,18 +123,18 @@ class PlayerDeck(TopBottomDeck):
                     self.draw_rest_deck(self.deck[max(i - 1, 0)], for_drag=True)
                     self.update(False)
 
-                    return "player"
+                    return "left"
                 elif card.get_chosen():
                     self.move_to_deck(card)
                     card.change_chosen(False)
                     self.was_chosen_deck.append(card)
-                    return "player"
+                    return "left"
                 else:
                     self.move_to_chosen(card)
                     card.change_chosen(True)
                     self.to_be_chosen_cards.append(card)
-                    return "player"
+                    return "left"
             i -= 1
 
         if dragging and len(self.drag_card) == 0:
-            return "Not Selected player"
+            return "Not Selected left"

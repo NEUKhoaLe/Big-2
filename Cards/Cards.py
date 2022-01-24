@@ -5,7 +5,7 @@ import copy
 
 
 def _rotate_in_place(image, top_left, degree):
-    rotated_image = pygame.transform.rotozoom(image, degree, 1)
+    rotated_image = pygame.transform.rotate(image, degree)
     rotated_rect = rotated_image.get_rect(center=image.get_rect(topleft=top_left).center)
     return rotated_image, rotated_rect
 
@@ -234,41 +234,18 @@ class Cards:
     def update_vis(self, boolean):
         self.front = boolean
 
-    # Method to rotate the card smoothly
-    def rotate(self, degrees, is_front=True):
-        is_positive = True if degrees >= 0 else False
+    def rotate(self, degrees):
+        rotated_image, new_rect = _rotate_in_place(self.front_image, (self.x, self.y), degrees)
+        self.draw_rotation(image=rotated_image, place=new_rect.topleft)
 
-        if not is_positive:
-            new_degree = degrees * -1
-        else:
-            new_degree = degrees
+        self.front_image = rotated_image
 
-        temp_image = self.front_image.copy() if is_front else self.back_image.copy()
-        degree = 2
+        rotated_image, new_rect = _rotate_in_place(self.back_image, (self.x, self.y), degrees)
+        self.draw_rotation(image=rotated_image, place=new_rect.topleft)
 
-        while new_degree > 0:
-            if is_positive:
-                rotated_image, new_rect = _rotate_in_place(temp_image, (self.x, self.y), degree)
-                self.draw_rotation(image=rotated_image, place=new_rect.topleft)
+        self.back_image = rotated_image
 
-                temp_image = self.front_image.copy() if is_front else self.back_image.copy()
-            else:
-                rotated_image, new_rect = _rotate_in_place(temp_image, (self.x, self.y), -1 * degree)
-                self.draw_rotation(rotated_image, new_rect.topleft)
-
-                temp_image = self.front_image.copy() if is_front else self.back_image.copy()
-
-            new_degree -= 2
-            degree += 2
-
-            if new_degree == 0:
-                if is_front:
-                    self.front_image = rotated_image
-                else:
-                    self.back_image = rotated_image
-
-        self.draw(still_drawing=True, is_front=is_front)
-        self.rect_card = self.front_image.get_rect() if is_front else self.back_image.get_rect()
+        self.update_card_collision(self.x, self.y)
 
     # Method to get the Width
     def get_width(self):
@@ -290,7 +267,7 @@ class Cards:
     def get_chosen(self):
         return self.chosen
 
-    # Change the status of the in play instance
+    # Change the status of the in play instanceself.rect_card = self.front_image.get_rect()
     def change_in_play(self, boolean):
         self.in_play = boolean
 
@@ -299,7 +276,8 @@ class Cards:
         return self.in_play
 
     def update_card_collision(self, x, y):
-        self.rect_card.update(x, y, self.width, self.height)
+        self.rect_card = self.front_image.get_rect()
+        self.rect_card.move_ip(x, y)
 
     def update_card_block_area(self, x, y, width, height):
         self.rect_blocked.update(x, y, width, height)

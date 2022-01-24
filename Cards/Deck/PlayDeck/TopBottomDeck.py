@@ -2,7 +2,7 @@ from math import ceil
 
 import pygame
 
-from Cards.AbstractDeck import AbstractDeck
+from Cards.Deck.AbstractDeck import AbstractDeck
 from Utils.Settings import Settings
 
 
@@ -47,11 +47,17 @@ class TopBottomDeck(AbstractDeck):
 
     def draw_rest_deck(self, card, for_drag=False):
         index = self.deck.index(card)
-        for c in range(index + 1 if not for_drag else index, len(self.deck)):
-            temp = self.deck[c]
-            if ((not (temp.get_chosen() and c == index + 1)) or self.to_be_chosen_cards.__contains__(temp)) \
-                    and not self.was_drag_card.__contains__(temp):
-                self.deck[c].draw(still_drawing=False)
+        if for_drag:
+            for c in range(index, len(self.deck)):
+                temp = self.deck[c]
+                if not self.was_drag_card.__contains__(temp):
+                    self.deck[c].draw(still_drawing=False)
+        else:
+            for c in range(index + 1 if not for_drag else index, len(self.deck)):
+                temp = self.deck[c]
+                if ((not (temp.get_chosen() and c == index + 1)) or self.to_be_chosen_cards.__contains__(temp)) \
+                        and not self.was_drag_card.__contains__(temp):
+                    self.deck[c].draw(still_drawing=False)
 
     def flip_vis(self, boolean):
         for card in self.deck:
@@ -85,7 +91,7 @@ class TopBottomDeck(AbstractDeck):
         if not successful:
             self.deck.insert(self.drag_card_original_index, self.drag_card.pop())
 
-        self.draw_deck(game_update=True)
+        self.draw_deck(game_update=False)
 
         self.drag_card_original_index = -1
         self.mouse_y_offset = -1

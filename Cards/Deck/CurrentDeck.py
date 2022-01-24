@@ -1,6 +1,6 @@
 import pygame
 
-from Cards.AbstractDeck import AbstractDeck
+from Cards.Deck.AbstractDeck import AbstractDeck
 from Utils.Settings import Settings
 
 

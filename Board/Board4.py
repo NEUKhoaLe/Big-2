@@ -1,12 +1,12 @@
 import pygame
 
 from Board.AbstractBoard import AbstractBoard
-from Cards.CurrentDeck import CurrentDeck
-from Cards.DiscardDeck import DiscardDeck
-from Cards.LeftDeck import LeftDeck
-from Cards.PlayerDeck import PlayerDeck
-from Cards.OppositeDeck import OppositeDeck
-from Cards.RightDeck import RightDeck
+from Cards.Deck.CurrentDeck import CurrentDeck
+from Cards.Deck.DiscardDeck import DiscardDeck
+from Cards.Deck.PlayDeck.LeftDeck import LeftDeck
+from Cards.Deck.PlayDeck.PlayerDeck import PlayerDeck
+from Cards.Deck.PlayDeck.OppositeDeck import OppositeDeck
+from Cards.Deck.PlayDeck.RightDeck import RightDeck
 
 
 def is_same(operating_deck):
