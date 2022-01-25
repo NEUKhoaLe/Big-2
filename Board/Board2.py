@@ -18,7 +18,7 @@ def is_same(operating_deck):
 
 
 class Board2(AbstractBoard):
-    def __init__(self, display, surface, player, opposite):
+    def __init__(self, display, surface):
         super().__init__(display, surface)
 
         self.opposite_deck_collide_point = pygame.Rect(self.settings.opposite_deck_2_x, self.settings.opposite_y,
@@ -35,12 +35,6 @@ class Board2(AbstractBoard):
         self.opposite_deck = OppositeDeck(self.settings.opposite_deck_2_x, self.settings.opposite_y,
                                           self.settings.opposite_chosen_y, self.settings.play_deck_width_2,
                                           self.opposite_deck_collide_point, self.display, self.surface)
-
-        self.player = player
-        self.opposite = opposite
-
-        self.player.enter_deck(self.player_deck)
-        self.opposite.enter_deck(self.opposite_deck)
 
         # The current play deck: where we will place the cards
         # That are currently being played.
@@ -65,9 +59,9 @@ class Board2(AbstractBoard):
             self.move_to_shuffle_pos(game_update)
         elif deck_type == "opposite":
             if game_update:
-                self.opposite.update_draw()
+                self.opposite_deck.update_draw()
             else:
-                self.opposite.draw_deck(False, game_update)
+                self.opposite_deck.draw_deck(False, game_update)
         elif deck_type == "current":
             if game_update:
                 self.current_deck.update_draw()
@@ -80,9 +74,9 @@ class Board2(AbstractBoard):
                 self.discard_deck.draw_deck(False, game_update)
         elif deck_type == "player":
             if game_update:
-                self.player.update_draw()
+                self.player_deck.update_draw()
             else:
-                self.player.draw_deck(False, game_update)
+                self.player_deck.draw_deck(False, game_update)
 
     # Method to deal the shuffled card.
     # takes in the winner of the last game.
@@ -95,11 +89,11 @@ class Board2(AbstractBoard):
             while i >= 0:
                 self.shuffledeck.card_change_in_play(i, True)
                 if counter % 2 == 0:
-                    self.player.add_card(self.shuffledeck.remove_card("last"))
-                    self.player.draw_deck(True)
+                    self.player_deck.add_card(self.shuffledeck.remove_card("last"))
+                    self.player_deck.draw_deck(True)
                 else:
-                    self.opposite.add_card(self.shuffledeck.remove_card("last"))
-                    self.opposite.draw_deck(True)
+                    self.opposite_deck.add_card(self.shuffledeck.remove_card("last"))
+                    self.opposite_deck.draw_deck(True)
                 counter += 1
                 i -= 1
         else:
@@ -107,11 +101,11 @@ class Board2(AbstractBoard):
             while i >= 0:
                 self.shuffledeck.card_change_in_play(i, True)
                 if counter % 2 == 1:
-                    self.opposite.add_card(self.shuffledeck.remove_card("last"))
-                    self.opposite.draw_deck(True)
+                    self.opposite_deck.add_card(self.shuffledeck.remove_card("last"))
+                    self.opposite_deck.draw_deck(True)
                 else:
-                    self.player.add_card(self.shuffledeck.remove_card("last"))
-                    self.player.draw_deck(True)
+                    self.player_deck.add_card(self.shuffledeck.remove_card("last"))
+                    self.player_deck.draw_deck(True)
                 counter += 1
                 i -= 1
 
@@ -134,14 +128,14 @@ class Board2(AbstractBoard):
     # Method to flip the visibility.
     def flip_vis(self, deck_type, boolean):
         if deck_type == "opposite":
-            self.opposite.flip_vis(boolean)
+            self.opposite_deck.flip_vis(boolean)
         elif deck_type == "player":
-            self.player.flip_vis(boolean)
+            self.player_deck.flip_vis(boolean)
 
     def select_deck(self, mouse_x, mouse_y):
-        if self.player.select_deck(mouse_x, mouse_y):
+        if self.player_deck.select_deck(mouse_x, mouse_y):
             return "player"
-        elif self.opposite.select_deck(mouse_x, mouse_y):
+        elif self.opposite_deck.select_deck(mouse_x, mouse_y):
             return "opposite"
 
     # Handle collision. Choosing a card. Passes in x and y position of mouse. First find which deck was chosen
@@ -149,17 +143,16 @@ class Board2(AbstractBoard):
     # If a chosen card is selected, then it is "unchosen" i.e. removed from the chosen pile
     def choose_card(self, mouse_x, mouse_y, cur_player, dragging):
         if self.select_deck(mouse_x, mouse_y) == "player" and cur_player == "player":
-            return self.player.handle_selected(mouse_x, mouse_y, dragging)
+            return self.player_deck.handle_selected(mouse_x, mouse_y, dragging)
         elif self.select_deck(mouse_x, mouse_y) == "opposite" and cur_player == "opposite":
-            return self.opposite.handle_selected(mouse_x, mouse_y, dragging)
+            return self.opposite_deck.handle_selected(mouse_x, mouse_y, dragging)
         else:
             return "Not Selected " + cur_player
 
-    def rotate_deck(self):
-        temp_x, temp_y = self.opposite.get_pos()
-
-        self.opposite.change_pos(self.player.get_pos()[0], self.player.get_pos()[1])
-        self.player.change_pos(temp_x, temp_y)
+    def rotate_deck(self, order):
+        temp_deck = self.opposite_deck.get_deck()
+        self.opposite_deck.transfer_all_cards_to_deck(self.player_deck.get_deck())
+        self.player_deck.transfer_all_cards_to_deck(temp_deck)
 
     def move_to_discard(self):
         pass
@@ -167,9 +160,9 @@ class Board2(AbstractBoard):
     def play(self, turn):
         operating_deck = None
         if turn == "player":
-            operating_deck = self.player.get_chosen_deck()
+            operating_deck = self.player_deck.get_chosen()
         elif turn == "opposite":
-            operating_deck = self.opposite.get_chosen_deck()
+            operating_deck = self.opposite_deck.get_chosen()
 
         if self.valid_move(operating_deck):
             pass
@@ -239,12 +232,12 @@ class Board2(AbstractBoard):
 
     def move_to_mouse(self, mouse_x, mouse_y, turn):
         if turn == "player":
-            self.player.move_to_mouse(mouse_x, mouse_y)
+            self.player_deck.move_to_mouse(mouse_x, mouse_y)
         elif turn == "opposite":
-            self.opposite.move_to_mouse(mouse_x, mouse_y)
+            self.opposite_deck.move_to_mouse(mouse_x, mouse_y)
 
     def undrag(self, mouse_x, mouse_y, turn):
         if turn == "player":
-            self.player.undrag(mouse_x, mouse_y)
+            self.player_deck.undrag(mouse_x, mouse_y)
         elif turn == "opposite":
-            self.opposite.undrag(mouse_x, mouse_y)
+            self.opposite_deck.undrag(mouse_x, mouse_y)

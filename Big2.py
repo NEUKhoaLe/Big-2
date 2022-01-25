@@ -1,9 +1,8 @@
 import pygame
 import sys
 
-from Bots.EasyBot import EasyBot
 from Game.Game4Bot import Game4Bot
-from Network.Network import Network
+from Network import Network
 from Utils.Settings import Settings
 from Utils.Buttons import Buttons
 from Game.Game2Bot import Game2Bot
@@ -134,7 +133,9 @@ class Big2:
     # The main function that handles the pygame events on the main menu screen
     def main_menu(self):
         """Start the main loop for the game."""
-        while True:
+        run = True
+
+        while run:
             self.reset_drawn_stat_rect()
             self.clock.tick(self.settings.FPS)
 
@@ -155,7 +156,9 @@ class Big2:
     # The main function that handles the pygame events on the Rules Screen
     def rules(self):
         """The loop that displays the rules"""
-        while True:
+        run = True
+
+        while run:
             self.reset_drawn_stat_rect()
             self.clock.tick(self.settings.FPS)
 
@@ -179,7 +182,9 @@ class Big2:
     # The main function that handles the pygame events on the Single Player Screen
     def single_player(self):
         """Start the main loop for the game."""
-        while True:
+        run = True
+
+        while run:
             self.reset_drawn_stat_rect()
             self.clock.tick(self.settings.FPS)
 
@@ -203,7 +208,9 @@ class Big2:
             pygame.display.flip()
 
     def two_player_single_mode(self):
-        while True:
+        run = True
+
+        while run:
             self.reset_drawn_stat_rect()
             self.clock.tick(self.settings.FPS)
 
@@ -226,7 +233,9 @@ class Big2:
             pygame.display.flip()
 
     def four_player_single_mode(self):
-        while True:
+        run = True
+
+        while run:
             self.reset_drawn_stat_rect()
             self.clock.tick(self.settings.FPS)
 
@@ -259,18 +268,20 @@ class Big2:
     """
 
     def easy_difficulty(self, num_player):
+        run = True
+
         self.game = Game2Bot(self.screen) if num_player == 2 else Game4Bot(self.screen)
         temp = pygame.Surface((self.settings.screen_width, self.settings.screen_height))
         self.screen.blit(temp, (0, 0))
         player1_name = self.enter_name(temp)
 
-        self.game.create_player(player1_name, "easy bot", "easy bot", "easy bot")
+        self.game.create_player(player1_name, "easy bot")
         self.game.start_game()
         self.dragging = False
 
         self.game.update()
 
-        while True:
+        while run:
             self.reset_drawn_stat_rect()
             self.clock.tick(self.settings.FPS)
 
@@ -318,7 +329,9 @@ class Big2:
             pygame.display.flip()
 
     def hard_difficulty(self, num_player):
-        while True:
+        run = True
+
+        while run:
             self.reset_drawn_stat_rect()
             self.clock.tick(self.settings.FPS)
 
@@ -348,7 +361,9 @@ class Big2:
     # The main function that handles the pygame events on the Multi Player Screen
     def multi_player(self):
         """The screen for multiplayer set up"""
-        while True:
+        run = True
+
+        while run:
             self.reset_drawn_stat_rect()
             self.clock.tick(self.settings.FPS)
 
@@ -372,17 +387,22 @@ class Big2:
 
     # Two player online mode main method
     def two_player_online_mode(self):
+        run = True
         # Get the client's name
         temp = pygame.Surface((self.settings.screen_width, self.settings.screen_height))
         self.screen.blit(temp, (0, 0))
         client_name = self.enter_name(temp)
+        self.dragging = False
 
         # Connect to the network, which will automatically get the player number.
         network = Network()
         # Get the player number
-        self.player_number = str(network.get_player())
+        self.player_number = int(network.get_player())
         # Get the game to initialize and add the player name into the server's game client
         self.game = network.send("get")
+
+        # Everytime we get the game, we have to send in our surface and our display.
+        # The server game client will not need to have a display or surface.
 
         # Process: Client-prediction Server Reconciliation
         # We want the client to always be the deck at the bottom. So when
@@ -405,9 +425,15 @@ class Big2:
         # In this reconciliation process, if everything is the same, then nothing happens
         # If everything is not, we will draw the server's game state, as the server is
         # the authority here.
-        self.game.reconcile(network.send(client_name))
 
-        while True:
+        # We will send a tuple to the client, which is [game_object, player_int]
+        # If the player_int doesn't match with the client player number, then there
+        # is no need to reconcile.
+        self.game.reconcile(network.send(client_name), self.player_number, name=True)
+
+        self.game.update()
+
+        while run:
             self.reset_drawn_stat_rect()
             self.clock.tick(self.settings.FPS)
 

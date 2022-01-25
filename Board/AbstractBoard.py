@@ -219,7 +219,7 @@ class AbstractBoard:
 
     # swapping the position of each deck 90 degrees counter clockwise
     # 180 degrees for two player
-    def rotate_deck(self):
+    def rotate_deck(self, order):
         pass
 
     def play(self, turn):

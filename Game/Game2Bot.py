@@ -19,7 +19,7 @@ class Game2Bot(AbstractGame):
         self.player1 = Player(self.surface, player_type="player")
         self.player2 = Player(self.surface, player_type="opposite")
 
-        self.board = Board2(self.display, self.surface, self.player1, self.player2)
+        self.board = Board2(self.display, self.surface)
 
         self.turn = "player"
 
@@ -32,53 +32,7 @@ class Game2Bot(AbstractGame):
         self.skip_button = Buttons("  Skip  ", self.settings.game_button_font,
                                    self.settings.skip_button_x, self.settings.skip_button_y, self.surface)
 
-        player1_name = self.enter_name(self.surface)
-        self.create_player(player1_name, "easy bot")
-
         self.display.fill(self.settings.bg_color)
-
-    def enter_name(self, surface):
-        entered_name1 = False
-        player1_name = ""
-
-        while not entered_name1:
-
-            font = self.settings.game_mode_font
-
-            surface.fill(self.settings.bg_color)
-            pygame.display.flip()
-
-            string_size = 0
-
-            if not entered_name1:
-                string = "Enter Player 1 name: " + player1_name
-                title = font.render(string, True, (255, 255, 255))
-                title_width = font.size(string)
-
-                string_size = title_width[0]
-
-                surface.blit(title, (500 - title_width[0]/2, 200 - title_width[1]/2))
-
-            self.display.blit(surface, (0, 0))
-            pygame.display.flip()
-
-            for event in pygame.event.get():
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_RETURN:
-                        if not entered_name1 and player1_name != "":
-                            entered_name1 = True
-                    elif event.key == pygame.K_BACKSPACE:
-                        if not entered_name1 and player1_name != "":
-                            player1_name = player1_name[:-1]
-                    else:
-                        if not entered_name1 and not font.size(event.unicode)[0] + string_size >= 1000:
-                            player1_name += event.unicode
-                if entered_name1:
-                    break
-
-            pygame.display.flip()
-
-        return player1_name
 
     def create_player(self, player1_name, player2):
         self.clear()
@@ -95,7 +49,7 @@ class Game2Bot(AbstractGame):
         else:
             self.player2 = player2
 
-        self.board = Board2(self.display, self.surface, self.player1, self.player2)
+        self.board = Board2(self.display, self.surface)
 
         self.draw_player_name()
 

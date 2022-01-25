@@ -36,8 +36,7 @@ class AbstractDeck:
             return self.deck.remove(cards)
 
     def transfer_all_cards_to_deck(self, deck):
-        deck.add_card(self.deck)
-        self.deck = []
+        self.deck = deck.copy()
 
     def get_length(self):
         return len(self.deck)
