@@ -19,7 +19,7 @@ class CurrentDeck(AbstractDeck):
         self.x = x
         self.y = y
 
-    def draw_deck(self, move_from_shuffle=False, game_update=False):
+    def draw_deck(self, move_from_shuffle=False, game_update=False, draw=True):
         if not move_from_shuffle:
             self.surface.blit(self.background, (self.x, self.y))
 

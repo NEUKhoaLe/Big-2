@@ -25,8 +25,6 @@ class Network:
     def send(self, data):
         try:
             self.client.send(str.encode(data))
-            game = Game2Online(1)
-            return_value = pickle.loads(game)
-            return return_value
+            return pickle.loads(self.client.recv(2048 * 2))
         except socket.error as e:
             print(e)

@@ -1,7 +1,7 @@
 from random import Random
 
 from Cards.Cards import Cards
-from Cards.Deck.ShuffleDeck import ShuffleDeck
+from Cards.Deck.Shuffle.ShuffleDeck import ShuffleDeck
 from Utils.Settings import Settings
 
 

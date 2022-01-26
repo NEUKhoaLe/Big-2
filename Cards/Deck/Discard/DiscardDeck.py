@@ -16,7 +16,7 @@ class DiscardDeck(AbstractDeck):
         self.x = x
         self.y = y
 
-    def draw_deck(self, move_from_shuffle=False, game_update=False):
+    def draw_deck(self, move_from_shuffle=False, game_update=False, draw=True):
         if len(self.deck) != 0:
             card = self.deck[len(self.deck) - 1]
             card.draw(is_front=False)
@@ -39,4 +39,3 @@ class DiscardDeck(AbstractDeck):
 
     def get_pos(self):
         return self.x, self.y
-
