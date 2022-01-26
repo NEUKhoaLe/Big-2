@@ -2,7 +2,7 @@ import pickle
 import socket
 from _thread import *
 
-from Game.Game2Online import Game2Online
+from Game.Player2.ServerGame2 import ServerGame2
 
 server = "192.168.1.241"
 port = 5555
@@ -38,7 +38,7 @@ def threaded_client(conn, player, game_id):
                 else:
                     pass
 
-                conn.sendall(pickle.dumps(game))
+                conn.sendall(pickle.dumps([game, player]))
         except:
             break
 
@@ -61,7 +61,7 @@ while True:
     game_id = (idCount - 1) // 2
 
     if idCount % 2 == 1:
-        games[game_id] = Game2Online(game_id)
+        games[game_id] = ServerGame2(game_id)
         print("Creating a new game...")
     else:
         games[game_id].set_ready(True)

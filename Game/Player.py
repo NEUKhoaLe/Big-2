@@ -6,7 +6,6 @@ from Utils.Settings import Settings
 class Player:
     def __init__(self, surface, player_type="", name=""):
         self.name = name
-        self.deck = None
         self.score = 0
         self.surface = surface
         self.player_type = player_type

@@ -1,5 +1,7 @@
 from Board.Board2.Board2 import Board2
+from Bots.EasyBot import EasyBot
 from Game.AbstractGame import AbstractGame
+from Game.Player import Player
 from Utils.Buttons import Buttons
 
 
@@ -35,6 +37,25 @@ class Game2Online(AbstractGame):
         elif player_number == 2:
             return self.player2.copy()
 
+    def create_player(self, player1_name, player2):
+        self.clear()
+
+        if type(player1_name) is str:
+            self.player1 = Player(self.surface, player_type="player")
+            self.player1.enter_name(player1_name)
+        else:
+            self.player1 = player1_name
+
+        if type(player2) is str:
+            self.player2 = Player(self.surface, player_type="opposite")
+            self.player2.enter_name(player2)
+        else:
+            self.player2 = player2
+
+        self.board = Board2(self.display, self.surface)
+
+        self.draw_player_name()
+
     def set_ready(self, boolean):
         self.server_ready = boolean
 
@@ -50,6 +71,24 @@ class Game2Online(AbstractGame):
             order = [2, 1]
 
         self.board.rotate_deck(order)
+
+    def clear(self):
+        self.surface.fill(self.settings.bg_color)
+
+    def draw_player_name(self):
+        if type(self.player1) is Player:
+            self.player1.draw_name()
+        elif type(self.player1) is EasyBot:
+            pass
+        # elif type(self.player1) is HardBot:
+        # pass
+
+        if type(self.player2) is Player:
+            self.player2.draw_name()
+        elif type(self.player2) is EasyBot:
+            pass
+        # elif type(self.player1) is HardBot:
+        # pass
 
     def reconcile(self, game_object, player_number, name=False):
         server_game = game_object[0]

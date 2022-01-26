@@ -1,11 +1,11 @@
 import pygame
 import sys
 
-from Game.Game4Bot import Game4Bot
+from Game.Player4.Game4Bot import Game4Bot
 from Network import Network
 from Utils.Settings import Settings
 from Utils.Buttons import Buttons
-from Game.Game2Bot import Game2Bot
+from Game.Player2.Game2Bot import Game2Bot
 
 """
 This is the Big 2. It will represent the client. It will speak to a server.
@@ -404,11 +404,7 @@ class Big2:
         # Everytime we get the game, we have to send in our surface and our display.
         # The server game client will not need to have a display or surface.
 
-        # Process: Client-prediction Server Reconciliation
-        # We want the client to always be the deck at the bottom. So when
-        # We get the game client from the server. We switch rotate the board.
-        # Do the action on the client, then rotate it back.
-        # In the beginning, just to add the name, we do not have to do rotation.
+        #
         if self.player_number == 1:
             self.game.create_player(client_name, None)
         elif self.player_number == 2:

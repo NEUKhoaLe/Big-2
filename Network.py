@@ -1,8 +1,6 @@
 import socket
 import pickle
 
-from Game.Game2Online import Game2Online
-
 
 class Network:
     def __init__(self):
