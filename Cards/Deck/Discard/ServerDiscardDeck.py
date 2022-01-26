@@ -2,7 +2,7 @@ from Cards.ServerCard import ServerCard
 from Utils.ServerSettings import ServerSettings
 
 
-class DiscardDeck:
+class ServerDiscardDeck:
     def __init__(self, x, y):
         self.deck = []
 

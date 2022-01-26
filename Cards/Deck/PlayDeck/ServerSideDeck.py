@@ -70,6 +70,9 @@ class ServerSideDeck:
     def draw_deck(self, move_from_shuffle, game_update=False, draw=True):
         pass
 
+    def get_chosen(self):
+        return self.chosen_deck.copy()
+
     def change_pos(self, x, y):
         self.x = x
         self.y = y

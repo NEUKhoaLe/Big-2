@@ -1,4 +1,4 @@
-from Board.Board2 import Board2
+from Board.Board2.Board2 import Board2
 from Game.AbstractGame import AbstractGame
 from Utils.Buttons import Buttons
 

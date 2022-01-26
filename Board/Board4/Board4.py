@@ -185,8 +185,7 @@ class Board4(AbstractBoard):
 
         pygame.display.flip()
 
-        # Method to move card from play pile to chosen pile
-
+    # Method to move card from play pile to chosen pile
     def move_play_to_chosen(self, card, deck_type):
         pass
 

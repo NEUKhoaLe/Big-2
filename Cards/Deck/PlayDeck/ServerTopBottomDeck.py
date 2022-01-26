@@ -115,7 +115,7 @@ class ServerTopBottomDeck:
         new_pos_x = mouse_x + self.mouse_x_offset
         new_pos_y = mouse_y + self.mouse_y_offset
 
-        self.drag_card[0].move(new_pos_x, new_pos_y, drag=True)
+        self.drag_card[0].move(new_pos_x, new_pos_y)
 
     def get_chosen(self):
         return self.chosen_deck.copy()

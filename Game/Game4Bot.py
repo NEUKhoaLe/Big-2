@@ -1,6 +1,6 @@
 import pygame
 
-from Board.Board4 import Board4
+from Board.Board4.Board4 import Board4
 from Bots.EasyBot import EasyBot
 from Game.AbstractGame import AbstractGame
 from Game.Player import Player
