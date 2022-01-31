@@ -275,7 +275,11 @@ class Big2:
         self.screen.blit(temp, (0, 0))
         player1_name = self.enter_name(temp)
 
-        self.game.create_player(player1_name, "easy bot")
+        if num_player == 2:
+            self.game.create_player(player1_name, "easy bot")
+        else:
+            self.game.create_player(player1_name, "easy bot", "easy bot", "easy bot")
+
         self.game.start_game()
         self.dragging = False
 
@@ -425,7 +429,7 @@ class Big2:
         # We will send a tuple to the client, which is [game_object, player_int]
         # If the player_int doesn't match with the client player number, then there
         # is no need to reconcile.
-        self.game.reconcile(network.send(client_name), self.player_number, name=True)
+        self.game.reconcile(network.send("name " + client_name), self.player_number)
 
         self.game.update()
 

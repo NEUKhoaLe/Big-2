@@ -1,3 +1,5 @@
+from Board.Board2.ServerBoard2 import ServerBoard2
+from Game.ServerPlayer import ServerPlayer
 from Utils.ServerButtons import ServerButtons
 from Utils.ServerSettings import ServerSettings
 
@@ -26,6 +28,20 @@ class ServerGame2:
 
     def set_ready(self, boolean):
         self.server_ready = boolean
+
+    def create_player(self, player1_name, player2):
+        if type(player1_name) is str:
+            self.player1 = ServerPlayer(player_type="player", name=player1_name)
+        else:
+            self.player1 = player1_name
+
+        if type(player2) is str:
+            self.player2 = ServerPlayer(player_type="opposite", name=player2)
+            self.player2.enter_name(player2)
+        elif not None:
+            self.player2 = player2
+
+        self.board = ServerBoard2()
 
     # If player number 2, player_deck = 2, opposite_deck = 1
     def swap_decks(self, player_number):
@@ -92,3 +108,6 @@ class ServerGame2:
                 self.have_selected_card_drag = False
             else:
                 return "nothing"
+
+    def get_board(self):
+        return self.board.copy()

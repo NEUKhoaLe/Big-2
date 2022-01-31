@@ -90,20 +90,20 @@ class Game2Online(AbstractGame):
         # elif type(self.player1) is HardBot:
         # pass
 
-    def reconcile(self, game_object, player_number, name=False):
+    def reconcile(self, game_object, player_number):
         server_game = game_object[0]
         server_player = game_object[1]
 
         if player_number != server_player:
             return
 
-        if name:
-            if player_number == 1:
-                if server_game.get_player(player_number).get_name() != self.player1.get_name():
-                    self.player1.set_name(server_game.get_player(player_number).get_name())
+        # Transferring the constants
+        self.turn = server_game.turn
+        self.have_selected_card_drag = server_game.turn
 
-            elif player_number == 2:
-                if server_game.get_player(server_game).get_name() != self.player2.get_name():
-                    self.player2.set_name(server_game.get_player(player_number).get_name())
-        else:
-            pass
+        self.game_id = server_game.game_id
+        self.server_ready = server_game.server_ready
+
+        # Player Transfer
+        self.board.transfer_board(server_game.get_board())
+        # Board Transfer
