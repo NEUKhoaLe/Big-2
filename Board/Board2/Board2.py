@@ -1,3 +1,5 @@
+from random import Random
+
 import pygame
 
 from Board.AbstractBoard import AbstractBoard
@@ -150,9 +152,10 @@ class Board2(AbstractBoard):
             return "Not Selected " + cur_player
 
     def rotate_deck(self, order):
-        temp_deck = self.opposite_deck.get_deck()
-        self.opposite_deck.transfer_all_cards_to_deck(self.player_deck.get_deck())
-        self.player_deck.transfer_all_cards_to_deck(temp_deck)
+        if order == [2, 1]:
+            temp_deck = self.opposite_deck.get_deck()
+            self.opposite_deck.transfer_all_cards_to_deck(self.player_deck.get_deck())
+            self.player_deck.transfer_all_cards_to_deck(temp_deck)
 
     def move_to_discard(self):
         pass
@@ -241,3 +244,12 @@ class Board2(AbstractBoard):
             self.player_deck.undrag(mouse_x, mouse_y)
         elif turn == "opposite":
             self.opposite_deck.undrag(mouse_x, mouse_y)
+
+    def transfer_board(self, server_board):
+        self.random = Random()
+        self.shuffledeck.transfer_all_cards_to_deck(server_board.shuffledeck.get_deck())
+        self.player_deck.transfer_all_cards_to_deck(server_board.player_deck.get_deck())
+        self.opposite_deck.transfer_all_cards_to_deck(server_board.opposite_deck.get_deck())
+
+        self.current_deck.transfer_all_cards_to_deck(server_board.current_deck.get_deck())
+        self.discard_deck.transfer_all_cards_to_deck(server_board.discard_deck.get_deck())

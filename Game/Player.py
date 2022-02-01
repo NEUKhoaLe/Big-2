@@ -20,6 +20,9 @@ class Player:
     def enter_score(self, score):
         self.score = score
 
+    def get_score(self):
+        return self.score
+
     def draw_name(self):
         font = pygame.font.SysFont('jetsbrainsmono.ttf', 36)
         name_rendered = font.render(self.name + " (" + str(self.score) + ")", True, (255, 255, 255))

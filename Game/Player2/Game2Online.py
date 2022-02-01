@@ -1,3 +1,5 @@
+import pygame
+
 from Board.Board2.Board2 import Board2
 from Bots.EasyBot import EasyBot
 from Game.AbstractGame import AbstractGame
@@ -6,11 +8,10 @@ from Utils.Buttons import Buttons
 
 
 class Game2Online(AbstractGame):
-    def __init__(self, game_id):
-        super().__init__(None)
+    def __init__(self, display, game_id):
+        super().__init__(display)
 
-        self.display = None
-        self.surface = None
+        self.surface = pygame.Surface((self.settings.screen_width, self.settings.screen_height))
 
         self.turn = "player"
         self.have_selected_card_drag = False
@@ -30,6 +31,15 @@ class Game2Online(AbstractGame):
                                    self.settings.skip_button_x, self.settings.skip_button_y, self.surface)
 
         self.board = Board2(self.display, self.surface)
+
+    def start_game(self):
+        self.deal()
+        # self.update(p=False, o=False)
+
+    # Dealing The Card
+    def deal(self):
+        self.board.move_to_shuffle_pos(game_update=False)
+        self.board.deal(self.turn)
 
     def get_player(self, player_number):
         if player_number == 1:
@@ -58,6 +68,9 @@ class Game2Online(AbstractGame):
 
     def set_ready(self, boolean):
         self.server_ready = boolean
+
+    def get_ready(self):
+        return self.server_ready
 
     def set_display_and_surface(self, display, surface):
         self.display = display
@@ -104,6 +117,31 @@ class Game2Online(AbstractGame):
         self.game_id = server_game.game_id
         self.server_ready = server_game.server_ready
 
-        # Player Transfer
-        self.board.transfer_board(server_game.get_board())
         # Board Transfer
+        # Only do when both player has joined
+        if server_game.player2 is not None and server_game.player1 is not None:
+            self.board.transfer_board(server_game.get_board())
+            self.swap_decks(player_number)
+
+        # Player Transfer
+
+        if server_game.player2 is not None:
+            self.player2.enter_name(server_game.player2.get_name())
+            self.player2.enter_score(server_game.player2.get_score())
+
+        if server_game.player1 is not None:
+            self.player1.enter_name(server_game.player1.get_name())
+            self.player1.enter_score(server_game.player2.get_score())
+
+    def get_board(self):
+        return self.board.copy()
+
+    # Updating the game
+    # Draw the board
+    # Draw the player's .display.flip()names
+    # Draw the buttons
+    def update(self, s=True, o=True, c=True, d=True, l=True, r=True, p=True, gu=False):
+        self.draw_player_name()
+        self.skip_button.draw_button()
+        self.play_button.draw_button()
+        self.board.draw_board(shuffle=s, opposite=o, current=c, discard=d, player=p, left=l, right=r, gu=gu)

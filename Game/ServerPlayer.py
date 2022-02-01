@@ -11,6 +11,9 @@ class ServerPlayer:
     def get_name(self):
         return self.name
 
+    def get_score(self):
+        return self.score
+
     def enter_name(self, name):
         self.name = name
 

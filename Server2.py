@@ -35,6 +35,8 @@ def threaded_client(conn, player, game_id):
                 if not data:
                     print("Disconnected.")
                     break
+                elif data == "get":
+                    conn.send(pickle.dumps([game, player]))
                 else:
                     pass
 

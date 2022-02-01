@@ -242,3 +242,6 @@ class AbstractBoard:
 
     def undrag(self, mouse_x, mouse_y, turn):
         pass
+
+    def transferBoard(self, server_board):
+        pass

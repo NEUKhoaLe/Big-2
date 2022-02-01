@@ -1,6 +1,7 @@
 import pygame
 import sys
 
+from Game.Player2.Game2Online import Game2Online
 from Game.Player4.Game4Bot import Game4Bot
 from Network import Network
 from Utils.Settings import Settings
@@ -391,28 +392,37 @@ class Big2:
 
     # Two player online mode main method
     def two_player_online_mode(self):
-        run = True
+        run = False
         # Get the client's name
         temp = pygame.Surface((self.settings.screen_width, self.settings.screen_height))
         self.screen.blit(temp, (0, 0))
         client_name = self.enter_name(temp)
         self.dragging = False
 
+        title_font = self.settings.big2_font
+        title = title_font.render("Waiting for other players", True, (255, 255, 255))
+        title_width = title_font.size("Waiting for other players")
+
+        self.screen.blit(title, (500 - title_width[0] / 2, 500 - title_width[1] / 2))
+
         # Connect to the network, which will automatically get the player number.
         network = Network()
         # Get the player number
         self.player_number = int(network.get_player())
         # Get the game to initialize and add the player name into the server's game client
-        self.game = network.send("get")
+        reply = network.send("get")
 
-        # Everytime we get the game, we have to send in our surface and our display.
-        # The server game client will not need to have a display or surface.
+        # Initialize the client-side game.
+        self.game = Game2Online(self.screen, self.player_number)
+        # Initial reconciliation with server.
+        self.game.reconcile(reply, self.player_number)
 
-        #
+        # Creating the player.
         if self.player_number == 1:
             self.game.create_player(client_name, None)
         elif self.player_number == 2:
             self.game.create_player(None, client_name)
+
         # After changing the name in the client side, we send the instruction to the
         # Server. The below are the server instructions so far:
         # "click <x y>" - selecting card, playing, skipping, choosing a card
@@ -430,6 +440,23 @@ class Big2:
         # If the player_int doesn't match with the client player number, then there
         # is no need to reconcile.
         self.game.reconcile(network.send("name " + client_name), self.player_number)
+
+        # While the server is not ready, we print a screen that says "Waiting for another player"
+        # No matter what we do, we will always reconcile with the server at the end
+
+        while not self.game.get_ready():
+            self.screen.fill(self.settings.bg_color)
+            self.screen.blit(title, (500 - title_width[0] / 2, 500 - title_width[1] / 2))
+
+            pygame.display.flip()
+
+            self.game.reconcile(network.send("get"), self.player_number)
+
+        run = True
+
+        self.game.reconcile(network.send("get"), self.player_number)
+        self.game.start_game()
+        self.dragging = False
 
         self.game.update()
 

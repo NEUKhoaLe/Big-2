@@ -1,6 +1,6 @@
 from random import Random
 
-from ServerCard.Deck.Shuffle.ServerShuffleDeck import ServerShuffleDeck
+from Cards.Deck.Shuffle.ServerShuffleDeck import ServerShuffleDeck
 
 from Cards.ServerCard import ServerCard
 from Utils.ServerSettings import ServerSettings
