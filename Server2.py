@@ -17,8 +17,7 @@ class Server2:
 
         self.idCount = 0
         self.games = {}
-        self.game_instructions = {}
-        self.connections = []
+        self.connections = {}
 
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -39,19 +38,18 @@ class Server2:
             conn, addr = self.server_socket.accept()
             print("Connected to: ", addr)
 
-            self.connections.append(conn)
-
             self.idCount += 1
             player = 1
             game_id = (self.idCount - 1) // 2
 
             if self.idCount % 2 == 1:
                 self.games[game_id] = ServerGame2(game_id)
-                self.game_instructions[game_id] = []
+                self.connections[game_id] = [conn]
                 print("Creating a new game...")
             else:
                 self.games[game_id].set_ready(True)
                 player = 2
+                self.connections[game_id].append(conn)
 
             start_new_thread(self.threaded_client, (conn, player, game_id))
 
@@ -71,7 +69,9 @@ class Server2:
                     elif data == "get":
                         conn.send(pickle.dumps([game, player]))
                     else:
-                        pass
+                        for client in self.connections[game_id]:
+                            if conn != client:
+                                client.send(str.encode(data))
 
                     conn.sendall(pickle.dumps([game, player]))
             except:
