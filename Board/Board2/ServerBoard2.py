@@ -35,6 +35,8 @@ class ServerBoard2(ServerAbstractBoard):
                                                 self.settings.opposite_chosen_y, self.settings.play_deck_width_2,
                                                 self.opposite_deck_collide_point)
 
+        self.board_dict = {1: self.player_deck, 2: self.opposite_deck}
+
         # The current play deck: where we will place the cards
         # That are currently being played.
         self.current_deck = ServerCurrentDeck(self.settings.current_deck_2_x, self.settings.current_deck_y,
@@ -46,7 +48,7 @@ class ServerBoard2(ServerAbstractBoard):
     # takes in the winner of the last game.
     # deals in counter clock-wise
     # Must implement the move.
-    def deal(self, last_winner):
+    def deal2(self, last_winner):
         counter = 0
         if last_winner == "player":
             i = self.shuffledeck.get_length() - 1
@@ -70,6 +72,30 @@ class ServerBoard2(ServerAbstractBoard):
                 else:
                     self.player_deck.add_card(self.shuffledeck.remove_card("last"))
                     self.player_deck.move_deck()
+                counter += 1
+                i -= 1
+
+    # Method to deal the shuffled card.
+    # takes in the winner of the last game.
+    # deals in counter clock-wise
+    # Must implement the move.
+    def deal(self, last_winner):
+        if last_winner == "player":
+            counter = 0
+            i = self.shuffledeck.get_length() - 1
+            while i >= 0:
+                self.shuffledeck.card_change_in_play(i, True)
+                self.board_dict[counter % 2 + 1].add_card(self.shuffledeck.remove_card("last"))
+                self.board_dict[counter % 2 + 1].move_deck()
+                counter += 1
+                i -= 1
+        else:
+            i = self.shuffledeck.get_length() - 1
+            while i >= 0:
+                counter = 1
+                self.shuffledeck.card_change_in_play(i, True)
+                self.board_dict[counter % 2 + 1].add_card(self.shuffledeck.remove_card("last"))
+                self.board_dict[counter % 2 + 1].move_deck()
                 counter += 1
                 i -= 1
 

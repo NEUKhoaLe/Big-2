@@ -1,3 +1,5 @@
+import select
+
 import pygame
 import sys
 
@@ -287,6 +289,7 @@ class Big2:
         self.game.update()
 
         while run:
+
             self.reset_drawn_stat_rect()
             self.clock.tick(self.settings.FPS)
 
@@ -441,10 +444,22 @@ class Big2:
         # is no need to reconcile.
         self.game.reconcile(network.send("name " + client_name), self.player_number)
 
+        test = network.send("get")
         # While the server is not ready, we print a screen that says "Waiting for another player"
         # No matter what we do, we will always reconcile with the server at the end
 
+        socket = network.get_socket()
+
         while not self.game.get_ready():
+            readable, _, exceptable = select.select([socket], [], [socket])
+
+            for s in readable:
+                data, addr = s.recvfrom(2048)
+                if data:
+                    message = data.decode()
+
+                    self.game.reconcile(network.send(self.game.execute_instructions(message)), self.player_number)
+
             self.screen.fill(self.settings.bg_color)
             self.screen.blit(title, (500 - title_width[0] / 2, 500 - title_width[1] / 2))
 

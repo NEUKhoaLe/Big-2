@@ -5,6 +5,7 @@ from Bots.EasyBot import EasyBot
 from Game.AbstractGame import AbstractGame
 from Game.Player import Player
 from Utils.Buttons import Buttons
+import copy
 
 
 class Game2Online(AbstractGame):
@@ -30,7 +31,7 @@ class Game2Online(AbstractGame):
         self.skip_button = Buttons("  Skip  ", self.settings.game_button_font,
                                    self.settings.skip_button_x, self.settings.skip_button_y, self.surface)
 
-        self.board = Board2(self.display, self.surface)
+        self.board = Board2(self.display, self.surface, player_id=self.game_id)
 
     def start_game(self):
         self.deal()
@@ -43,9 +44,9 @@ class Game2Online(AbstractGame):
 
     def get_player(self, player_number):
         if player_number == 1:
-            return self.player1.copy()
+            return copy.deepcopy(self.player1)
         elif player_number == 2:
-            return self.player2.copy()
+            return copy.deepcopy(self.player2)
 
     def create_player(self, player1_name, player2):
         self.clear()
@@ -126,15 +127,21 @@ class Game2Online(AbstractGame):
         # Player Transfer
 
         if server_game.player2 is not None:
-            self.player2.enter_name(server_game.player2.get_name())
-            self.player2.enter_score(server_game.player2.get_score())
+            if self.player2 is None:
+                self.player2 = server_game.player2
+            else:
+                self.player2.enter_name(server_game.player2.get_name())
+                self.player2.enter_score(server_game.player2.get_score())
 
         if server_game.player1 is not None:
-            self.player1.enter_name(server_game.player1.get_name())
-            self.player1.enter_score(server_game.player2.get_score())
+            if self.player1 is None:
+                self.player1 = server_game.player1
+            else:
+                self.player1.enter_name(server_game.player1.get_name())
+                self.player1.enter_score(server_game.player1.get_score())
 
     def get_board(self):
-        return self.board.copy()
+        return copy.deepcopy(self.board)
 
     # Updating the game
     # Draw the board
@@ -145,3 +152,14 @@ class Game2Online(AbstractGame):
         self.skip_button.draw_button()
         self.play_button.draw_button()
         self.board.draw_board(shuffle=s, opposite=o, current=c, discard=d, player=p, left=l, right=r, gu=gu)
+
+    def execute_instructions(self, data):
+        array = data.split(" ")
+
+        if array[0] == "name":
+            if array[2] == 1:
+                self.create_player(array[1], None)
+            else:
+                self.create_player(None, array[1])
+
+        return "done"

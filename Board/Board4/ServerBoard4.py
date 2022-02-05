@@ -32,7 +32,6 @@ class ServerBoard4(ServerAbstractBoard):
                                                         0, 0)
         self.right_deck_deck_collide_point = pygame.Rect(self.settings.right_deck_4_x, self.settings.right_deck_4_y, 0,
                                                          0)
-
         # The layout of the board
         # The player's Deck
         self.player_deck = ServerPlayerDeck(self.settings.player_deck_4_x, self.settings.player_y,
@@ -50,6 +49,8 @@ class ServerBoard4(ServerAbstractBoard):
                                           self.settings.right_chosen_4_x, self.settings.play_deck_width_4,
                                           self.right_deck_deck_collide_point)
 
+        self.board_dict = {1: self.player_deck, 2: self.right_deck, 3: self.opposite_deck, 4: self.left_deck}
+
         # The current play deck: where we will place the cards
         # That are currently being played.
         self.current_deck = ServerCurrentDeck(self.settings.current_deck_4_x, self.settings.current_deck_y,
@@ -62,80 +63,45 @@ class ServerBoard4(ServerAbstractBoard):
     # deals in counter clock-wise
     # Must implement the move.
     def deal(self, last_winner):
-        counter = 0
         if last_winner == "player":
+            counter = 0
             i = self.shuffledeck.get_length() - 1
             while i >= 0:
                 self.shuffledeck.card_change_in_play(i, True)
-                if counter % 4 == 0:
-                    self.player_deck.add_card(self.shuffledeck.remove_card("last"))
-                    self.player_deck.move_deck()
-                elif counter % 4 == 1:
-                    self.right_deck.add_card(self.shuffledeck.remove_card("last"))
-                    self.right_deck.move_deck()
-                elif counter % 4 == 2:
-                    self.opposite_deck.add_card(self.shuffledeck.remove_card("last"))
-                    self.opposite_deck.move_deck()
-                elif counter % 4 == 3:
-                    self.left_deck.add_card(self.shuffledeck.remove_card("last"))
-                    self.left_deck.move_deck()
+                self.board_dict[counter % 4 + 1].add_card(self.shuffledeck.remove_card("last"))
+                self.board_dict[counter % 4 + 1].draw_deck(True)
                 counter += 1
                 i -= 1
         elif last_winner == "right":
+            counter = 1
             i = self.shuffledeck.get_length() - 1
             while i >= 0:
                 self.shuffledeck.card_change_in_play(i, True)
-                if counter % 4 == 3:
-                    self.player_deck.add_card(self.shuffledeck.remove_card("last"))
-                    self.player_deck.move_deck()
-                elif counter % 4 == 0:
-                    self.right_deck.add_card(self.shuffledeck.remove_card("last"))
-                    self.right_deck.move_deck()
-                elif counter % 4 == 1:
-                    self.opposite_deck.add_card(self.shuffledeck.remove_card("last"))
-                    self.opposite_deck.move_deck()
-                elif counter % 4 == 2:
-                    self.left_deck.add_card(self.shuffledeck.remove_card("last"))
-                    self.left_deck.move_deck()
+                self.board_dict[counter % 4 + 1].add_card(self.shuffledeck.remove_card("last"))
+                self.board_dict[counter % 4 + 1].draw_deck(True)
                 counter += 1
                 i -= 1
         elif last_winner == "opposite":
+            counter = 2
             i = self.shuffledeck.get_length() - 1
             while i >= 0:
                 self.shuffledeck.card_change_in_play(i, True)
-                if counter % 4 == 2:
-                    self.player_deck.add_card(self.shuffledeck.remove_card("last"))
-                    self.player_deck.move_deck()
-                elif counter % 4 == 1:
-                    self.right_deck.add_card(self.shuffledeck.remove_card("last"))
-                    self.right_deck.move_deck()
-                elif counter % 4 == 0:
-                    self.opposite_deck.add_card(self.shuffledeck.remove_card("last"))
-                    self.opposite_deck.move_deck()
-                elif counter % 4 == 1:
-                    self.left_deck.add_card(self.shuffledeck.remove_card("last"))
-                    self.left_deck.move_deck()
+                self.board_dict[counter % 4 + 1].add_card(self.shuffledeck.remove_card("last"))
+                self.board_dict[counter % 4 + 1].draw_deck(True)
                 counter += 1
                 i -= 1
 
         elif last_winner == "left":
+            counter = 3
             i = self.shuffledeck.get_length() - 1
             while i >= 0:
                 self.shuffledeck.card_change_in_play(i, True)
-                if counter % 4 == 1:
-                    self.player_deck.add_card(self.shuffledeck.remove_card("last"))
-                    self.player_deck.move_deck()
-                elif counter % 4 == 2:
-                    self.right_deck.add_card(self.shuffledeck.remove_card("last"))
-                    self.right_deck.move_deck()
-                elif counter % 4 == 3:
-                    self.opposite_deck.add_card(self.shuffledeck.remove_card("last"))
-                    self.opposite_deck.move_deck()
-                elif counter % 4 == 0:
-                    self.left_deck.add_card(self.shuffledeck.remove_card("last"))
-                    self.left_deck.move_deck()
+                self.board_dict[counter % 4 + 1].add_card(self.shuffledeck.remove_card("last"))
+                self.board_dict[counter % 4 + 1].draw_deck(True)
                 counter += 1
                 i -= 1
+
+        pygame.display.flip()
 
     # Method to move card from play pile to chosen pile
     def move_play_to_chosen(self, card, deck_type):

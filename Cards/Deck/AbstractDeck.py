@@ -1,6 +1,7 @@
 import pygame
 
 from Cards.Cards import Cards
+from Cards.ServerCard import ServerCard
 
 
 class AbstractDeck:
@@ -36,7 +37,24 @@ class AbstractDeck:
             return self.deck.remove(cards)
 
     def transfer_all_cards_to_deck(self, deck):
-        self.deck = deck
+        self.deck = []
+
+        if len(deck) != 0 and type(deck[0]) is ServerCard:
+            for card in deck:
+                temp = Cards(self.display, self.surface, card.value, card.suit, card.front_image, card.back_image)
+                temp.x = card.x
+                temp.y = card.y
+                temp.chosen = card.chosen
+                temp.in_play = card.in_play
+                temp.rect_card = card.rect_card
+                temp.rect_blocked = card.rect_blocked
+                temp.orientation = card.orientation
+                temp.width = card.width
+                temp.height = card.height
+
+                self.deck.append(temp)
+        else:
+            self.deck = deck
 
     def get_length(self):
         return len(self.deck)

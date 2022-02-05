@@ -65,3 +65,6 @@ class ServerShuffleDeck:
 
     def get_pos(self):
         return self.x, self.y
+
+    def shuffle(self):
+        pass

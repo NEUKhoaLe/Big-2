@@ -20,7 +20,7 @@ def is_same(operating_deck):
 
 
 class Board2(AbstractBoard):
-    def __init__(self, display, surface):
+    def __init__(self, display, surface, player_id=-1):
         super().__init__(display, surface)
 
         self.opposite_deck_collide_point = pygame.Rect(self.settings.opposite_deck_2_x, self.settings.opposite_y,
@@ -37,6 +37,14 @@ class Board2(AbstractBoard):
         self.opposite_deck = OppositeDeck(self.settings.opposite_deck_2_x, self.settings.opposite_y,
                                           self.settings.opposite_chosen_y, self.settings.play_deck_width_2,
                                           self.opposite_deck_collide_point, self.display, self.surface)
+
+        self.board_dict = {}
+        if player_id == 1 or player_id == -1:
+            self.board_dict[1] = self.player_deck
+            self.board_dict[2] = self.opposite_deck
+        elif player_id == 2:
+            self.board_dict[player_id] = self.player_deck
+            self.board_dict[player_id - 1] = self.opposite_deck
 
         # The current play deck: where we will place the cards
         # That are currently being played.
@@ -85,29 +93,22 @@ class Board2(AbstractBoard):
     # deals in counter clock-wise
     # Must implement the move.
     def deal(self, last_winner):
-        counter = 0
         if last_winner == "player":
+            counter = 0
             i = self.shuffledeck.get_length() - 1
             while i >= 0:
                 self.shuffledeck.card_change_in_play(i, True)
-                if counter % 2 == 0:
-                    self.player_deck.add_card(self.shuffledeck.remove_card("last"))
-                    self.player_deck.draw_deck(True)
-                else:
-                    self.opposite_deck.add_card(self.shuffledeck.remove_card("last"))
-                    self.opposite_deck.draw_deck(True)
+                self.board_dict[counter % 2 + 1].add_card(self.shuffledeck.remove_card("last"))
+                self.board_dict[counter % 2 + 1].draw_deck(True)
                 counter += 1
                 i -= 1
         else:
             i = self.shuffledeck.get_length() - 1
             while i >= 0:
+                counter = 1
                 self.shuffledeck.card_change_in_play(i, True)
-                if counter % 2 == 1:
-                    self.opposite_deck.add_card(self.shuffledeck.remove_card("last"))
-                    self.opposite_deck.draw_deck(True)
-                else:
-                    self.player_deck.add_card(self.shuffledeck.remove_card("last"))
-                    self.player_deck.draw_deck(True)
+                self.board_dict[counter % 2 + 1].add_card(self.shuffledeck.remove_card("last"))
+                self.board_dict[counter % 2 + 1].draw_deck(True)
                 counter += 1
                 i -= 1
 

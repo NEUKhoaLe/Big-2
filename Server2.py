@@ -1,3 +1,4 @@
+import copy
 import pickle
 import socket
 from _thread import *
@@ -12,13 +13,15 @@ to perform threaded actions on each connections. They will also try to broadcast
 
 class Server2:
     def __init__(self):
-        self.server = "192.168.1.241"
+        #self.server = "192.168.1.241"
+        self.server = 'localhost'
         self.port = 5555
 
         self.idCount = 0
         self.games = {}
         self.connections = {}
 
+        # self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         self.setup()
@@ -67,13 +70,14 @@ class Server2:
                         print("Disconnected.")
                         break
                     elif data == "get":
-                        conn.send(pickle.dumps([game, player]))
-                    else:
-                        for client in self.connections[game_id]:
-                            if conn != client:
-                                client.send(str.encode(data))
+                        conn.sendall(pickle.dumps([game, player]))
+                    elif data == "done":
+                        pass
+                    elif type(data) is str:
 
-                    conn.sendall(pickle.dumps([game, player]))
+
+                        conn.sendall(pickle.dumps([game, player]))
+
             except:
                 break
 

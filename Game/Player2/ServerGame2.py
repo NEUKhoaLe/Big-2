@@ -2,6 +2,7 @@ from Board.Board2.ServerBoard2 import ServerBoard2
 from Game.ServerPlayer import ServerPlayer
 from Utils.ServerButtons import ServerButtons
 from Utils.ServerSettings import ServerSettings
+import copy
 
 
 class ServerGame2:
@@ -32,16 +33,21 @@ class ServerGame2:
     def create_player(self, player1_name, player2):
         if type(player1_name) is str:
             self.player1 = ServerPlayer(player_type="player", name=player1_name)
+        elif self.player1 is not None:
+            pass
         else:
             self.player1 = player1_name
 
         if type(player2) is str:
             self.player2 = ServerPlayer(player_type="opposite", name=player2)
             self.player2.enter_name(player2)
-        elif not None:
+        elif self.player2 is not None:
+            pass
+        else:
             self.player2 = player2
 
-        self.board = ServerBoard2()
+        if type(self.player2) is ServerPlayer and type(self.player1) is ServerPlayer:
+            self.board = ServerBoard2()
 
     # If player number 2, player_deck = 2, opposite_deck = 1
     def swap_decks(self, player_number):
@@ -54,9 +60,9 @@ class ServerGame2:
 
     def get_player(self, player_number):
         if player_number == 1:
-            return self.player1.copy()
+            return copy.deepcopy(self.player1)
         elif player_number == 2:
-            return self.player2.copy()
+            return copy.deepcopy(self.player2)
 
     # Dealing The Card
     def deal(self):
@@ -110,4 +116,14 @@ class ServerGame2:
                 return "nothing"
 
     def get_board(self):
-        return self.board.copy()
+        return copy.deepcopy(self.board)
+
+    def execute_instructions(self, data):
+        array = data.split(" ")
+
+        if array[0] == "name":
+            if array[2] == 1:
+                self.create_player(array[1], None)
+            else:
+                self.create_player(None, array[1])
+

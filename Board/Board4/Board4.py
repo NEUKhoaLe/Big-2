@@ -22,7 +22,7 @@ def is_same(operating_deck):
 
 
 class Board4(AbstractBoard):
-    def __init__(self, display, surface):
+    def __init__(self, display, surface, player_id=-1):
         super().__init__(display, surface)
 
         self.opposite_deck_deck_collide_point = pygame.Rect(self.settings.opposite_deck_4_x, self.settings.opposite_y,
@@ -51,6 +51,28 @@ class Board4(AbstractBoard):
         self.right_deck = RightDeck(self.settings.right_deck_4_x, self.settings.right_deck_4_y,
                                     self.settings.right_chosen_4_x, self.settings.play_deck_width_4,
                                     self.right_deck_deck_collide_point, self.display, self.surface)
+
+        self.board_dict = {}
+        if player_id == 1 or player_id == -1:
+            self.board_dict[1] = self.player_deck
+            self.board_dict[2] = self.right_deck
+            self.board_dict[3] = self.opposite_deck
+            self.board_dict[4] = self.left_deck
+        elif player_id == 2:
+            self.board_dict[player_id] = self.player_deck
+            self.board_dict[player_id - 1] = self.left_deck
+            self.board_dict[player_id + 1] = self.right_deck
+            self.board_dict[player_id + 2] = self.opposite_deck
+        elif player_id == 3:
+            self.board_dict[player_id] = self.player_deck
+            self.board_dict[player_id - 1] = self.left_deck
+            self.board_dict[player_id - 2] = self.opposite_deck
+            self.board_dict[player_id + 1] = self.right_deck
+        elif player_id == 4:
+            self.board_dict[player_id] = self.player_deck
+            self.board_dict[player_id - 1] = self.left_deck
+            self.board_dict[player_id - 2] = self.opposite_deck
+            self.board_dict[player_id - 3] = self.right_deck
 
         # The current play deck: where we will place the cards
         # That are currently being played.
@@ -110,78 +132,41 @@ class Board4(AbstractBoard):
     # deals in counter clock-wise
     # Must implement the move.
     def deal(self, last_winner):
-        counter = 0
         if last_winner == "player":
+            counter = 0
             i = self.shuffledeck.get_length() - 1
             while i >= 0:
                 self.shuffledeck.card_change_in_play(i, True)
-                if counter % 4 == 0:
-                    self.player_deck.add_card(self.shuffledeck.remove_card("last"))
-                    self.player_deck.draw_deck(True)
-                elif counter % 4 == 1:
-                    self.right_deck.add_card(self.shuffledeck.remove_card("last"))
-                    self.right_deck.draw_deck(True)
-                elif counter % 4 == 2:
-                    self.opposite_deck.add_card(self.shuffledeck.remove_card("last"))
-                    self.opposite_deck.draw_deck(True)
-                elif counter % 4 == 3:
-                    self.left_deck.add_card(self.shuffledeck.remove_card("last"))
-                    self.left_deck.draw_deck(True)
+                self.board_dict[counter % 4 + 1].add_card(self.shuffledeck.remove_card("last"))
+                self.board_dict[counter % 4 + 1].draw_deck(True)
                 counter += 1
                 i -= 1
         elif last_winner == "right":
+            counter = 1
             i = self.shuffledeck.get_length() - 1
             while i >= 0:
                 self.shuffledeck.card_change_in_play(i, True)
-                if counter % 4 == 3:
-                    self.player_deck.add_card(self.shuffledeck.remove_card("last"))
-                    self.player_deck.draw_deck(True)
-                elif counter % 4 == 0:
-                    self.right_deck.add_card(self.shuffledeck.remove_card("last"))
-                    self.right_deck.draw_deck(True)
-                elif counter % 4 == 1:
-                    self.opposite_deck.add_card(self.shuffledeck.remove_card("last"))
-                    self.opposite_deck.draw_deck(True)
-                elif counter % 4 == 2:
-                    self.left_deck.add_card(self.shuffledeck.remove_card("last"))
-                    self.left_deck.draw_deck(True)
+                self.board_dict[counter % 4 + 1].add_card(self.shuffledeck.remove_card("last"))
+                self.board_dict[counter % 4 + 1].draw_deck(True)
                 counter += 1
                 i -= 1
         elif last_winner == "opposite":
+            counter = 2
             i = self.shuffledeck.get_length() - 1
             while i >= 0:
                 self.shuffledeck.card_change_in_play(i, True)
-                if counter % 4 == 2:
-                    self.player_deck.add_card(self.shuffledeck.remove_card("last"))
-                    self.player_deck.draw_deck(True)
-                elif counter % 4 == 1:
-                    self.right_deck.add_card(self.shuffledeck.remove_card("last"))
-                    self.right_deck.draw_deck(True)
-                elif counter % 4 == 0:
-                    self.opposite_deck.add_card(self.shuffledeck.remove_card("last"))
-                    self.opposite_deck.draw_deck(True)
-                elif counter % 4 == 1:
-                    self.left_deck.add_card(self.shuffledeck.remove_card("last"))
-                    self.left_deck.draw_deck(True)
+                self.board_dict[counter % 4 + 1].add_card(self.shuffledeck.remove_card("last"))
+                self.board_dict[counter % 4 + 1].draw_deck(True)
                 counter += 1
                 i -= 1
 
         elif last_winner == "left":
+            counter = 3
             i = self.shuffledeck.get_length() - 1
             while i >= 0:
                 self.shuffledeck.card_change_in_play(i, True)
-                if counter % 4 == 1:
-                    self.player_deck.add_card(self.shuffledeck.remove_card("last"))
-                    self.player_deck.draw_deck(True)
-                elif counter % 4 == 2:
-                    self.right_deck.add_card(self.shuffledeck.remove_card("last"))
-                    self.right_deck.draw_deck(True)
-                elif counter % 4 == 3:
-                    self.opposite_deck.add_card(self.shuffledeck.remove_card("last"))
-                    self.opposite_deck.draw_deck(True)
-                elif counter % 4 == 0:
-                    self.left_deck.add_card(self.shuffledeck.remove_card("last"))
-                    self.left_deck.draw_deck(True)
+                self.board_dict[counter % 4 + 1].add_card(self.shuffledeck.remove_card("last"))
+                self.board_dict[counter % 4 + 1].draw_deck(True)
                 counter += 1
                 i -= 1
 

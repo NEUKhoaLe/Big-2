@@ -11,7 +11,7 @@ def _rotate_in_place(image, top_left, degree):
 
 class ServerCard:
 
-    def __init__(self, value, suit):
+    def __init__(self, value, suit, front_image, back_image):
         self.value = value
         self.suit = suit
         self.settings = ServerSettings()
@@ -26,6 +26,9 @@ class ServerCard:
 
         self.x = -200
         self.y = -200
+
+        self.back_image = back_image
+        self.front_image = front_image
 
         self.chosen = False
 
