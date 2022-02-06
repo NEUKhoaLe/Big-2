@@ -22,6 +22,8 @@ class Game2Online(AbstractGame):
         self.player1 = None
         self.player2 = None
 
+        self.started = False
+
         self.server_ready = False
 
         # The Play button
@@ -34,6 +36,7 @@ class Game2Online(AbstractGame):
         self.board = Board2(self.display, self.surface, player_id=self.game_id)
 
     def start_game(self):
+        self.started = True
         self.deal()
         # self.update(p=False, o=False)
 
@@ -65,7 +68,7 @@ class Game2Online(AbstractGame):
 
         self.board = Board2(self.display, self.surface)
 
-        self.draw_player_name()
+        # self.draw_player_name()
 
     def set_ready(self, boolean):
         self.server_ready = boolean
@@ -126,19 +129,42 @@ class Game2Online(AbstractGame):
 
         # Player Transfer
 
-        if server_game.player2 is not None:
-            if self.player2 is None:
-                self.player2 = server_game.player2
-            else:
-                self.player2.enter_name(server_game.player2.get_name())
-                self.player2.enter_score(server_game.player2.get_score())
+        if player_number == 1:
+            if server_game.player1 is not None:
+                if self.player1 is None:
+                    self.player1 = Player(self.surface, player_type="player")
+                    self.player1.enter_name(server_game.player1.get_name())
+                    self.player1.enter_score(server_game.player1.get_score())
+                else:
+                    self.player1.enter_name(server_game.player1.get_name())
+                    self.player1.enter_score(server_game.player1.get_score())
 
-        if server_game.player1 is not None:
-            if self.player1 is None:
-                self.player1 = server_game.player1
-            else:
-                self.player1.enter_name(server_game.player1.get_name())
-                self.player1.enter_score(server_game.player1.get_score())
+            if server_game.player2 is not None:
+                if self.player2 is None:
+                    self.player2 = Player(self.surface, player_type="opposite")
+                    self.player2.enter_name(server_game.player2.get_name())
+                    self.player2.enter_score(server_game.player2.get_score())
+                else:
+                    self.player2.enter_name(server_game.player2.get_name())
+                    self.player2.enter_score(server_game.player2.get_score())
+        elif player_number == 2:
+            if server_game.player2 is not None:
+                if self.player1 is None:
+                    self.player1 = Player(self.surface, player_type="player")
+                    self.player1.enter_name(server_game.player2.get_name())
+                    self.player1.enter_score(server_game.player2.get_score())
+                else:
+                    self.player1.enter_name(server_game.player2.get_name())
+                    self.player1.enter_score(server_game.player2.get_score())
+
+            if server_game.player1 is not None:
+                if self.player2 is None:
+                    self.player2 = Player(self.surface, player_type="opposite")
+                    self.player2.enter_name(server_game.player1.get_name())
+                    self.player2.enter_score(server_game.player1.get_score())
+                else:
+                    self.player2.enter_name(server_game.player1.get_name())
+                    self.player2.enter_score(server_game.player1.get_score())
 
     def get_board(self):
         return copy.deepcopy(self.board)
@@ -161,5 +187,7 @@ class Game2Online(AbstractGame):
                 self.create_player(array[1], None)
             else:
                 self.create_player(None, array[1])
+        elif array[0] == "start":
+            self.start_game()
 
         return "done"

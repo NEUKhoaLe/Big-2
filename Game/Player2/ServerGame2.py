@@ -19,12 +19,15 @@ class ServerGame2:
         self.player1 = None
         self.player2 = None
 
+        self.started = False
+
         self.server_ready = False
 
         self.play_button = ServerButtons(758.0, 945.5, 88, 35)
         self.skip_button = ServerButtons(856.5, 945.5, 93, 35)
 
     def start_game(self):
+        self.started = True
         self.deal()
 
     def set_ready(self, boolean):
@@ -120,10 +123,21 @@ class ServerGame2:
 
     def execute_instructions(self, data):
         array = data.split(" ")
+        print("passed 1")
 
         if array[0] == "name":
-            if array[2] == 1:
+            print("pass 2")
+            if int(array[2]) == 1:
                 self.create_player(array[1], None)
             else:
                 self.create_player(None, array[1])
 
+        if self.player1 is not None and self.player2 is not None:
+            print("pass 3")
+            self.set_ready(True)
+
+    def get_ready(self):
+        return self.server_ready
+
+    def get_started(self):
+        return self.started

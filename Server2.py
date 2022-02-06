@@ -13,7 +13,7 @@ to perform threaded actions on each connections. They will also try to broadcast
 
 class Server2:
     def __init__(self):
-        #self.server = "192.168.1.241"
+        # self.server = "192.168.1.241"
         self.server = 'localhost'
         self.port = 5555
 
@@ -23,6 +23,7 @@ class Server2:
 
         # self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        # self.server_socket.setblocking(False)
 
         self.setup()
         self.startup()
@@ -50,7 +51,6 @@ class Server2:
                 self.connections[game_id] = [conn]
                 print("Creating a new game...")
             else:
-                self.games[game_id].set_ready(True)
                 player = 2
                 self.connections[game_id].append(conn)
 
@@ -69,15 +69,22 @@ class Server2:
                     if not data:
                         print("Disconnected.")
                         break
-                    elif data == "get":
-                        conn.sendall(pickle.dumps([game, player]))
-                    elif data == "done":
-                        pass
-                    elif type(data) is str:
+                    else:
+                        if data == "get":
+                            conn.sendall(pickle.dumps([game, player]))
+                        elif data == "done":
+                            pass
+                        else:
+                            game.execute_instructions(data + " " + str(player))
 
+                            if game.get_ready() and not game.get_started():
+                                conn.sendall(str.encode("start"))
+                                game.execute_instructions("start")
 
-                        conn.sendall(pickle.dumps([game, player]))
+                            conn.sendall(pickle.dumps([game, player]))
 
+                else:
+                    break
             except:
                 break
 
