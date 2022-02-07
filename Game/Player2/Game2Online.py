@@ -125,7 +125,6 @@ class Game2Online(AbstractGame):
         # Only do when both player has joined
         if server_game.player2 is not None and server_game.player1 is not None:
             self.board.transfer_board(server_game.get_board())
-            self.swap_decks(player_number)
 
         # Player Transfer
 

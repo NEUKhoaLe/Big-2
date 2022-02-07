@@ -69,7 +69,7 @@ class ServerGame2:
 
     # Dealing The Card
     def deal(self):
-        self.board.move_to_shuffle_pos(game_update=False)
+        self.board.move_to_shuffle_pos()
         self.board.deal(self.turn)
 
     # Selecting a card/un-selecting cards, and or board buttons
@@ -126,13 +126,14 @@ class ServerGame2:
         print("passed 1")
 
         if array[0] == "name":
-            print("pass 2")
             if int(array[2]) == 1:
                 self.create_player(array[1], None)
             else:
                 self.create_player(None, array[1])
+        elif array[0] == "start":
+            self.start_game()
 
-        if self.player1 is not None and self.player2 is not None:
+        if not self.server_ready and self.player1 is not None and self.player2 is not None:
             print("pass 3")
             self.set_ready(True)
 

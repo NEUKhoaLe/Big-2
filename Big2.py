@@ -413,7 +413,7 @@ class Big2:
         # Get the player number
         self.player_number = int(network.get_player())
         # Get the game to initialize and add the player name into the server's game client
-        reply = network.send("get")
+        reply = network.send2("get")
 
         # Initialize the client-side game.
         self.game = Game2Online(self.screen, self.player_number)
@@ -438,7 +438,7 @@ class Big2:
         # We will send a tuple to the client, which is [game_object, player_int]
         # If the player_int doesn't match with the client player number, then there
         # is no need to reconcile.
-        self.game.reconcile(network.send("name " + client_name), self.player_number)
+        self.game.reconcile(network.send2("name " + client_name), self.player_number)
         # While the server is not ready, we print a screen that says "Waiting for another player"
         # No matter what we do, we will always reconcile with the server at the end
 
@@ -450,29 +450,35 @@ class Big2:
 
             pygame.display.flip()
 
-            self.game.reconcile(network.send("get"), self.player_number)
+            self.game.reconcile(network.send2("get"), self.player_number)
+
+        self.screen.fill(self.settings.bg_color)
+        pygame.display.flip()
 
         run = True
         self.dragging = False
 
         # Now we go into a while loop to listen for the start message
-        while True:
-            try:
-                message = socket.recv(4096).decode()
-            except:
-                pass
-            else:
-                self.game.execute_instructions(message)
-                self.game.reconcile(network.recvall(), self.player_number)
-                break
+        waiting = True
+        while waiting:
+            read_sockets, write_sockets, error_sockets = select.select([socket], [], [])
+
+            for sock in read_sockets:
+                message = sock.recv(4096).decode()
+                if not message:
+                    break
+                else:
+                    self.screen.fill(self.settings.bg_color)
+                    self.game.execute_instructions(message)
+                    self.game.reconcile(network.send2("get"), self.player_number)
+                    waiting = False
+                    break
 
         self.game.update()
 
         while run:
             self.reset_drawn_stat_rect()
             self.clock.tick(self.settings.FPS)
-
-            self.screen.fill(self.settings.bg_color)
 
             self.draw_back_button()
 

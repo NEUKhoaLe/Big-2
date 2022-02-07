@@ -43,8 +43,8 @@ class Board2(AbstractBoard):
             self.board_dict[1] = self.player_deck
             self.board_dict[2] = self.opposite_deck
         elif player_id == 2:
-            self.board_dict[player_id] = self.player_deck
-            self.board_dict[player_id - 1] = self.opposite_deck
+            self.board_dict[2] = self.player_deck
+            self.board_dict[1] = self.opposite_deck
 
         # The current play deck: where we will place the cards
         # That are currently being played.
@@ -94,7 +94,7 @@ class Board2(AbstractBoard):
     # Must implement the move.
     def deal(self, last_winner):
         if last_winner == "player":
-            counter = 0
+            counter = 1
             i = self.shuffledeck.get_length() - 1
             while i >= 0:
                 self.shuffledeck.card_change_in_play(i, True)
@@ -104,8 +104,8 @@ class Board2(AbstractBoard):
                 i -= 1
         else:
             i = self.shuffledeck.get_length() - 1
+            counter = 1
             while i >= 0:
-                counter = 1
                 self.shuffledeck.card_change_in_play(i, True)
                 self.board_dict[counter % 2 + 1].add_card(self.shuffledeck.remove_card("last"))
                 self.board_dict[counter % 2 + 1].draw_deck(True)

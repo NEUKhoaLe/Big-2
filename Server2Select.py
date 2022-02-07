@@ -23,9 +23,10 @@ class Server2:
 
         # self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        # self.server_socket.setblocking(False)
 
         self.setup()
-        self.startup()
+        start_new_thread(self.startup(),())
 
     def setup(self):
         try:
@@ -55,15 +56,17 @@ class Server2:
 
             start_new_thread(self.threaded_client, (conn, player, game_id))
 
+
+
     def threaded_client(self, conn, player, game_id):
-        conn.sendall(str.encode(str(player)))
+        conn.send(str.encode(str(player)))
 
         while True:
             game = self.games[game_id]
 
             if game.get_ready() and not game.get_started():
                 print("pass 5")
-                conn.sendall(str.encode("start"))
+                conn.send(str.encode("start"))
                 game.execute_instructions("start")
 
             try:

@@ -12,7 +12,7 @@ class Network:
         self.port = 5555
         self.addr = (self.server, self.port)
         self.player = self.connect()
-        self.client.settimeout(0.1)
+        # self.client.settimeout(0.1)
 
     def get_player(self):
         return self.player
@@ -24,11 +24,11 @@ class Network:
         except:
             pass
 
-    def send(self, data):
+    def send2(self, data):
         try:
-            self.client.send(str.encode(data))
+            self.client.sendall(str.encode(data))
 
-            return self.recvall()
+            return pickle.loads(self.client.recv(2048 * 32))
         except socket.error as e:
             print(e)
 
