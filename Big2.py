@@ -1,4 +1,5 @@
 import select
+import time
 
 import pygame
 import sys
@@ -461,6 +462,7 @@ class Big2:
         # Now we go into a while loop to listen for the start message
         waiting = True
         while waiting:
+            time.sleep(0.1)
             read_sockets, write_sockets, error_sockets = select.select([socket], [], [])
 
             for sock in read_sockets:
