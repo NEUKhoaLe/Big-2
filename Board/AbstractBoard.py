@@ -170,14 +170,14 @@ class AbstractBoard:
                    left=True, right=False, gu=True):
         if shuffle:
             self.draw_deck("shuffle", gu)
-        if opposite:
-            self.draw_deck("opposite", gu)
-        if current:
-            self.draw_deck("current", gu)
         if discard:
             self.draw_deck("discard", gu)
+        if current:
+            self.draw_deck("current", gu)
         if player:
             self.draw_deck("player", gu)
+        if opposite:
+            self.draw_deck("opposite", gu)
         if left:
             self.draw_deck("left", gu)
         if right:
@@ -193,13 +193,7 @@ class AbstractBoard:
     def deal(self, last_winner):
         pass
 
-    def move_play_to_chosen(self, card, deck_type):
-        pass
-
-    def move_chosen_to_play(self, card, deck_type):
-        pass
-
-    def move_chosen_to_current(self, pile_from, cards):
+    def move_chosen_to_current(self, pile_from):
         pass
 
     # Method to move card to the shuffle deck position
@@ -222,10 +216,10 @@ class AbstractBoard:
     def rotate_deck(self, order):
         pass
 
-    def play(self, turn):
+    def play(self, player, turn):
         pass
 
-    def valid_move(self, turn):
+    def valid_move(self, operating_deck, player, turn):
         pass
 
     def is_double(self, operating_deck):

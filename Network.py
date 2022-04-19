@@ -24,7 +24,7 @@ class Network:
         except:
             pass
 
-    def send2(self, data):
+    def send(self, data):
         try:
             self.client.sendall(str.encode(data))
 

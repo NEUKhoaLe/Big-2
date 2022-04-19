@@ -1,3 +1,4 @@
+import random
 import select
 import time
 
@@ -305,7 +306,7 @@ class Big2:
                             deck_selected = self.game.select(mouse_x, mouse_y)
 
                             if deck_selected == "player":
-                                self.game.update(o=False, c=False, d=False, s=False, l=False, r=False, gu=False)
+                                self.game.update(o=False, c=True, d=True, s=False, l=False, r=False, gu=False)
                         elif self.game.get_turn() == "opposite":
                             mouse_x, mouse_y = pygame.mouse.get_pos()
                             deck_selected = self.game.select(mouse_x, mouse_y)
@@ -414,7 +415,7 @@ class Big2:
         # Get the player number
         self.player_number = int(network.get_player())
         # Get the game to initialize and add the player name into the server's game client
-        reply = network.send2("get")
+        reply = network.send("get")
 
         # Initialize the client-side game.
         self.game = Game2Online(self.screen, self.player_number)
@@ -439,7 +440,7 @@ class Big2:
         # We will send a tuple to the client, which is [game_object, player_int]
         # If the player_int doesn't match with the client player number, then there
         # is no need to reconcile.
-        self.game.reconcile(network.send2("name " + client_name), self.player_number)
+        self.game.reconcile(network.send("name " + client_name), self.player_number)
         # While the server is not ready, we print a screen that says "Waiting for another player"
         # No matter what we do, we will always reconcile with the server at the end
 
@@ -451,7 +452,7 @@ class Big2:
 
             pygame.display.flip()
 
-            self.game.reconcile(network.send2("get"), self.player_number)
+            self.game.reconcile(network.send("get"), self.player_number)
 
         self.screen.fill(self.settings.bg_color)
         pygame.display.flip()
@@ -472,7 +473,7 @@ class Big2:
                 else:
                     self.screen.fill(self.settings.bg_color)
                     self.game.execute_instructions(message)
-                    self.game.reconcile(network.send2("get"), self.player_number)
+                    self.game.reconcile(network.send("get"), self.player_number)
                     waiting = False
                     break
 

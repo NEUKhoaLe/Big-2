@@ -13,7 +13,6 @@ def _rotate_in_place(image, top_left, degree):
 class Cards:
 
     def __init__(self, display, surface, value, suit, front_image, back_image):
-
         # The screen
         self.display = display
         self.surface = surface
@@ -270,7 +269,7 @@ class Cards:
     def get_chosen(self):
         return self.chosen
 
-    # Change the status of the in play instanceself.rect_card = self.front_image.get_rect()
+    # Change the status of the in play instance self.rect_card = self.front_image.get_rect()
     def change_in_play(self, boolean):
         self.in_play = boolean
 
@@ -296,4 +295,6 @@ class Cards:
         return self.value
 
     def equals(self, card):
-        return (self.get_value() == card.get_value()) and (self.get_suit() == card.get_suit())
+        return (self.get_value() == card.get_value()) and (self.get_suit() == card.get_suit()) and \
+               self.get_in_play() == card.get_in_play() and self.get_chosen() == card.get_chosen() and \
+               self.cur_pos() == card.cur_pos()

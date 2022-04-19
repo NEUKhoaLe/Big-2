@@ -6,6 +6,60 @@ from Cards.Deck.AbstractDeck import AbstractDeck
 from Utils.Settings import Settings
 
 
+def to_int_value(value):
+    if value == "3":
+        return 3
+    if value == "4":
+        return 4
+    if value == "5":
+        return 5
+    if value == "6":
+        return 6
+    if value == "7":
+        return 7
+    if value == "8":
+        return 8
+    if value == "9":
+        return 9
+    if value == "10":
+        return 10
+    if value == "J":
+        return 11
+    if value == "Q":
+        return 12
+    if value == "K":
+        return 13
+    else:
+        return 14
+
+
+def compare_suits(player, current):
+    if (player == "Hearts" and (current == "Diamonds" or current == "Clubs" or current == "Spades")) or \
+            (player == "Diamonds" and (current == "Clubs" or current == "Spades")) or \
+            (player == "Clubs" and current == "Spades"):
+        return True
+    else:
+        return False
+
+
+def compare(player, current):
+    player_value = player[-1].get_value()
+    player_suit = player[-1].get_suit()
+
+    current_value = current[-1].get_value()
+    current_suit = current[-1].gets_suit()
+
+    player_value = to_int_value(player_value)
+    current_value = to_int_value(current_value)
+
+    if player_value > current_value:
+        return True
+    if player_value < current_value:
+        return False
+
+    return compare_suits(player_suit, current_suit)
+
+
 class SideDeck(AbstractDeck):
     def __init__(self, x, y, chosen_x, length, collide_point, display, surface):
         super().__init__(display, surface)
@@ -178,7 +232,19 @@ class SideDeck(AbstractDeck):
         return min_width
 
     def move_to_chosen(self, card):
-        self.chosen_deck.append(card)
+        original_length = len(self.chosen_deck)
+
+        if len(self.chosen_deck) == 0:
+            self.chosen_deck.append(card)
+        else:
+            for in_c in self.chosen_deck:
+                if not compare(card, in_c):
+                    index = self.chosen_deck.index(in_c)
+                    self.chosen_deck.insert(index, card)
+                    break
+
+        if len(self.chosen_deck) == original_length:
+            self.chosen_deck.append(card)
 
     def move_to_deck(self, card):
         self.chosen_deck.remove(card)
@@ -188,3 +254,7 @@ class SideDeck(AbstractDeck):
 
     def get_pos(self):
         return self.x, self.y
+
+    def reset_chosen(self):
+        self.chosen_deck = []
+

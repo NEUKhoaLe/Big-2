@@ -18,17 +18,14 @@ class DiscardDeck(AbstractDeck):
 
     def draw_deck(self, move_from_shuffle=False, game_update=False, draw=True):
         if len(self.deck) != 0:
-            card = self.deck[len(self.deck) - 1]
-            card.draw(is_front=False)
-
-            self.update(game_update)
-
-        else:
             for x in self.deck:
                 x.move(self.x, self.y, False)
                 x.update_vis(False)
 
-            self.update(game_update)
+            card = self.deck[len(self.deck) - 1]
+            card.draw(is_front=False)
+
+            # self.update(game_update)
 
     def update(self, game_update):
         for card in self.deck:

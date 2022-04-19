@@ -13,10 +13,68 @@ def is_same(operating_deck):
     i = 0
 
     while i < len(operating_deck) - 1:
-        if operating_deck[i].get_value() != operating_deck[i+1].get_value():
+        if operating_deck[i].get_value() != operating_deck[i + 1].get_value():
             return False
 
+        i += 1
+
     return True
+
+
+def to_int_value(value):
+    if value == "3":
+        return 3
+    if value == "4":
+        return 4
+    if value == "5":
+        return 5
+    if value == "6":
+        return 6
+    if value == "7":
+        return 7
+    if value == "8":
+        return 8
+    if value == "9":
+        return 9
+    if value == "10":
+        return 10
+    if value == "J":
+        return 11
+    if value == "Q":
+        return 12
+    if value == "K":
+        return 13
+    elif value == "A":
+        return 14
+    else:
+        return 15
+
+
+def compare_suits(player, current):
+    if (player == "Hearts" and (current == "Diamonds" or current == "Clubs" or current == "Spades")) or \
+            (player == "Diamonds" and (current == "Clubs" or current == "Spades")) or \
+            (player == "Clubs" and current == "Spades"):
+        return "player"
+    else:
+        return "current"
+
+
+def compare(player, current):
+    player_value = player.get_value()
+    player_suit = player.get_suit()
+
+    current_value = current.get_value()
+    current_suit = current.get_suit()
+
+    player_value = to_int_value(player_value)
+    current_value = to_int_value(current_value)
+
+    if player_value > current_value:
+        return "player"
+    if player_value < current_value:
+        return "current"
+
+    return compare_suits(player_suit, current_suit)
 
 
 class Board2(AbstractBoard):
@@ -37,6 +95,8 @@ class Board2(AbstractBoard):
         self.opposite_deck = OppositeDeck(self.settings.opposite_deck_2_x, self.settings.opposite_y,
                                           self.settings.opposite_chosen_y, self.settings.play_deck_width_2,
                                           self.opposite_deck_collide_point, self.display, self.surface)
+
+        self.player_id = player_id
 
         self.board_dict = {}
         if player_id == 1 or player_id == -1:
@@ -102,6 +162,8 @@ class Board2(AbstractBoard):
                 self.board_dict[counter % 2 + 1].draw_deck(True)
                 counter += 1
                 i -= 1
+
+                pygame.display.flip()
         else:
             i = self.shuffledeck.get_length() - 1
             counter = 1
@@ -112,21 +174,20 @@ class Board2(AbstractBoard):
                 counter += 1
                 i -= 1
 
-        pygame.display.flip()
-
-    # Method to move card from play pile to chosen pile
-    def move_play_to_chosen(self, card, deck_type):
-        pass
-
-    def move_chosen_to_play(self, card, deck_type):
-        pass
+                pygame.display.flip()
 
     # Method to move card from pile to the play pile
-    def move_chosen_to_current(self, pile_from, cards):
+    def move_chosen_to_current(self, pile_from):
         if pile_from == "player":
-            pass
+            player_chosen = self.player_deck.get_chosen()
+            self.current_deck.transfer_all_cards_to_deck(player_chosen)
+            self.player_deck.remove_card(player_chosen)
+            self.player_deck.reset_chosen()
         elif pile_from == "opposite":
-            pass
+            opposite_chosen = self.opposite_deck.get_chosen()
+            self.current_deck.transfer_all_cards_to_deck(opposite_chosen)
+            self.opposite_deck.remove_card(opposite_chosen)
+            self.opposite_deck.reset_chosen()
 
     # Method to flip the visibility.
     def flip_vis(self, deck_type, boolean):
@@ -159,17 +220,28 @@ class Board2(AbstractBoard):
             self.player_deck.transfer_all_cards_to_deck(temp_deck)
 
     def move_to_discard(self):
-        pass
+        current_deck = self.current_deck.get_deck()
+        self.discard_deck.transfer_all_cards_to_deck(current_deck)
+        self.current_deck.remove_card(current_deck)
 
-    def play(self, turn):
+    def play(self, player, turn):
         operating_deck = None
-        if turn == "player":
+        if player == "player":
             operating_deck = self.player_deck.get_chosen()
-        elif turn == "opposite":
+        elif player == "opposite":
             operating_deck = self.opposite_deck.get_chosen()
 
-        if self.valid_move(operating_deck):
+        if self.valid_move(operating_deck, player, turn):
             pass
+            # If valid move, then move old cards in current to discard
+            self.move_to_discard()
+            # move chosen to current
+            self.move_chosen_to_current("player")
+
+            return True
+            # return "success" / true
+        else:
+            return False
 
     # It is a valid move if:
     # - There is cards in the chosen deck
@@ -191,19 +263,43 @@ class Board2(AbstractBoard):
     # - If a player has 12 cards that is in a row (3 to A) they automatically win
     # - If a player has 6 pairs of cards, then they automatically win
     # - If a player has 4 2's, they automatically win
-    def valid_move(self, operating_deck):
+    def valid_move(self, operating_deck, player, turn):
+        # Covers the case if the player has 4 double in a row, he can play it at anytime
+        # If the current card is 2 or two 2's.
+        if len(operating_deck) % 2 == 0 and len(operating_deck) >= 8 and player != turn:
+            current_card = self.current_deck.get_deck()
+
+            if len(current_card) > 2 and player != turn:
+                return False
+            elif len(current_card) == 2 or len(current_card) == 1:
+                is_two = True
+
+                for card in current_card:
+                    is_two = is_two and card.get_value() == "2"
+
+                if not is_two:
+                    return False
+                else:
+                    return self.is_double_consecutive(operating_deck)
+
+        # Else, if the player that is pressing the play button is not at his turn, then
+        # he cannot make the move.
+        if player != turn:
+            return False
+
+        # If there are no cards in the chosen deck, then he cannot make the move.
         if len(operating_deck) == 0:
             return False
 
-        if len(operating_deck) != self.current_deck.get_length():
-            return False
-
+        # Covers the case when it is the opening of the trick, i.e. The player is opening up
+        # and there are no cards in current_deck.
         if self.current_deck.get_length() == 0:
             if len(operating_deck) == 1:
                 return True
             elif len(operating_deck) == 2:
                 return is_same(operating_deck)
             elif len(operating_deck) >= 3:
+
                 valid = False
                 valid = valid or self.is_consecutive(operating_deck)
                 if len(operating_deck) == 3:
@@ -213,11 +309,185 @@ class Board2(AbstractBoard):
                 if len(operating_deck) % 2 == 0 and len(operating_deck) >= 6:
                     valid = valid or self.is_double_consecutive(operating_deck)
 
+                return valid
+
+        # Covers the case when it is the middle of the trick. Here we have to compare card values, and
+        # Deck size.
+        else:
+            current_deck = self.current_deck.get_deck()
+
+            if self.current_deck.get_length() == 1:
+                if current_deck[0].get_value() == "2":
+                    if len(operating_deck) == 1:
+                        if operating_deck[0] != "2":
+                            if self.quad_beat_two(operating_deck) or self.triple_beat_two(operating_deck) or \
+                                    self.special_beat_two(operating_deck):
+                                return True
+
+                            return False
+                        else:
+                            if compare_suits(operating_deck[0], current_deck[0]) == "player":
+                                return True
+                            else:
+                                return False
+                    elif len(operating_deck) == 2 or len(operating_deck) == 4:
+                        if operating_deck[0] != "2" or not is_same(operating_deck):
+                            return False
+                        else:
+                            return True
+                    elif len(operating_deck) == 3:
+                        return False
+                    elif len(operating_deck) % 2 == 0 and len(operating_deck) > 5:
+                        return operating_deck[0] == "2" and self.is_double_consecutive(operating_deck)
+                    else:
+                        return False
+                else:
+                    if compare_suits(operating_deck[0], current_deck[0]) == "player":
+                        return True
+                    else:
+                        return False
+
+            elif self.current_deck.get_length() == 2:
+                if current_deck[0].get_value() == "2":
+                    if len(operating_deck) == 1:
+                        return False
+                    elif len(operating_deck) == 2:
+                        if operating_deck[0] != "2":
+                            if self.quad_beat_two(operating_deck) or self.special_beat_two(operating_deck):
+                                return True
+                            else:
+                                return False
+                        else:
+                            if is_same(operating_deck):
+                                if compare(operating_deck[1], current_deck[1]) == "player":
+                                    return True
+                                else:
+                                    return False
+                            else:
+                                return False
+                    elif len(operating_deck) == 4:
+                        if operating_deck[0] != "2" or not is_same(operating_deck):
+                            return False
+                        else:
+                            return True
+                    elif len(operating_deck) % 2 == 0 and len(operating_deck) > 5:
+                        return operating_deck[0] == "2" and self.is_double_consecutive(operating_deck)
+                    else:
+                        return False
+                else:
+                    if not is_same(operating_deck):
+                        return False
+                    else:
+                        if compare(operating_deck[1], current_deck[1]) == "player":
+                            return True
+                        else:
+                            return False
+
+            elif self.current_deck.get_deck() == 3:
+                if self.current_deck.get_length() != len(operating_deck):
+                    return False
+
+                if current_deck[0].get_value() == "2":
+                    return False
+
+                if self.is_consecutive(current_deck):
+                    if not self.is_consecutive(operating_deck):
+                        return False
+                    else:
+                        if compare(operating_deck[-1], current_deck[-1]) == "player":
+                            return True
+                        else:
+                            return False
+                elif is_same(current_deck):
+                    if not is_same(operating_deck):
+                        return False
+                    else:
+                        if compare(operating_deck[-1], current_deck[-1]) == "player":
+                            return True
+                        else:
+                            return False
+
+            elif self.current_deck.get_deck() == 4:
+                if self.current_deck.get_length() != len(operating_deck):
+                    return False
+
+                if self.is_consecutive(current_deck):
+                    if not self.is_consecutive(operating_deck):
+                        return False
+                    else:
+                        if compare(operating_deck[-1], current_deck[-1]) == "player":
+                            return True
+                        else:
+                            return False
+                elif is_same(current_deck):
+                    if not is_same(operating_deck):
+                        return False
+                    else:
+                        if compare(operating_deck[-1], current_deck[-1]) == "player":
+                            return True
+                        else:
+                            return False
+
+            elif len(self.current_deck.get_deck()) > 4 and self.current_deck.get_length() % 2 == 0:
+                if self.current_deck.get_length() != len(operating_deck):
+                    return False
+
+                if self.is_consecutive(current_deck):
+                    if not self.is_consecutive(operating_deck):
+                        return False
+                    else:
+                        if compare(operating_deck[-1], current_deck[-1]) == "player":
+                            return True
+                        else:
+                            return False
+                elif self.is_double_consecutive(current_deck):
+                    if not self.is_double_consecutive(operating_deck):
+                        return False
+                    else:
+                        if compare(operating_deck[-1], current_deck[-1]) == "player":
+                            return True
+                        else:
+                            return False
+            else:
+                if self.current_deck.get_length() != len(operating_deck):
+                    return False
+                if self.is_consecutive(current_deck):
+                    if not self.is_consecutive(operating_deck):
+                        return False
+                    else:
+                        if compare(operating_deck[-1], current_deck[-1]) == "player":
+                            return True
+                        else:
+                            return False
+
+    def triple_beat_two(self, current_deck):
+        if len(current_deck) == 6 and self.is_double_consecutive(current_deck):
+            return True
+        else:
+            return False
+
+    def quad_beat_two(self, current_deck):
+        if len(current_deck) == 4 and is_same(current_deck):
+            return True
+        else:
+            return False
+
+    def special_beat_two(self, current_deck):
+        if len(current_deck) >= 6 and len(current_deck) % 2 == 0 and self.is_double_consecutive(current_deck):
+            return True
+        else:
+            return False
+
     def is_consecutive(self, operating_deck):
+        if operating_deck[0] == "2":
+            return False
+
         i = 1
         while i < len(operating_deck):
-            if operating_deck[i-1].get_value() != operating_deck[i].get_value() + 1:
+            if int(operating_deck[i - 1].get_value()) >= int(operating_deck[i].get_value()) + 1:
                 return False
+
+            i += 1
 
         return True
 
@@ -249,8 +519,13 @@ class Board2(AbstractBoard):
     def transfer_board(self, server_board):
         self.random = Random()
         self.shuffledeck.transfer_all_cards_to_deck(server_board.shuffledeck.get_deck())
-        self.player_deck.transfer_all_cards_to_deck(server_board.player_deck.get_deck())
-        self.opposite_deck.transfer_all_cards_to_deck(server_board.opposite_deck.get_deck())
+
+        if self.player_id == 1:
+            self.player_deck.transfer_all_cards_to_deck(server_board.player_deck.get_deck())
+            self.opposite_deck.transfer_all_cards_to_deck(server_board.opposite_deck.get_deck())
+        else:
+            self.player_deck.transfer_all_cards_to_deck(server_board.opposite_deck.get_deck())
+            self.opposite_deck.transfer_all_cards_to_deck(server_board.player_deck.get_deck())
 
         self.current_deck.transfer_all_cards_to_deck(server_board.current_deck.get_deck())
         self.discard_deck.transfer_all_cards_to_deck(server_board.discard_deck.get_deck())

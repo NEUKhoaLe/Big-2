@@ -9,7 +9,7 @@ import copy
 
 
 class Game2Online(AbstractGame):
-    def __init__(self, display, game_id):
+    def __init__(self, display, player_id):
         super().__init__(display)
 
         self.surface = pygame.Surface((self.settings.screen_width, self.settings.screen_height))
@@ -17,7 +17,7 @@ class Game2Online(AbstractGame):
         self.turn = "player"
         self.have_selected_card_drag = False
 
-        self.game_id = game_id
+        self.player_id = player_id
 
         self.player1 = None
         self.player2 = None
@@ -33,7 +33,7 @@ class Game2Online(AbstractGame):
         self.skip_button = Buttons("  Skip  ", self.settings.game_button_font,
                                    self.settings.skip_button_x, self.settings.skip_button_y, self.surface)
 
-        self.board = Board2(self.display, self.surface, player_id=self.game_id)
+        self.board = Board2(self.display, self.surface, player_id=self.player_id)
 
     def start_game(self):
         self.started = True
@@ -66,7 +66,7 @@ class Game2Online(AbstractGame):
         else:
             self.player2 = player2
 
-        self.board = Board2(self.display, self.surface)
+        self.board = Board2(self.display, self.surface, player_id=self.player_id)
 
         # self.draw_player_name()
 
@@ -118,7 +118,6 @@ class Game2Online(AbstractGame):
         self.turn = server_game.turn
         self.have_selected_card_drag = server_game.turn
 
-        self.game_id = server_game.game_id
         self.server_ready = server_game.server_ready
 
         # Board Transfer

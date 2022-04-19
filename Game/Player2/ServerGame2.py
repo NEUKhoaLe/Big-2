@@ -28,6 +28,7 @@ class ServerGame2:
 
     def start_game(self):
         self.started = True
+
         self.deal()
 
     def set_ready(self, boolean):
@@ -134,7 +135,6 @@ class ServerGame2:
             self.start_game()
 
         if not self.server_ready and self.player1 is not None and self.player2 is not None:
-            print("pass 3")
             self.set_ready(True)
 
     def get_ready(self):

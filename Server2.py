@@ -62,7 +62,6 @@ class Server2:
             game = self.games[game_id]
 
             if game.get_ready() and not game.get_started():
-                print("pass 5")
                 conn.sendall(str.encode("start"))
                 game.execute_instructions("start")
 

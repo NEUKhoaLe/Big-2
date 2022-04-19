@@ -9,7 +9,6 @@ from Utils.Buttons import Buttons
 
 class Game2Bot(AbstractGame):
     def __init__(self, win):
-
         super().__init__(win)
 
         self.surface = pygame.surface.Surface((self.settings.screen_width, self.settings.screen_height))
@@ -22,6 +21,9 @@ class Game2Bot(AbstractGame):
         self.board = Board2(self.display, self.surface)
 
         self.turn = "player"
+
+        self.player_skip = False
+        self.opposite_skip = False
 
         self.have_selected_card_drag = False
 
@@ -80,7 +82,11 @@ class Game2Bot(AbstractGame):
     # Selecting a card/un-selecting cards, and or board buttons
     def select(self, mouse_x, mouse_y):
         if self.play_button.collide_point(mouse_x, mouse_y):
-            self.board.play(self.turn)
+            success = self.board.play("player", self.turn)
+            if success:
+                self.change_turn()
+
+                return "player"
         elif self.skip_button.collide_point(mouse_x, mouse_y):
             self.change_turn()
         else:

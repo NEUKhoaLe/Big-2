@@ -42,7 +42,9 @@ class PlayerDeck(TopBottomDeck):
                     self.surface.blit(self.half_card, (starting + self.card_width - width, self.chosen_y))
                     self.was_chosen_deck.remove(x)
 
-                if draw:
+                if not self.draw_prev:
+                    pass
+                elif draw and self.draw_prev:
                     self.draw_previous(i)
                     self.draw_rest_deck(x)
 
@@ -73,7 +75,9 @@ class PlayerDeck(TopBottomDeck):
                                       (starting + self.card_width - width, self.y + self.card_height/2))
                     self.to_be_chosen_cards.remove(x)
 
-                if draw:
+                if not self.draw_prev:
+                    pass
+                elif draw and self.draw_prev:
                     self.draw_previous(i)
                     self.draw_rest_deck(x)
 
@@ -100,6 +104,7 @@ class PlayerDeck(TopBottomDeck):
                 self.was_drag_card.remove(x)
 
         self.update(game_update)
+        self.draw_prev = True
 
     def handle_selected(self, mouse_x, mouse_y, dragging):
         i = len(self.deck) - 1
