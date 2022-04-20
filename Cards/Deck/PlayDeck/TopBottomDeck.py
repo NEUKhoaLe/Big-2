@@ -29,8 +29,11 @@ def to_int_value(value):
         return 12
     if value == "K":
         return 13
-    else:
+    elif value == "A":
         return 14
+    else:
+        # Represents 2
+        return 15
 
 
 def compare_suits(player, current):

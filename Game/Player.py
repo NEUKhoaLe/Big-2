@@ -38,3 +38,6 @@ class Player:
             pass
         elif self.player_type == "right":
             pass
+
+    def enter_surface(self, surface):
+        self.surface = surface

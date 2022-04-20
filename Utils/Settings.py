@@ -17,6 +17,7 @@ class Settings:
         self.bot_difficulty_font = pygame.font.SysFont('jetsbrainsmono.ttf', 64)
         self.game_button_font = pygame.font.SysFont('jetsbrainsmono.ttf', 36)
         self.player_name_font = pygame.font.SysFont('jetsbrainsmono.ttf', 50)
+        self.message_font = pygame.font.SysFont('jetsbrainsmono.ttf', 24)
 
         self.player_deck_2_x = 50
         self.opposite_deck_2_x = 50
@@ -26,12 +27,12 @@ class Settings:
         self.opposite_chosen_y = 150
         self.play_deck_width_2 = 900
 
-        self.current_deck_2_x = 100
+        self.current_deck_2_x = 50
         self.current_deck_y = 425
         self.current_deck_width_2 = 900
 
-        self.discard_deck_x_2 = 450
-        self.discard_deck_y_2 = 250
+        self.discard_deck_x_2 = 470
+        self.discard_deck_y_2 = 310
 
         self.player_name_x = 500
         self.player_name_y = 963
@@ -76,3 +77,6 @@ class Settings:
         self.right_name_y = 500
 
         self.FPS = 240
+
+        self.message_x = 50
+        self.message_y = 963

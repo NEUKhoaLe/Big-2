@@ -1,3 +1,5 @@
+import random
+
 import pygame
 
 from Cards.Deck.AbstractDeck import AbstractDeck
@@ -42,7 +44,7 @@ class ShuffleDeck(AbstractDeck):
             pygame.display.flip()
 
     def shuffle(self):
-        pass
+        random.shuffle(self.deck)
 
     def card_change_in_play(self, index, boolean):
         self.deck[index].change_in_play(boolean)

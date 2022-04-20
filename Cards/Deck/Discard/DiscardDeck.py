@@ -10,6 +10,8 @@ class DiscardDeck(AbstractDeck):
 
         self.x = x
         self.y = y
+        self.discard_x_size = 60
+        self.discard_y_size = 100
         self.settings = Settings()
 
     def change_pos(self, x, y):
@@ -19,7 +21,8 @@ class DiscardDeck(AbstractDeck):
     def draw_deck(self, move_from_shuffle=False, game_update=False, draw=True):
         if len(self.deck) != 0:
             for x in self.deck:
-                x.move(self.x, self.y, False)
+                x.scale(self.discard_x_size, self.discard_y_size)
+                x.move(self.x, self.y, True)
                 x.update_vis(False)
 
             card = self.deck[len(self.deck) - 1]

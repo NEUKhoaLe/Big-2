@@ -126,7 +126,7 @@ class OppositeDeck(TopBottomDeck):
                     self.mouse_y_offset = card_y - mouse_y
 
                     cx, cy = card.cur_pos()
-                    self.surface.blit(self.full_card, (cx + 2, cy))
+                    self.surface.blit(self.full_card, (cx, cy))
 
                     self.draw_previous(i)
                     self.draw_rest_deck(self.deck[max(i - 1, 0)], for_drag=True)

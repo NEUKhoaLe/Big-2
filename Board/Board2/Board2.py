@@ -206,12 +206,10 @@ class Board2(AbstractBoard):
     # and then go through every card in that deck to find the card. Move that card to the chosen
     # If a chosen card is selected, then it is "unchosen" i.e. removed from the chosen pile
     def choose_card(self, mouse_x, mouse_y, cur_player, dragging):
-        if self.select_deck(mouse_x, mouse_y) == "player" and cur_player == "player":
+        if self.select_deck(mouse_x, mouse_y) == "player":
             return self.player_deck.handle_selected(mouse_x, mouse_y, dragging)
-        elif self.select_deck(mouse_x, mouse_y) == "opposite" and cur_player == "opposite":
+        if self.select_deck(mouse_x, mouse_y) == "opposite":
             return self.opposite_deck.handle_selected(mouse_x, mouse_y, dragging)
-        else:
-            return "Not Selected " + cur_player
 
     def rotate_deck(self, order):
         if order == [2, 1]:
@@ -224,6 +222,34 @@ class Board2(AbstractBoard):
         self.discard_deck.transfer_all_cards_to_deck(current_deck)
         self.current_deck.remove_card(current_deck)
 
+    def check_winner(self):
+        player = self.player_deck.get_deck()
+        opposite = self.opposite_deck.get_deck()
+
+        if len(player) == 0:
+            return "player"
+
+        if len(opposite) == 0:
+            return "opposite"
+
+        player_2_count = 0
+        for card in player:
+            if card.get_value() == "2":
+                player_2_count += 1
+
+        if player_2_count == 4:
+            return "player"
+
+        opposite_2_count = 0
+        for card in opposite:
+            if card.get_value() == "2":
+                opposite_2_count += 1
+
+        if opposite_2_count == 4:
+            return "opposite"
+
+        return "none"
+
     def play(self, player, turn):
         operating_deck = None
         if player == "player":
@@ -232,11 +258,10 @@ class Board2(AbstractBoard):
             operating_deck = self.opposite_deck.get_chosen()
 
         if self.valid_move(operating_deck, player, turn):
-            pass
             # If valid move, then move old cards in current to discard
             self.move_to_discard()
             # move chosen to current
-            self.move_chosen_to_current("player")
+            self.move_chosen_to_current(player)
 
             return True
             # return "success" / true
@@ -319,30 +344,30 @@ class Board2(AbstractBoard):
             if self.current_deck.get_length() == 1:
                 if current_deck[0].get_value() == "2":
                     if len(operating_deck) == 1:
-                        if operating_deck[0] != "2":
+                        if operating_deck[0].get_value() != "2":
                             if self.quad_beat_two(operating_deck) or self.triple_beat_two(operating_deck) or \
                                     self.special_beat_two(operating_deck):
                                 return True
 
                             return False
                         else:
-                            if compare_suits(operating_deck[0], current_deck[0]) == "player":
+                            if compare(operating_deck[0], current_deck[0]) == "player":
                                 return True
                             else:
                                 return False
-                    elif len(operating_deck) == 2 or len(operating_deck) == 4:
-                        if operating_deck[0] != "2" or not is_same(operating_deck):
+                    elif len(operating_deck) == 4:
+                        if not is_same(operating_deck):
                             return False
                         else:
                             return True
                     elif len(operating_deck) == 3:
                         return False
                     elif len(operating_deck) % 2 == 0 and len(operating_deck) > 5:
-                        return operating_deck[0] == "2" and self.is_double_consecutive(operating_deck)
+                        return self.is_double_consecutive(operating_deck)
                     else:
                         return False
                 else:
-                    if compare_suits(operating_deck[0], current_deck[0]) == "player":
+                    if compare(operating_deck[0], current_deck[0]) == "player":
                         return True
                     else:
                         return False
@@ -352,7 +377,7 @@ class Board2(AbstractBoard):
                     if len(operating_deck) == 1:
                         return False
                     elif len(operating_deck) == 2:
-                        if operating_deck[0] != "2":
+                        if operating_deck[0].get_value() != "2":
                             if self.quad_beat_two(operating_deck) or self.special_beat_two(operating_deck):
                                 return True
                             else:
@@ -366,12 +391,12 @@ class Board2(AbstractBoard):
                             else:
                                 return False
                     elif len(operating_deck) == 4:
-                        if operating_deck[0] != "2" or not is_same(operating_deck):
+                        if operating_deck[0].get_value() != "2" or not is_same(operating_deck):
                             return False
                         else:
                             return True
                     elif len(operating_deck) % 2 == 0 and len(operating_deck) > 5:
-                        return operating_deck[0] == "2" and self.is_double_consecutive(operating_deck)
+                        return operating_deck[0].get_value() == "2" and self.is_double_consecutive(operating_deck)
                     else:
                         return False
                 else:
@@ -479,12 +504,12 @@ class Board2(AbstractBoard):
             return False
 
     def is_consecutive(self, operating_deck):
-        if operating_deck[0] == "2":
+        if operating_deck[-1].get_value() == "2":
             return False
 
         i = 1
         while i < len(operating_deck):
-            if int(operating_deck[i - 1].get_value()) >= int(operating_deck[i].get_value()) + 1:
+            if to_int_value(operating_deck[i - 1].get_value()) >= to_int_value(operating_deck[i].get_value()):
                 return False
 
             i += 1

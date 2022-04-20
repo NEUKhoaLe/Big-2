@@ -295,33 +295,18 @@ class Big2:
             self.reset_drawn_stat_rect()
             self.clock.tick(self.settings.FPS)
 
+            self.game.game_status()
+
             # Watch for keyboard and mouse events.
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     sys.exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
-                        if self.game.get_turn() == "player":
-                            mouse_x, mouse_y = pygame.mouse.get_pos()
-                            deck_selected = self.game.select(mouse_x, mouse_y)
+                        mouse_x, mouse_y = pygame.mouse.get_pos()
+                        deck_selected = self.game.select(mouse_x, mouse_y)
 
-                            if deck_selected == "player":
-                                self.game.update(o=False, c=True, d=True, s=False, l=False, r=False, gu=False)
-                        elif self.game.get_turn() == "opposite":
-                            mouse_x, mouse_y = pygame.mouse.get_pos()
-                            deck_selected = self.game.select(mouse_x, mouse_y)
-                            if deck_selected == "opposite":
-                                self.game.update(p=False, c=False, d=False, s=False, l=False, r=False, gu=False)
-                        elif self.game.get_turn() == "left":
-                            mouse_x, mouse_y = pygame.mouse.get_pos()
-                            deck_selected = self.game.select(mouse_x, mouse_y)
-                            if deck_selected == "left":
-                                self.game.update(o=False, r=False, p=False, c=False, d=False, s=False, gu=False)
-                        elif self.game.get_turn() == "right":
-                            mouse_x, mouse_y = pygame.mouse.get_pos()
-                            deck_selected = self.game.select(mouse_x, mouse_y)
-                            if deck_selected == "right":
-                                self.game.update(o=False, l=False, p=False, c=False, d=False, s=False, gu=False)
+                        self.game.update(c=True, d=True, s=False, l=False, r=False, gu=False)
                     if event.button == 3:
                         self.dragging = True
                 if event.type == pygame.MOUSEBUTTONUP:

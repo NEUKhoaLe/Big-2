@@ -193,6 +193,9 @@ class AbstractBoard:
     def deal(self, last_winner):
         pass
 
+    def check_winner(self):
+        pass
+
     def move_chosen_to_current(self, pile_from):
         pass
 

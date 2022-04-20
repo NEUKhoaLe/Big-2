@@ -58,6 +58,10 @@ class Cards:
         # rect used to calculate the area that is blocked by the card above
         self.rect_blocked = pygame.Rect(0, 0, 0, 0)
 
+    def scale(self, x , y):
+        self.front_image = pygame.transform.scale(self.front_image, (x, y))
+        self.back_image = pygame.transform.scale(self.back_image, (x, y))
+
     # Move the card to a different location
     # If we are moving the card to the shuffle position, we will make it appear
     # instantly. If shuffle is true, then we are moving it to the shuffle
